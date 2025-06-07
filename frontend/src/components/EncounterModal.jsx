@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import './EncounterModal.css'
-import { computeAttackPower, fightGoblin } from '../fightUtils'
+import { computeAttackBreakdown, fightGoblin } from '../fightUtils'
 
 function EncounterModal({ goblin, hero, onFight, onFlee }) {
   const [stage, setStage] = useState('menu')
@@ -10,7 +10,10 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
   const [result, setResult] = useState(null)
 
   const startFight = () => {
-    const r = Array.from({ length: hero.fightDice }, () => Math.ceil(Math.random() * 6))
+    const weapon = hero.weapons[weaponIdx]
+    const diceKey = `${weapon.dice}Dice`
+    const count = hero[diceKey]
+    const r = Array.from({ length: count }, () => Math.ceil(Math.random() * 6))
     setRolls(r)
     setStage('fight')
   }
@@ -23,7 +26,7 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
   }
 
   const handleFlee = () => {
-    const r = Array.from({ length: hero.fleeDice }, () => Math.ceil(Math.random() * 6))
+    const r = Array.from({ length: hero.agilityDice }, () => Math.ceil(Math.random() * 6))
     const success = r.some(v => v >= 4)
     const heroDef = hero.defence + hero.weapons[weaponIdx].defence
     const damage = Math.max(1, goblin.attack - heroDef)
@@ -71,7 +74,7 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
                     checked={weaponIdx === idx}
                     onChange={() => setWeaponIdx(idx)}
                   />
-                  {w.name} (A{w.attack} D{w.defence})
+                  {w.name} (A{w.attack} D{w.defence} {w.dice})
                 </label>
               ))}
             </div>
@@ -99,7 +102,18 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
             <div className="info">
               {baseIdx === null
                 ? 'Choose a base die (>=3).'
-                : `Power ${computeAttackPower(hero, hero.weapons[weaponIdx], rolls, baseIdx)} vs defence ${goblin.defence}`}
+                : (() => {
+                    const details = computeAttackBreakdown(
+                      hero,
+                      hero.weapons[weaponIdx],
+                      rolls,
+                      baseIdx
+                    )
+                    const parts = [`${details.hero} hero`, `${details.weapon} weapon`]
+                    if (details.base) parts.push(`${details.base} base`)
+                    if (details.extra) parts.push(`${details.extra} extra`)
+                    return `Power ${details.total} (${parts.join(' + ')}) vs defence ${goblin.defence}`
+                  })()}
             </div>
             <div className="buttons">
               <button onClick={confirmFight} disabled={baseIdx === null}>Attack</button>

@@ -27,17 +27,19 @@ function HeroPanel({ hero }) {
         <div>{hero.defence}</div>
         <div className="label">Agi</div>
         <div>{hero.agility}</div>
-        <div className="label">Fight Dice</div>
-        <div>{hero.fightDice}</div>
-        <div className="label">Flee Dice</div>
-        <div>{hero.fleeDice}</div>
+        <div className="label">Strength Dice</div>
+        <div>{hero.strengthDice}</div>
+        <div className="label">Agility Dice</div>
+        <div>{hero.agilityDice}</div>
+        <div className="label">Magic Dice</div>
+        <div>{hero.magicDice}</div>
         <div className="label">Weapon 1</div>
         <div>
-          {hero.weapons[0].name} (A{hero.weapons[0].attack} D{hero.weapons[0].defence})
+          {hero.weapons[0].name} (A{hero.weapons[0].attack} D{hero.weapons[0].defence} {hero.weapons[0].dice})
         </div>
         <div className="label">Weapon 2</div>
         <div>
-          {hero.weapons[1].name} (A{hero.weapons[1].attack} D{hero.weapons[1].defence})
+          {hero.weapons[1].name} (A{hero.weapons[1].attack} D{hero.weapons[1].defence} {hero.weapons[1].dice})
         </div>
       </div>
     </div>
