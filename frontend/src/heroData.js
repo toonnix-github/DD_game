@@ -7,6 +7,7 @@ export const HERO_TYPES = {
     attack: 4,
     defence: 3,
     icon: 'K',
+    image: '/knight.svg',
   },
   elf: {
     name: 'Elf',
@@ -16,6 +17,7 @@ export const HERO_TYPES = {
     attack: 3,
     defence: 1,
     icon: 'E',
+    image: '/elf.svg',
   },
 }
 

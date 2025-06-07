@@ -9,7 +9,8 @@ function HeroSelect({ onSelect }) {
       <div className="hero-options">
         {Object.entries(HERO_TYPES).map(([key, hero]) => (
           <button key={key} onClick={() => onSelect(key)}>
-            {hero.name}
+            <img src={hero.image} alt={hero.name} width="40" height="40" />
+            <div>{hero.name}</div>
           </button>
         ))}
       </div>

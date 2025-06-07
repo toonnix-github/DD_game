@@ -2,7 +2,7 @@
 
 This project aims to build a digital adaptation of the board game **Tiny Epic Dungeon** using JavaScript and React.
 
-The current version includes a simple hero portrait generated with the HTML canvas and displays additional hero statistics.
+The current version shows a hero portrait drawn in a Hearthstone‑style. Each hero now has unique artwork making it clear which character is a knight or an elf.
 
 ## Getting Started
 
@@ -37,10 +37,16 @@ The current version includes a simple hero portrait generated with the HTML canv
   - Attack power
 - Defence power
 
-The hero panel now displays these attributes along with a small picture drawn on a canvas element.
+The hero panel now displays these attributes along with a portrait image for the selected hero.
 
 ### Customizing Hero Stats
 
 Starting values for each hero type can be modified in
 `frontend/src/heroData.js`. Edit the stats there to tweak the characters
 without touching the game logic.
+
+### Artwork Credits
+
+The colored knight and elf portraits shown in the game are custom SVG assets
+created for this project. They replace the monochrome icons previously sourced
+from the [Game Icons](https://game-icons.net/) project.
