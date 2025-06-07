@@ -1,21 +1,32 @@
-export function computeAttackPower(hero, rolls, baseIdx) {
-  let power = hero.attack
+
+export function computeAttackBreakdown(hero, weapon, rolls, baseIdx) {
+  const heroPart = hero.attack
+  const weaponPart = weapon.attack
+  let base = 0
+  let extra = 0
   if (baseIdx != null && rolls[baseIdx] >= 3) {
-    power += rolls[baseIdx]
+    base = rolls[baseIdx]
     rolls.forEach((v, idx) => {
-      if (idx !== baseIdx && v <= 2) power += v
+      if (idx !== baseIdx && v <= 2) extra += v
     })
   }
-  return power
+  const total = heroPart + weaponPart + base + extra
+  return { total, hero: heroPart, weapon: weaponPart, base, extra }
 }
 
-export function fightGoblin(hero, goblin, rolls, baseIdx) {
+export function computeAttackPower(hero, weapon, rolls, baseIdx) {
+  return computeAttackBreakdown(hero, weapon, rolls, baseIdx).total
+}
+
+export function fightGoblin(hero, goblin, weapon, rolls, baseIdx) {
   let heroHp = hero.hp
   let goblinHp = goblin.hp
 
-  const attackPower = computeAttackPower(hero, rolls, baseIdx)
+  const details = computeAttackBreakdown(hero, weapon, rolls, baseIdx)
+  const attackPower = details.total
+  const heroDefence = hero.defence + weapon.defence
   const heroDmg = Math.max(1, attackPower - goblin.defence)
-  const goblinDmg = Math.max(1, goblin.attack - hero.defence)
+  const goblinDmg = Math.max(1, goblin.attack - heroDefence)
 
   goblinHp -= heroDmg
   let message = `Hero deals ${heroDmg} damage.`
@@ -32,6 +43,7 @@ export function fightGoblin(hero, goblin, rolls, baseIdx) {
   return {
     hero: { ...hero, hp: heroHp },
     goblin: { ...goblin, hp: goblinHp },
+    details,
     attackPower,
     heroDmg,
     goblinDmg: goblinHp > 0 ? goblinDmg : 0,

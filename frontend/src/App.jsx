@@ -77,8 +77,10 @@ function loadState() {
           attack: parsed.hero.attack ?? base.attack,
           defence: parsed.hero.defence ?? base.defence,
           agility: parsed.hero.agility ?? base.agility,
-          fightDice: parsed.hero.fightDice ?? base.fightDice,
-          fleeDice: parsed.hero.fleeDice ?? base.fleeDice,
+          strengthDice: parsed.hero.strengthDice ?? base.strengthDice,
+          agilityDice: parsed.hero.agilityDice ?? base.agilityDice,
+          magicDice: parsed.hero.magicDice ?? base.magicDice,
+          weapons: parsed.hero.weapons ?? base.weapons.map(w => ({ ...w })),
           name: base.name,
           image: base.image,
           type,
@@ -123,8 +125,10 @@ function App() {
       attack: base.attack,
       defence: base.defence,
       agility: base.agility,
-      fightDice: base.fightDice,
-      fleeDice: base.fleeDice,
+      strengthDice: base.strengthDice,
+      agilityDice: base.agilityDice,
+      magicDice: base.magicDice,
+      weapons: base.weapons.map(w => ({ ...w })),
       image: base.image,
       type,
     }
@@ -241,10 +245,11 @@ function App() {
   }, [state])
 
   const handleFight = useCallback(
-    (rolls, baseIdx) => {
+    (rolls, baseIdx, weaponIdx) => {
       const { encounter, board, hero } = state
       if (!encounter) return null
-      const result = fightGoblin(hero, encounter.goblin, rolls, baseIdx)
+      const weapon = hero.weapons[weaponIdx]
+      const result = fightGoblin(hero, encounter.goblin, weapon, rolls, baseIdx)
       const newBoard = board.map(row => row.map(tile => ({ ...tile })))
       const tile = newBoard[encounter.position.row][encounter.position.col]
       let newEncounter = { ...encounter, goblin: result.goblin }
