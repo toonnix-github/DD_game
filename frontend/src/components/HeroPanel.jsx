@@ -20,20 +20,31 @@ function drawHeroPicture(canvas) {
 function HeroPanel({ hero }) {
   return (
     <div className="hero-panel">
-      <h2>Hero Attributes</h2>
+      <h2>Hero</h2>
       <canvas
-        width="100"
-        height="100"
+        width="80"
+        height="80"
         ref={c => drawHeroPicture(c)}
-        style={{ display: 'block', margin: '0 auto 10px' }}
+        style={{ display: 'block', margin: '0 auto 8px' }}
       />
-      <p>Icon: {hero.icon}</p>
-      <p>Position: ({hero.row}, {hero.col})</p>
-      <p>Movement: {hero.movement}</p>
-      <p>HP: {hero.hp}</p>
-      <p>AP: {hero.ap}</p>
-      <p>Attack: {hero.attack}</p>
-      <p>Defence: {hero.defence}</p>
+      <div className="stats">
+        <div className="label">Icon</div>
+        <div>{hero.icon}</div>
+        <div className="label">Pos</div>
+        <div>
+          ({hero.row}, {hero.col})
+        </div>
+        <div className="label">Move</div>
+        <div>{hero.movement}</div>
+        <div className="label">HP</div>
+        <div>{hero.hp}</div>
+        <div className="label">AP</div>
+        <div>{hero.ap}</div>
+        <div className="label">Atk</div>
+        <div>{hero.attack}</div>
+        <div className="label">Def</div>
+        <div>{hero.defence}</div>
+      </div>
     </div>
   )
 }

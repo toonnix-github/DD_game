@@ -10,8 +10,9 @@ function RoomTile({ tile, hero, onClick, highlight }) {
     <div
       className={`tile ${tile.revealed ? 'revealed' : ''} ${highlight ? 'possible' : ''}`}
       onClick={onClick}
+      title={tile.revealed ? tile.roomId : undefined}
     >
-      {tile.revealed ? tile.roomId : '?'}
+      <span className="room-name">{tile.revealed ? tile.roomId : '?'}</span>
       {tile.revealed && (
         <div className="paths">
           {DIRS.filter(d => tile.paths && tile.paths[d])
