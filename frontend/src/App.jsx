@@ -85,6 +85,7 @@ function loadState() {
           name: base.name,
           image: base.image,
           type,
+          offset: parsed.hero.offset ?? { x: 0, y: 0 },
         }
       }
       parsed.encounter = null
@@ -132,6 +133,10 @@ function App() {
       weapons: base.weapons.map(w => ({ ...w })),
       image: base.image,
       type,
+      offset: {
+        x: Math.random() * 40 - 20,
+        y: Math.random() * 40 - 20,
+      },
     }
     setState(prev => ({ ...prev, hero }))
   }, [])
@@ -204,6 +209,10 @@ function App() {
         row: r,
         col: c,
         movement: hero.movement - 1,
+        offset: {
+          x: Math.random() * 40 - 20,
+          y: Math.random() * 40 - 20,
+        },
       }
 
       let newEncounter = null
@@ -275,6 +284,10 @@ function App() {
       if (success) {
         newHero.row = encounter.prev.row
         newHero.col = encounter.prev.col
+        newHero.offset = {
+          x: Math.random() * 40 - 20,
+          y: Math.random() * 40 - 20,
+        }
         newEncounter = null
       } else {
         const damage = Math.max(1, encounter.goblin.attack - hero.defence)
@@ -323,8 +336,8 @@ function App() {
             <div
               className="hero-overlay"
               style={{
-                transform: `translate(${state.hero.col * 100}%, ${
-                  state.hero.row * 100
+                transform: `translate(${state.hero.col * 100 + (state.hero.offset?.x ?? 0)}%, ${
+                  state.hero.row * 100 + (state.hero.offset?.y ?? 0)
                 }%)`,
               }}
             >
