@@ -125,7 +125,9 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
             </div>
             <div className="info">
               {baseIdx === null
-                ? 'Choose a base die (>=3).'
+                ? rolls.some(v => v >= 3)
+                  ? 'Choose a base die (>=3).'
+                  : 'No die is high enough for a base roll.'
                 : (() => {
                     const details = computeAttackBreakdown(
                       hero,
@@ -140,7 +142,12 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
                   })()}
             </div>
             <div className="buttons">
-              <button onClick={confirmFight} disabled={baseIdx === null}>Attack</button>
+              <button
+                onClick={confirmFight}
+                disabled={rolls.some(v => v >= 3) && baseIdx === null}
+              >
+                Attack
+              </button>
             </div>
           </div>
         )}
