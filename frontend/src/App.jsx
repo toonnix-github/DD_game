@@ -4,6 +4,7 @@ import './App.css'
 
 const BOARD_SIZE = 7
 const CENTER = Math.floor(BOARD_SIZE / 2)
+const START_MOVEMENT = 3
 
 function createEmptyBoard() {
   return Array.from({ length: BOARD_SIZE }, (_, r) =>
@@ -23,7 +24,7 @@ function loadState() {
   board[CENTER][CENTER] = { row: CENTER, col: CENTER, roomId: 'Start', revealed: true }
   return {
     board,
-    hero: { row: CENTER, col: CENTER, movement: 3, icon: 'H' },
+    hero: { row: CENTER, col: CENTER, movement: START_MOVEMENT, icon: 'H' },
     deck: Array.from({ length: 60 }, (_, i) => i + 1),
   }
 }
@@ -34,6 +35,13 @@ function App() {
   useEffect(() => {
     localStorage.setItem('dungeon-state', JSON.stringify(state))
   }, [state])
+
+  const endTurn = useCallback(() => {
+    setState(prev => ({
+      ...prev,
+      hero: { ...prev.hero, movement: START_MOVEMENT },
+    }))
+  }, [])
 
   const moveHero = useCallback(
     (r, c) => {
@@ -87,6 +95,8 @@ function App() {
   return (
     <>
       <h1>Dungeon Board</h1>
+      <button onClick={endTurn}>End Turn</button>
+      <p>Movement left: {state.hero.movement}</p>
       <div className="board">
         {state.board.map((row, rIdx) =>
           row.map((tile, cIdx) => {
