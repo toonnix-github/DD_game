@@ -36,10 +36,19 @@ function opposite(dir) {
   }
 }
 
-function fightGoblin(hero, goblin) {
+function fightGoblin(hero, goblin, rolls, baseIdx) {
   let heroHp = hero.hp
   let goblinHp = goblin.hp
-  const heroDmg = Math.max(1, hero.attack - goblin.defence)
+
+  let attackPower = hero.attack
+  if (baseIdx != null && rolls[baseIdx] >= 3) {
+    attackPower += rolls[baseIdx]
+    rolls.forEach((v, idx) => {
+      if (idx !== baseIdx && v <= 2) attackPower += v
+    })
+  }
+
+  const heroDmg = Math.max(1, attackPower - goblin.defence)
   const goblinDmg = Math.max(1, goblin.attack - hero.defence)
 
   goblinHp -= heroDmg
@@ -91,6 +100,8 @@ function loadState() {
           attack: parsed.hero.attack ?? base.attack,
           defence: parsed.hero.defence ?? base.defence,
           agility: parsed.hero.agility ?? base.agility,
+          fightDice: parsed.hero.fightDice ?? base.fightDice,
+          fleeDice: parsed.hero.fleeDice ?? base.fleeDice,
           name: base.name,
           image: base.image,
           type,
@@ -135,6 +146,8 @@ function App() {
       attack: base.attack,
       defence: base.defence,
       agility: base.agility,
+      fightDice: base.fightDice,
+      fleeDice: base.fleeDice,
       image: base.image,
       type,
     }
@@ -250,13 +263,13 @@ function App() {
     return moves
   }, [state])
 
-  const handleFight = useCallback(() => {
+  const handleFight = useCallback((rolls, baseIdx) => {
     setState(prev => {
       if (!prev.encounter) return prev
       const { encounter, board, hero } = prev
       const newBoard = board.map(row => row.map(tile => ({ ...tile })))
       const tile = newBoard[encounter.position.row][encounter.position.col]
-      const result = fightGoblin(hero, encounter.goblin)
+      const result = fightGoblin(hero, encounter.goblin, rolls, baseIdx)
       let newEncounter = { ...encounter, goblin: result.goblin }
       tile.goblin = result.goblin
       if (result.goblin.hp <= 0) {
@@ -267,12 +280,10 @@ function App() {
     })
   }, [])
 
-  const handleFlee = useCallback(() => {
+  const handleFlee = useCallback(success => {
     setState(prev => {
       if (!prev.encounter) return prev
       const { encounter, board, hero } = prev
-      const successProb = hero.agility / (hero.agility + encounter.goblin.attack)
-      const success = Math.random() < successProb
       const newBoard = board.map(row => row.map(tile => ({ ...tile })))
       let newHero = { ...hero, movement: 0 }
       let newEncounter = encounter
@@ -333,6 +344,7 @@ function App() {
       {state.encounter && (
         <EncounterModal
           goblin={state.encounter.goblin}
+          hero={state.hero}
           onFight={handleFight}
           onFlee={handleFlee}
         />

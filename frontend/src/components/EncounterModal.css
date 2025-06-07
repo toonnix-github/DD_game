@@ -31,6 +31,31 @@
   justify-content: center;
 }
 
+.dice-container {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.dice {
+  width: 24px;
+  height: 24px;
+  border: 1px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.dice.base {
+  background-color: #883333;
+}
+.dice.selectable:hover {
+  background-color: #555;
+}
+
 .label {
   text-align: right;
   opacity: 0.8;
