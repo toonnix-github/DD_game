@@ -5,6 +5,7 @@ export const GOBLIN_TYPES = {
     attack: 2,
     defence: 1,
     icon: 'K',
+    image: '/goblin.svg',
   },
   archer: {
     name: 'Archer Goblin',
@@ -12,6 +13,7 @@ export const GOBLIN_TYPES = {
     attack: 3,
     defence: 1,
     icon: 'A',
+    image: '/goblin.svg',
   },
   spear: {
     name: 'Spear Goblin',
@@ -19,6 +21,7 @@ export const GOBLIN_TYPES = {
     attack: 3,
     defence: 2,
     icon: 'S',
+    image: '/goblin.svg',
   },
   mage: {
     name: 'Mage Goblin',
@@ -26,6 +29,7 @@ export const GOBLIN_TYPES = {
     attack: 4,
     defence: 1,
     icon: 'M',
+    image: '/goblin.svg',
   },
   king: {
     name: 'Goblin King',
@@ -33,6 +37,7 @@ export const GOBLIN_TYPES = {
     attack: 4,
     defence: 3,
     icon: 'G',
+    image: '/goblin.svg',
   },
 }
 

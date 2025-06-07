@@ -25,6 +25,12 @@ function HeroPanel({ hero }) {
         <div>{hero.attack}</div>
         <div className="label">Def</div>
         <div>{hero.defence}</div>
+        <div className="label">Agi</div>
+        <div>{hero.agility}</div>
+        <div className="label">Fight Dice</div>
+        <div>{hero.fightDice}</div>
+        <div className="label">Flee Dice</div>
+        <div>{hero.fleeDice}</div>
       </div>
     </div>
   )

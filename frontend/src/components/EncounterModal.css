@@ -1,0 +1,71 @@
+.encounter-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.encounter-window {
+  background-color: #444;
+  color: white;
+  padding: 1rem;
+  border-radius: 4px;
+  width: 240px;
+  text-align: center;
+}
+
+.encounter-window .stats {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 4px;
+  margin: 0.5rem 0;
+  font-size: 0.8rem;
+}
+
+.encounter-window .buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.dice-container {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.dice {
+  width: 24px;
+  height: 24px;
+  border: 1px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.dice.base {
+  background-color: #883333;
+}
+.dice.selectable:hover {
+  background-color: #555;
+}
+
+.info {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.result-message {
+  margin-bottom: 0.5rem;
+}
+
+.label {
+  text-align: right;
+  opacity: 0.8;
+}
