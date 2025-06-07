@@ -2,7 +2,7 @@ import React from 'react'
 import { HERO_TYPES } from '../heroData'
 import './HeroSelect.css'
 
-function HeroSelect({ onSelect, onReset }) {
+function HeroSelect({ onSelect }) {
   return (
     <div className="hero-select">
       <h2>Select Your Hero</h2>
@@ -13,9 +13,6 @@ function HeroSelect({ onSelect, onReset }) {
           </button>
         ))}
       </div>
-      <button onClick={onReset} className="reset-game" style={{ marginTop: '1rem' }}>
-        Reset Game
-      </button>
     </div>
   )
 }

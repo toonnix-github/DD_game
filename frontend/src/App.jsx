@@ -217,7 +217,7 @@ function App() {
   }, [state.hero, moveHero])
 
   if (!state.hero) {
-    return <HeroSelect onSelect={chooseHero} onReset={resetGame} />
+    return <HeroSelect onSelect={chooseHero} />
   }
 
   return (
