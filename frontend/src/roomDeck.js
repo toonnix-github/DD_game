@@ -29,7 +29,21 @@ GOBLIN_ROOMS.push({
   goblin: 'king',
 })
 
+const TRAP_ROOMS = [
+  { roomId: 'Snare Pit', paths: BASE_PATHS[0], trap: true },
+  { roomId: 'Spike Hall', paths: BASE_PATHS[1], trap: true },
+  { roomId: 'Arrow Corridor', paths: BASE_PATHS[2], trap: true },
+  { roomId: 'Flame Trap Room', paths: BASE_PATHS[3], trap: true },
+  { roomId: 'Falling Rock Room', paths: BASE_PATHS[4], trap: true },
+  { roomId: 'Gas Chamber', paths: BASE_PATHS[0], trap: true },
+  { roomId: 'Blade Passage', paths: BASE_PATHS[1], trap: true },
+  { roomId: 'Magic Rune Trap', paths: BASE_PATHS[2], trap: true },
+  { roomId: 'Pendulum Hall', paths: BASE_PATHS[3], trap: true },
+  { roomId: 'Collapsing Floor', paths: BASE_PATHS[4], trap: true },
+]
+
 export const ROOM_DECK = [
+  ...TRAP_ROOMS,
   { roomId: 'Chamber of Bones', paths: BASE_PATHS[0] },
   { roomId: 'Chamber of Doom', paths: BASE_PATHS[1] },
   { roomId: 'Chamber of Echoes', paths: BASE_PATHS[2] },
