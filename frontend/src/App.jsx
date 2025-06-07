@@ -271,25 +271,31 @@ function App() {
     return moves
   }, [state])
 
-  const handleFight = useCallback(
-    (rolls, baseIdx, weaponIdx) => {
-      const { encounter, board, hero } = state
-      if (!encounter) return null
+  const handleFight = useCallback((rolls, baseIdx, weaponIdx) => {
+    setState(prev => {
+      const { encounter, board, hero } = prev
+      if (!encounter) return prev
       const weapon = hero.weapons[weaponIdx]
       const result = fightGoblin(hero, encounter.goblin, weapon, rolls, baseIdx)
       const newBoard = board.map(row => row.map(tile => ({ ...tile })))
       const tile = newBoard[encounter.position.row][encounter.position.col]
       let newEncounter = { ...encounter, goblin: result.goblin }
+      let newHero = result.hero
+      let discard = prev.discard
       tile.goblin = result.goblin
       if (result.goblin.hp <= 0) {
         tile.goblin = null
         newEncounter = null
+        const item = adaptTreasureItem(randomTreasure())
+        newHero = { ...newHero, weapons: [...newHero.weapons, item] }
+        discard = null
+        if (newHero.weapons.length > 2) {
+          discard = { items: newHero.weapons }
+        }
       }
-      setState({ ...state, board: newBoard, hero: result.hero, encounter: newEncounter })
-      return result
-    },
-    [state]
-  )
+      return { ...prev, board: newBoard, hero: newHero, encounter: newEncounter, discard }
+    })
+  }, [])
 
   const handleFlee = useCallback(success => {
     setState(prev => {
