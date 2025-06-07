@@ -69,3 +69,24 @@
   text-align: right;
   opacity: 0.8;
 }
+
+.weapon-select {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
+.weapon-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.weapon-option input {
+  display: none;
+}
+
+.weapon-option input:checked + .item-card {
+  box-shadow: 0 0 0 2px yellow;
+}

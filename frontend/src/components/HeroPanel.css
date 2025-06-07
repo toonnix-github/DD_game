@@ -26,3 +26,9 @@
   text-align: right;
   opacity: 0.8;
 }
+
+.weapons {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}

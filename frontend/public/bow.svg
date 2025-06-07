@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <path d="M12 6 Q32 32 12 58" fill="none" stroke="#a52" stroke-width="4"/>
+  <path d="M52 6 Q32 32 52 58" fill="none" stroke="#a52" stroke-width="4"/>
+  <line x1="12" y1="6" x2="52" y2="6" stroke="#ccc"/>
+  <line x1="12" y1="58" x2="52" y2="58" stroke="#ccc"/>
+  <line x1="12" y1="6" x2="12" y2="58" stroke="#ccc"/>
+</svg>

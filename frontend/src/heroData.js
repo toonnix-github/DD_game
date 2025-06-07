@@ -13,8 +13,20 @@ export const HERO_TYPES = {
     icon: 'K',
     image: '/knight.svg',
     weapons: [
-      { name: 'Sword', attack: 2, defence: 0, dice: 'strength' },
-      { name: 'Shield', attack: 1, defence: 2, dice: 'strength' },
+      {
+        name: 'Sword',
+        attack: 2,
+        defence: 0,
+        dice: 'strength',
+        image: '/sword.svg',
+      },
+      {
+        name: 'Shield',
+        attack: 1,
+        defence: 2,
+        dice: 'strength',
+        image: '/shield.svg',
+      },
     ],
   },
   elf: {
@@ -31,8 +43,20 @@ export const HERO_TYPES = {
     icon: 'E',
     image: '/elf.svg',
     weapons: [
-      { name: 'Bow', attack: 2, defence: 0, dice: 'agility' },
-      { name: 'Dagger', attack: 1, defence: 1, dice: 'agility' },
+      {
+        name: 'Bow',
+        attack: 2,
+        defence: 0,
+        dice: 'agility',
+        image: '/bow.svg',
+      },
+      {
+        name: 'Dagger',
+        attack: 1,
+        defence: 1,
+        dice: 'agility',
+        image: '/dagger.svg',
+      },
     ],
   },
 }
