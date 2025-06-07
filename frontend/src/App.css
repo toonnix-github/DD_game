@@ -31,6 +31,10 @@
   width: 100%;
 }
 
+.reset-game {
+  width: 100%;
+}
+
 @media (max-width: 600px) {
   #root {
     padding: 1rem;
@@ -43,6 +47,9 @@
     width: 100%;
   }
   .end-turn {
+    width: 100%;
+  }
+  .reset-game {
     width: 100%;
   }
   .hero-panel {

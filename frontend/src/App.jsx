@@ -127,6 +127,11 @@ function App() {
     })
   }, [])
 
+  const resetGame = useCallback(() => {
+    localStorage.removeItem('dungeon-state')
+    setState(loadState())
+  }, [])
+
   const moveHero = useCallback(
     (r, c) => {
       const { hero, board, deck } = state
@@ -237,6 +242,7 @@ function App() {
         <div className="side">
           <HeroPanel hero={state.hero} />
           <button onClick={endTurn} className="end-turn">End Turn</button>
+          <button onClick={resetGame} className="reset-game">Reset Game</button>
         </div>
       </div>
     </>
