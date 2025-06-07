@@ -1,16 +1,32 @@
 # DD_game
 
-I love the board game "Tiny Epic Dungeon." I played with my son, and we loved it, so I want to have this in a digital version.
+This project aims to build a digital adaptation of the board game **Tiny Epic Dungeon** using JavaScript and React.
 
-MVP
-- dungeon with 7x7 tiles
-- 60 prepared room tiles
-- Open new rooms when a character moves to the room, open only the tiles that connect to the exits from the current tile.
-- 2 characters, knight and archer.
-- A character can only move
-- Character has basic attributes
-- move - that tells how many steps they can move
-- hp
-- activity points
-- attack power
-- defence power
+## Getting Started
+
+1. Install dependencies:
+   ```bash
+   npm install
+   cd frontend && npm install
+   ```
+2. Build the React app:
+   ```bash
+   npm run build --prefix frontend
+   ```
+3. Start the server:
+   ```bash
+   npm start
+   ```
+4. Open `http://localhost:3000` in your browser.
+
+## MVP Features
+- Dungeon with a 7x7 grid of tiles.
+- 60 prepared room tiles.
+- Open new rooms only when a character moves to a connecting exit.
+- Two characters: knight and archer.
+- Characters have attributes:
+  - Movement range
+  - HP
+  - Activity points
+  - Attack power
+  - Defence power
