@@ -1,5 +1,5 @@
-export function computeAttackPower(hero, rolls, baseIdx) {
-  let power = hero.attack
+export function computeAttackPower(hero, weapon, rolls, baseIdx) {
+  let power = hero.attack + weapon.attack
   if (baseIdx != null && rolls[baseIdx] >= 3) {
     power += rolls[baseIdx]
     rolls.forEach((v, idx) => {
@@ -9,13 +9,14 @@ export function computeAttackPower(hero, rolls, baseIdx) {
   return power
 }
 
-export function fightGoblin(hero, goblin, rolls, baseIdx) {
+export function fightGoblin(hero, goblin, weapon, rolls, baseIdx) {
   let heroHp = hero.hp
   let goblinHp = goblin.hp
 
-  const attackPower = computeAttackPower(hero, rolls, baseIdx)
+  const attackPower = computeAttackPower(hero, weapon, rolls, baseIdx)
+  const heroDefence = hero.defence + weapon.defence
   const heroDmg = Math.max(1, attackPower - goblin.defence)
-  const goblinDmg = Math.max(1, goblin.attack - hero.defence)
+  const goblinDmg = Math.max(1, goblin.attack - heroDefence)
 
   goblinHp -= heroDmg
   let message = `Hero deals ${heroDmg} damage.`

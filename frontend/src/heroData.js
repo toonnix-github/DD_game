@@ -11,6 +11,10 @@ export const HERO_TYPES = {
     fleeDice: 1,
     icon: 'K',
     image: '/knight.svg',
+    weapons: [
+      { name: 'Sword', attack: 2, defence: 0 },
+      { name: 'Shield', attack: 1, defence: 2 },
+    ],
   },
   elf: {
     name: 'Elf',
@@ -24,6 +28,10 @@ export const HERO_TYPES = {
     fleeDice: 2,
     icon: 'E',
     image: '/elf.svg',
+    weapons: [
+      { name: 'Bow', attack: 2, defence: 0 },
+      { name: 'Dagger', attack: 1, defence: 1 },
+    ],
   },
 }
 
