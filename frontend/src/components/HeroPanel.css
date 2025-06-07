@@ -22,8 +22,16 @@
   font-size: 0.75em;
 }
 
+
 .label {
   text-align: right;
+  opacity: 0.8;
+}
+
+.label-icon {
+  width: 12px;
+  height: 12px;
+  justify-self: end;
   opacity: 0.8;
 }
 
