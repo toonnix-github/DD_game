@@ -5,6 +5,32 @@ import './App.css'
 
 const BOARD_SIZE = 7
 const CENTER = Math.floor(BOARD_SIZE / 2)
+const START_MOVEMENT = 3
+
+const DIRS = ['up', 'down', 'left', 'right']
+
+function directionFromDelta(dr, dc) {
+  if (dr === -1) return 'up'
+  if (dr === 1) return 'down'
+  if (dc === -1) return 'left'
+  if (dc === 1) return 'right'
+  return null
+}
+
+function opposite(dir) {
+  switch (dir) {
+    case 'up':
+      return 'down'
+    case 'down':
+      return 'up'
+    case 'left':
+      return 'right'
+    case 'right':
+      return 'left'
+    default:
+      return null
+  }
+}
 
 function createEmptyBoard() {
   return Array.from({ length: BOARD_SIZE }, (_, r) =>
@@ -13,18 +39,39 @@ function createEmptyBoard() {
       col: c,
       roomId: null,
       revealed: false,
+      paths: { up: false, down: false, left: false, right: false },
     }))
   )
 }
 
 function loadState() {
   const saved = localStorage.getItem('dungeon-state')
-  if (saved) return JSON.parse(saved)
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved)
+      if (parsed.board) {
+        parsed.board.forEach(row =>
+          row.forEach(tile => {
+            if (!tile.paths) tile.paths = { up: false, down: false, left: false, right: false }
+          })
+        )
+      }
+      return parsed
+    } catch {
+      /* ignore corrupted save */
+    }
+  }
   const board = createEmptyBoard()
-  board[CENTER][CENTER] = { row: CENTER, col: CENTER, roomId: 'Start', revealed: true }
+  board[CENTER][CENTER] = {
+    row: CENTER,
+    col: CENTER,
+    roomId: 'Start',
+    revealed: true,
+    paths: { up: true, down: true, left: true, right: true },
+  }
   return {
     board,
-    hero: { row: CENTER, col: CENTER, movement: 3, icon: 'H' },
+    hero: { row: CENTER, col: CENTER, movement: START_MOVEMENT, icon: 'H' },
     deck: Array.from({ length: 60 }, (_, i) => i + 1),
   }
 }
@@ -36,23 +83,57 @@ function App() {
     localStorage.setItem('dungeon-state', JSON.stringify(state))
   }, [state])
 
+  const endTurn = useCallback(() => {
+    setState(prev => ({
+      ...prev,
+      hero: { ...prev.hero, movement: START_MOVEMENT },
+    }))
+  }, [])
+
   const moveHero = useCallback(
     (r, c) => {
       const { hero, board, deck } = state
       if (hero.movement <= 0) return
-      const dr = Math.abs(r - hero.row)
-      const dc = Math.abs(c - hero.col)
-      if (dr + dc !== 1) return
+      const dr = r - hero.row
+      const dc = c - hero.col
+      if (Math.abs(dr) + Math.abs(dc) !== 1) return
       if (r < 0 || r >= BOARD_SIZE || c < 0 || c >= BOARD_SIZE) return
+
+      const dir = directionFromDelta(dr, dc)
+      const currentTile = board[hero.row][hero.col]
+      if (!currentTile.paths[dir]) return
 
       const newBoard = board.map(row => row.map(tile => ({ ...tile })))
       let newDeck = deck
-      if (!newBoard[r][c].revealed) {
+      const target = newBoard[r][c]
+      if (!target.revealed) {
         const idx = Math.floor(Math.random() * newDeck.length)
         const roomId = newDeck[idx]
         newDeck = newDeck.filter((_, i) => i !== idx)
-        newBoard[r][c] = { row: r, col: c, roomId, revealed: true }
+
+        const pathCount = Math.floor(Math.random() * 4) + 1
+        const paths = { up: false, down: false, left: false, right: false }
+        const incoming = opposite(dir)
+        paths[incoming] = true
+        let available = DIRS.filter(d => d !== incoming)
+        while (Object.values(paths).filter(Boolean).length < pathCount) {
+          const ri = Math.floor(Math.random() * available.length)
+          const d = available[ri]
+          paths[d] = true
+          available.splice(ri, 1)
+        }
+
+        newBoard[r][c] = {
+          row: r,
+          col: c,
+          roomId,
+          revealed: true,
+          paths,
+        }
+      } else if (!target.paths[opposite(dir)]) {
+        return
       }
+
       const newHero = { ...hero, row: r, col: c, movement: hero.movement - 1 }
       setState({ board: newBoard, hero: newHero, deck: newDeck })
     },
@@ -60,17 +141,27 @@ function App() {
   )
 
   const possibleMoves = useMemo(() => {
-    const { hero } = state
+    const { hero, board } = state
     if (hero.movement <= 0) return []
-    const dirs = [
-      [1, 0],
-      [-1, 0],
-      [0, 1],
-      [0, -1],
-    ]
-    return dirs
-      .map(([dr, dc]) => ({ row: hero.row + dr, col: hero.col + dc }))
-      .filter(p => p.row >= 0 && p.row < BOARD_SIZE && p.col >= 0 && p.col < BOARD_SIZE)
+    const tile = board[hero.row][hero.col]
+    const moves = []
+    if (tile.paths.up && hero.row > 0) {
+      const t = board[hero.row - 1][hero.col]
+      if (!t.revealed || t.paths.down) moves.push({ row: hero.row - 1, col: hero.col })
+    }
+    if (tile.paths.down && hero.row < BOARD_SIZE - 1) {
+      const t = board[hero.row + 1][hero.col]
+      if (!t.revealed || t.paths.up) moves.push({ row: hero.row + 1, col: hero.col })
+    }
+    if (tile.paths.left && hero.col > 0) {
+      const t = board[hero.row][hero.col - 1]
+      if (!t.revealed || t.paths.right) moves.push({ row: hero.row, col: hero.col - 1 })
+    }
+    if (tile.paths.right && hero.col < BOARD_SIZE - 1) {
+      const t = board[hero.row][hero.col + 1]
+      if (!t.revealed || t.paths.left) moves.push({ row: hero.row, col: hero.col + 1 })
+    }
+    return moves
   }, [state])
 
   useEffect(() => {
@@ -88,6 +179,8 @@ function App() {
   return (
     <>
       <h1>Dungeon Board</h1>
+      <button onClick={endTurn}>End Turn</button>
+      <p>Movement left: {state.hero.movement}</p>
       <div className="main">
         <div className="board">
           {state.board.map((row, rIdx) =>
