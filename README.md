@@ -47,6 +47,6 @@ without touching the game logic.
 
 ### Artwork Credits
 
-The knight and elf portraits used in the hero panel and selection screen come
-from the [Game Icons](https://game-icons.net/) project and are distributed under
-the [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) license.
+The colored knight and elf portraits shown in the game are custom SVG assets
+created for this project. They replace the monochrome icons previously sourced
+from the [Game Icons](https://game-icons.net/) project.

@@ -70,6 +70,8 @@ function loadState() {
           ap: parsed.hero.ap ?? base.ap,
           attack: parsed.hero.attack ?? base.attack,
           defence: parsed.hero.defence ?? base.defence,
+          name: base.name,
+          image: base.image,
           type,
         }
       }
@@ -101,12 +103,14 @@ function App() {
     const hero = {
       row: CENTER,
       col: CENTER,
+      name: base.name,
       movement: base.movement,
       icon: base.icon,
       hp: base.hp,
       ap: base.ap,
       attack: base.attack,
       defence: base.defence,
+      image: base.image,
       type,
     }
     setState(prev => ({ ...prev, hero }))
