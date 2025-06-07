@@ -22,8 +22,8 @@ function HeroPanel({ hero }) {
     <div className="hero-panel">
       <h2>Hero</h2>
       <canvas
-        width="80"
-        height="80"
+        width="100"
+        height="100"
         ref={c => drawHeroPicture(c)}
         style={{ display: 'block', margin: '0 auto 8px' }}
       />
