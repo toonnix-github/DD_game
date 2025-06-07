@@ -89,6 +89,7 @@
 
 .weapon-option input:checked + .item-card {
   box-shadow: 0 0 0 2px yellow;
+}
 
 @keyframes shake {
   0% {

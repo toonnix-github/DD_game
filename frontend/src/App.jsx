@@ -323,8 +323,9 @@ function App() {
             <div
               className="hero-overlay"
               style={{
-                top: `calc(${state.hero.row} * (100% / ${BOARD_SIZE}))`,
-                left: `calc(${state.hero.col} * (100% / ${BOARD_SIZE}))`,
+                transform: `translate(${state.hero.col * 100}%, ${
+                  state.hero.row * 100
+                }%)`,
               }}
             >
               <Hero hero={state.hero} />
