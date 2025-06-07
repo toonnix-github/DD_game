@@ -100,9 +100,14 @@
 }
 
 .room-name {
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  right: 0;
   width: 100%;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  pointer-events: none;
 }
