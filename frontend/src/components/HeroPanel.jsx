@@ -30,10 +30,6 @@ function HeroPanel({ hero }) {
       <div className="stats">
         <div className="label">Icon</div>
         <div>{hero.icon}</div>
-        <div className="label">Pos</div>
-        <div>
-          ({hero.row}, {hero.col})
-        </div>
         <div className="label">Move</div>
         <div>{hero.movement}</div>
         <div className="label">HP</div>
