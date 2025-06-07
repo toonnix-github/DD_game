@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import RoomTile from './components/RoomTile'
+import HeroPanel from './components/HeroPanel'
 import './App.css'
 
 const BOARD_SIZE = 7
@@ -87,21 +88,24 @@ function App() {
   return (
     <>
       <h1>Dungeon Board</h1>
-      <div className="board">
-        {state.board.map((row, rIdx) =>
-          row.map((tile, cIdx) => {
-            const highlight = possibleMoves.some(p => p.row === rIdx && p.col === cIdx)
-            return (
-              <RoomTile
-                key={`${rIdx}-${cIdx}`}
-                tile={tile}
-                hero={state.hero}
-                highlight={highlight}
-                onClick={() => moveHero(rIdx, cIdx)}
-              />
-            )
-          })
-        )}
+      <div className="main">
+        <div className="board">
+          {state.board.map((row, rIdx) =>
+            row.map((tile, cIdx) => {
+              const highlight = possibleMoves.some(p => p.row === rIdx && p.col === cIdx)
+              return (
+                <RoomTile
+                  key={`${rIdx}-${cIdx}`}
+                  tile={tile}
+                  hero={state.hero}
+                  highlight={highlight}
+                  onClick={() => moveHero(rIdx, cIdx)}
+                />
+              )
+            })
+          )}
+        </div>
+        <HeroPanel hero={state.hero} />
       </div>
     </>
   )
