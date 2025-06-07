@@ -23,7 +23,7 @@ The current version includes a simple hero portrait generated with the HTML canv
 
 ## MVP Features
 - Dungeon with a 7x7 grid of tiles.
-- 60 prepared room tiles.
+- 70 prepared room tiles.
 - Open new rooms only when a character moves to a connecting exit.
 - Two characters: knight and archer.
 - Characters have attributes:
