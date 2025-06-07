@@ -1,0 +1,19 @@
+.tile {
+  background-color: #333;
+  color: white;
+  padding: 20px;
+  position: relative;
+}
+.tile.possible {
+  outline: 2px solid yellow;
+  cursor: pointer;
+}
+.tile.revealed {
+  background-color: #555;
+}
+
+.hero-wrapper {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+}
