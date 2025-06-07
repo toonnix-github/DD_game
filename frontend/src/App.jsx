@@ -217,9 +217,6 @@ function App() {
 
   return (
     <>
-      <h1>Dungeon Board</h1>
-      <button onClick={endTurn}>End Turn</button>
-      <p>Movement left: {state.hero.movement}</p>
       <div className="main">
         <div className="board">
           {state.board.map((row, rIdx) =>
@@ -237,7 +234,10 @@ function App() {
             })
           )}
         </div>
-        <HeroPanel hero={state.hero} />
+        <div className="side">
+          <HeroPanel hero={state.hero} />
+          <button onClick={endTurn} className="end-turn">End Turn</button>
+        </div>
       </div>
     </>
   )

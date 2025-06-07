@@ -10,6 +10,8 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  font-size: 0.55rem;
+  overflow: hidden;
 }
 .tile.possible {
   outline: 2px solid yellow;
@@ -26,6 +28,14 @@
 }
 
 .paths {
-  font-size: 0.7em;
+  font-size: 0.6em;
   margin-top: 4px;
+}
+
+.room-name {
+  width: 100%;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
