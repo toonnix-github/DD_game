@@ -56,6 +56,15 @@
   background-color: #555;
 }
 
+.info {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.result-message {
+  margin-bottom: 0.5rem;
+}
+
 .label {
   text-align: right;
   opacity: 0.8;

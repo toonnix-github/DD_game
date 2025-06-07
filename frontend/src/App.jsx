@@ -7,6 +7,7 @@ import { createShuffledDeck } from './roomDeck'
 import './App.css'
 import { HERO_TYPES } from './heroData'
 import { GOBLIN_TYPES, randomGoblinType } from './goblinData'
+import { fightGoblin } from './fightUtils'
 
 const BOARD_SIZE = 7
 const CENTER = Math.floor(BOARD_SIZE / 2)
@@ -36,30 +37,6 @@ function opposite(dir) {
   }
 }
 
-function fightGoblin(hero, goblin, rolls, baseIdx) {
-  let heroHp = hero.hp
-  let goblinHp = goblin.hp
-
-  let attackPower = hero.attack
-  if (baseIdx != null && rolls[baseIdx] >= 3) {
-    attackPower += rolls[baseIdx]
-    rolls.forEach((v, idx) => {
-      if (idx !== baseIdx && v <= 2) attackPower += v
-    })
-  }
-
-  const heroDmg = Math.max(1, attackPower - goblin.defence)
-  const goblinDmg = Math.max(1, goblin.attack - hero.defence)
-
-  goblinHp -= heroDmg
-  if (goblinHp > 0) {
-    heroHp -= goblinDmg
-  }
-  return {
-    hero: { ...hero, hp: heroHp },
-    goblin: { ...goblin, hp: goblinHp },
-  }
-}
 
 function createEmptyBoard() {
   return Array.from({ length: BOARD_SIZE }, (_, r) =>
@@ -263,22 +240,24 @@ function App() {
     return moves
   }, [state])
 
-  const handleFight = useCallback((rolls, baseIdx) => {
-    setState(prev => {
-      if (!prev.encounter) return prev
-      const { encounter, board, hero } = prev
+  const handleFight = useCallback(
+    (rolls, baseIdx) => {
+      const { encounter, board, hero } = state
+      if (!encounter) return null
+      const result = fightGoblin(hero, encounter.goblin, rolls, baseIdx)
       const newBoard = board.map(row => row.map(tile => ({ ...tile })))
       const tile = newBoard[encounter.position.row][encounter.position.col]
-      const result = fightGoblin(hero, encounter.goblin, rolls, baseIdx)
       let newEncounter = { ...encounter, goblin: result.goblin }
       tile.goblin = result.goblin
       if (result.goblin.hp <= 0) {
         tile.goblin = null
         newEncounter = null
       }
-      return { ...prev, board: newBoard, hero: result.hero, encounter: newEncounter }
-    })
-  }, [])
+      setState({ ...state, board: newBoard, hero: result.hero, encounter: newEncounter })
+      return result
+    },
+    [state]
+  )
 
   const handleFlee = useCallback(success => {
     setState(prev => {
