@@ -34,3 +34,9 @@ The current version includes a simple hero portrait generated with the HTML canv
 - Defence power
 
 The hero panel now displays these attributes along with a small picture drawn on a canvas element.
+
+### Customizing Hero Stats
+
+Default hero values such as movement and health are defined in
+`frontend/src/heroData.js`. Edit this file to tweak the starting
+attributes without touching the game logic.

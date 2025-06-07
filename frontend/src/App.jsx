@@ -3,14 +3,17 @@ import RoomTile from './components/RoomTile'
 import HeroPanel from './components/HeroPanel'
 import { ROOM_DECK } from './roomDeck'
 import './App.css'
+import {
+  START_MOVEMENT,
+  START_HP,
+  START_AP,
+  START_ATTACK,
+  START_DEFENCE,
+  HERO_ICON,
+} from './heroData'
 
 const BOARD_SIZE = 7
 const CENTER = Math.floor(BOARD_SIZE / 2)
-const START_MOVEMENT = 3
-const START_HP = 10
-const START_AP = 2
-const START_ATTACK = 3
-const START_DEFENCE = 1
 
 const DIRS = ['up', 'down', 'left', 'right']
 
@@ -66,7 +69,7 @@ function loadState() {
           row: parsed.hero.row,
           col: parsed.hero.col,
           movement: parsed.hero.movement ?? START_MOVEMENT,
-          icon: parsed.hero.icon ?? 'H',
+          icon: parsed.hero.icon ?? HERO_ICON,
           hp: parsed.hero.hp ?? START_HP,
           ap: parsed.hero.ap ?? START_AP,
           attack: parsed.hero.attack ?? START_ATTACK,
@@ -92,7 +95,7 @@ function loadState() {
       row: CENTER,
       col: CENTER,
       movement: START_MOVEMENT,
-      icon: 'H',
+      icon: HERO_ICON,
       hp: START_HP,
       ap: START_AP,
       attack: START_ATTACK,
