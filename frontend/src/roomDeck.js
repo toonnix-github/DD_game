@@ -102,3 +102,12 @@ export const ROOM_DECK = [
   { roomId: 'Vault of Whispers', paths: BASE_PATHS[0] },
   ...GOBLIN_ROOMS,
 ]
+
+export function createShuffledDeck() {
+  const deck = ROOM_DECK.slice()
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[deck[i], deck[j]] = [deck[j], deck[i]]
+  }
+  return deck
+}

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import RoomTile from './components/RoomTile'
 import HeroPanel from './components/HeroPanel'
 import HeroSelect from './components/HeroSelect'
-import { ROOM_DECK } from './roomDeck'
+import { createShuffledDeck } from './roomDeck'
 import './App.css'
 import { HERO_TYPES } from './heroData'
 import { GOBLIN_TYPES, randomGoblinType } from './goblinData'
@@ -109,7 +109,7 @@ function loadState() {
   return {
     board,
     hero: null,
-    deck: ROOM_DECK.slice(),
+    deck: createShuffledDeck(),
   }
 }
 
