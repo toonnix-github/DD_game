@@ -4,11 +4,14 @@ import Hero from './components/Hero'
 import HeroPanel from './components/HeroPanel'
 import HeroSelect from './components/HeroSelect'
 import EncounterModal from './components/EncounterModal'
+import TrapModal from './components/TrapModal'
+import DiscardModal from './components/DiscardModal'
 import { createShuffledDeck } from './roomDeck'
 import './App.css'
 import { HERO_TYPES } from './heroData'
 import { GOBLIN_TYPES, randomGoblinType } from './goblinData'
 import { fightGoblin } from './fightUtils'
+import { randomTreasure, adaptTreasureItem } from './treasureDeck'
 
 const BOARD_SIZE = 7
 const CENTER = Math.floor(BOARD_SIZE / 2)
@@ -62,6 +65,8 @@ function loadState() {
           row.forEach(tile => {
             if (!tile.paths) tile.paths = { up: false, down: false, left: false, right: false }
             if (!('goblin' in tile)) tile.goblin = null
+            if (!('trap' in tile)) tile.trap = false
+            if (!('trapResolved' in tile)) tile.trapResolved = false
           })
         )
       }
@@ -89,6 +94,8 @@ function loadState() {
         }
       }
       parsed.encounter = null
+      if (!parsed.trap) parsed.trap = null
+      if (!parsed.discard) parsed.discard = null
       return parsed
     } catch {
       /* ignore corrupted save */
@@ -108,6 +115,8 @@ function loadState() {
     hero: null,
     deck: createShuffledDeck(),
     encounter: null,
+    trap: null,
+    discard: null,
   }
 }
 
@@ -199,6 +208,8 @@ function App() {
           revealed: true,
           paths,
           goblin,
+          trap: room.trap || false,
+          trapResolved: false,
         }
       } else if (!target.paths[opposite(dir)]) {
         return
@@ -216,6 +227,7 @@ function App() {
       }
 
       let newEncounter = null
+      let newTrap = null
       if (newBoard[r][c].goblin) {
         newHero.movement = 0
         newEncounter = {
@@ -225,7 +237,12 @@ function App() {
         }
       }
 
-      setState({ board: newBoard, hero: newHero, deck: newDeck, encounter: newEncounter })
+      if (newBoard[r][c].trap && !newBoard[r][c].trapResolved && !newEncounter) {
+        newHero.movement = 0
+        newTrap = { position: { row: r, col: c } }
+      }
+
+      setState({ board: newBoard, hero: newHero, deck: newDeck, encounter: newEncounter, trap: newTrap })
     },
     [state]
   )
@@ -297,10 +314,34 @@ function App() {
     })
   }, [])
 
+  const handleTrapResolve = useCallback(success => {
+    setState(prev => {
+      const { trap, board, hero } = prev
+      if (!trap) return prev
+      const newBoard = board.map(row => row.map(tile => ({ ...tile })))
+      const tile = newBoard[trap.position.row][trap.position.col]
+      tile.trapResolved = true
+      let newHero = { ...hero }
+      let discard = null
+      if (success) {
+        const item = adaptTreasureItem(randomTreasure())
+        newHero.weapons = [...hero.weapons, item]
+        if (newHero.weapons.length > 2) {
+          discard = { items: newHero.weapons }
+        }
+      }
+      return { ...prev, board: newBoard, hero: newHero, trap: null, discard }
+    })
+  }, [])
+
+  const handleDiscardConfirm = useCallback(items => {
+    setState(prev => ({ ...prev, hero: { ...prev.hero, weapons: items }, discard: null }))
+  }, [])
+
   useEffect(() => {
     if (!state.hero) return
     const handler = e => {
-      if (state.encounter) return
+      if (state.encounter || state.trap || state.discard) return
       const { row, col } = state.hero
       if (e.key === 'ArrowUp') moveHero(row - 1, col)
       if (e.key === 'ArrowDown') moveHero(row + 1, col)
@@ -357,6 +398,12 @@ function App() {
           onFight={handleFight}
           onFlee={handleFlee}
         />
+      )}
+      {state.trap && (
+        <TrapModal hero={state.hero} onResolve={handleTrapResolve} />
+      )}
+      {state.discard && (
+        <DiscardModal items={state.discard.items} onConfirm={handleDiscardConfirm} />
       )}
     </div>
   </>
