@@ -23,6 +23,9 @@ function RoomTile({ tile, hero, onClick, highlight }) {
           )}
         </div>
       )}
+      {tile.revealed && tile.goblin && (
+        <span className="goblin-icon">{tile.goblin.icon}</span>
+      )}
       {heroHere && (
         <div className="hero-wrapper">
           <Hero hero={hero} />

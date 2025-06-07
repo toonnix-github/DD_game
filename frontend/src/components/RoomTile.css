@@ -79,6 +79,13 @@
   transform: translateY(-50%);
 }
 
+.goblin-icon {
+  position: absolute;
+  bottom: 2px;
+  left: 2px;
+  font-size: 0.7rem;
+}
+
 .room-name {
   width: 100%;
   text-align: center;

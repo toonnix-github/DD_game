@@ -17,6 +17,18 @@ const BASE_PATHS = [
   { up: false, down: false, left: false, right: false },
 ]
 
+const GOBLIN_ROOMS = Array.from({ length: 19 }, (_, i) => ({
+  roomId: `Goblin Lair ${i + 1}`,
+  paths: BASE_PATHS[i % BASE_PATHS.length],
+  goblin: true,
+}))
+
+GOBLIN_ROOMS.push({
+  roomId: 'Goblin King\'s Den',
+  paths: BASE_PATHS[0],
+  goblin: 'king',
+})
+
 export const ROOM_DECK = [
   { roomId: 'Chamber of Bones', paths: BASE_PATHS[0] },
   { roomId: 'Chamber of Doom', paths: BASE_PATHS[1] },
@@ -88,4 +100,5 @@ export const ROOM_DECK = [
   { roomId: 'Vault of Shadows', paths: BASE_PATHS[3] },
   { roomId: 'Vault of Trials', paths: BASE_PATHS[4] },
   { roomId: 'Vault of Whispers', paths: BASE_PATHS[0] },
+  ...GOBLIN_ROOMS,
 ]
