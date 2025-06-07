@@ -25,6 +25,8 @@ function HeroPanel({ hero }) {
         <div>{hero.attack}</div>
         <div className="label">Def</div>
         <div>{hero.defence}</div>
+        <div className="label">Agi</div>
+        <div>{hero.agility}</div>
       </div>
     </div>
   )

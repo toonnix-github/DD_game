@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import RoomTile from './components/RoomTile'
 import HeroPanel from './components/HeroPanel'
 import HeroSelect from './components/HeroSelect'
+import EncounterModal from './components/EncounterModal'
 import { createShuffledDeck } from './roomDeck'
 import './App.css'
 import { HERO_TYPES } from './heroData'
@@ -89,11 +90,13 @@ function loadState() {
           ap: parsed.hero.ap ?? base.ap,
           attack: parsed.hero.attack ?? base.attack,
           defence: parsed.hero.defence ?? base.defence,
+          agility: parsed.hero.agility ?? base.agility,
           name: base.name,
           image: base.image,
           type,
         }
       }
+      parsed.encounter = null
       return parsed
     } catch {
       /* ignore corrupted save */
@@ -112,6 +115,7 @@ function loadState() {
     board,
     hero: null,
     deck: createShuffledDeck(),
+    encounter: null,
   }
 }
 
@@ -130,6 +134,7 @@ function App() {
       ap: base.ap,
       attack: base.attack,
       defence: base.defence,
+      agility: base.agility,
       image: base.image,
       type,
     }
@@ -158,8 +163,8 @@ function App() {
 
   const moveHero = useCallback(
     (r, c) => {
-      const { hero, board, deck } = state
-      if (!hero || hero.movement <= 0) return
+      const { hero, board, deck, encounter } = state
+      if (!hero || hero.movement <= 0 || encounter) return
       const dr = r - hero.row
       const dc = c - hero.col
       if (Math.abs(dr) + Math.abs(dc) !== 1) return
@@ -206,23 +211,24 @@ function App() {
         movement: hero.movement - 1,
       }
 
+      let newEncounter = null
       if (newBoard[r][c].goblin) {
-        const result = fightGoblin(newHero, newBoard[r][c].goblin)
-        newHero = result.hero
-        if (result.goblin.hp <= 0) {
-          newBoard[r][c].goblin = null
-        } else {
-          newBoard[r][c].goblin = result.goblin
+        newHero.movement = 0
+        newEncounter = {
+          goblin: { ...newBoard[r][c].goblin },
+          position: { row: r, col: c },
+          prev: { row: hero.row, col: hero.col },
         }
       }
-      setState({ board: newBoard, hero: newHero, deck: newDeck })
+
+      setState({ board: newBoard, hero: newHero, deck: newDeck, encounter: newEncounter })
     },
     [state]
   )
 
   const possibleMoves = useMemo(() => {
-    const { hero, board } = state
-    if (!hero || hero.movement <= 0) return []
+    const { hero, board, encounter } = state
+    if (!hero || hero.movement <= 0 || encounter) return []
     const tile = board[hero.row][hero.col]
     const moves = []
     if (tile.paths.up && hero.row > 0) {
@@ -244,9 +250,48 @@ function App() {
     return moves
   }, [state])
 
+  const handleFight = useCallback(() => {
+    setState(prev => {
+      if (!prev.encounter) return prev
+      const { encounter, board, hero } = prev
+      const newBoard = board.map(row => row.map(tile => ({ ...tile })))
+      const tile = newBoard[encounter.position.row][encounter.position.col]
+      const result = fightGoblin(hero, encounter.goblin)
+      let newEncounter = { ...encounter, goblin: result.goblin }
+      tile.goblin = result.goblin
+      if (result.goblin.hp <= 0) {
+        tile.goblin = null
+        newEncounter = null
+      }
+      return { ...prev, board: newBoard, hero: result.hero, encounter: newEncounter }
+    })
+  }, [])
+
+  const handleFlee = useCallback(() => {
+    setState(prev => {
+      if (!prev.encounter) return prev
+      const { encounter, board, hero } = prev
+      const successProb = hero.agility / (hero.agility + encounter.goblin.attack)
+      const success = Math.random() < successProb
+      const newBoard = board.map(row => row.map(tile => ({ ...tile })))
+      let newHero = { ...hero, movement: 0 }
+      let newEncounter = encounter
+      if (success) {
+        newHero.row = encounter.prev.row
+        newHero.col = encounter.prev.col
+        newEncounter = null
+      } else {
+        const damage = Math.max(1, encounter.goblin.attack - hero.defence)
+        newHero.hp = hero.hp - damage
+      }
+      return { ...prev, board: newBoard, hero: newHero, encounter: newEncounter }
+    })
+  }, [])
+
   useEffect(() => {
     if (!state.hero) return
     const handler = e => {
+      if (state.encounter) return
       const { row, col } = state.hero
       if (e.key === 'ArrowUp') moveHero(row - 1, col)
       if (e.key === 'ArrowDown') moveHero(row + 1, col)
@@ -255,7 +300,7 @@ function App() {
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [state.hero, moveHero])
+  }, [state.hero, state.encounter, moveHero])
 
   if (!state.hero) {
     return <HeroSelect onSelect={chooseHero} />
@@ -280,14 +325,21 @@ function App() {
             })
           )}
         </div>
-        <div className="side">
-          <HeroPanel hero={state.hero} />
-          <button onClick={endTurn} className="end-turn">End Turn</button>
-          <button onClick={resetGame} className="reset-game">Reset Game</button>
-        </div>
+      <div className="side">
+        <HeroPanel hero={state.hero} />
+        <button onClick={endTurn} className="end-turn">End Turn</button>
+        <button onClick={resetGame} className="reset-game">Reset Game</button>
       </div>
-    </>
-  )
+      {state.encounter && (
+        <EncounterModal
+          goblin={state.encounter.goblin}
+          onFight={handleFight}
+          onFlee={handleFlee}
+        />
+      )}
+    </div>
+  </>
+)
 }
 
 export default App
