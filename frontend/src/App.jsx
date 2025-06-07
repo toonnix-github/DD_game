@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import RoomTile from './components/RoomTile'
 import HeroPanel from './components/HeroPanel'
+import { ROOM_DECK } from './roomDeck'
 import './App.css'
 
 const BOARD_SIZE = 7
@@ -97,7 +98,7 @@ function loadState() {
       attack: START_ATTACK,
       defence: START_DEFENCE,
     },
-    deck: Array.from({ length: 60 }, (_, i) => i + 1),
+    deck: ROOM_DECK.slice(),
   }
 }
 
@@ -132,21 +133,13 @@ function App() {
       let newDeck = deck
       const target = newBoard[r][c]
       if (!target.revealed) {
-        const idx = Math.floor(Math.random() * newDeck.length)
-        const roomId = newDeck[idx]
-        newDeck = newDeck.filter((_, i) => i !== idx)
+        const room = newDeck[0]
+        const roomId = room.roomId
+        newDeck = newDeck.slice(1)
 
-        const pathCount = Math.floor(Math.random() * 4) + 1
-        const paths = { up: false, down: false, left: false, right: false }
         const incoming = opposite(dir)
+        const paths = { ...room.paths }
         paths[incoming] = true
-        let available = DIRS.filter(d => d !== incoming)
-        while (Object.values(paths).filter(Boolean).length < pathCount) {
-          const ri = Math.floor(Math.random() * available.length)
-          const d = available[ri]
-          paths[d] = true
-          available.splice(ri, 1)
-        }
 
         newBoard[r][c] = {
           row: r,
