@@ -17,9 +17,17 @@ function HeroPanel({ hero }) {
         <img src="/boot.svg" alt="move" className="label-icon" />
         <div>{hero.movement}</div>
         <img src="/heart.svg" alt="hp" className="label-icon" />
-        <div>{hero.hp}</div>
+        <div className="icons">
+          {Array.from({ length: hero.hp }, (_, i) => (
+            <img key={i} src="/heart.svg" alt="hp" className="stat-icon" />
+          ))}
+        </div>
         <img src="/star.svg" alt="ap" className="label-icon" />
-        <div>{hero.ap}</div>
+        <div className="icons">
+          {Array.from({ length: hero.ap }, (_, i) => (
+            <img key={i} src="/star.svg" alt="ap" className="stat-icon" />
+          ))}
+        </div>
         <img src="/fist.svg" alt="strength" className="label-icon" />
         <div className="icons">
           {Array.from({ length: hero.attack }, (_, i) => (
