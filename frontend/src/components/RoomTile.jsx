@@ -12,7 +12,11 @@ function RoomTile({ tile, hero, onClick, highlight }) {
       onClick={onClick}
       title={tile.revealed ? tile.roomId : undefined}
     >
-      {!tile.revealed && <span className="room-name">?</span>}
+      {!tile.revealed && (
+        <div className="card-back">
+          <span className="room-name">?</span>
+        </div>
+      )}
       {tile.revealed && (
         <div className="room-graphic">
           <div className="center" />
