@@ -15,7 +15,7 @@
   overflow: hidden;
 }
 .tile.possible {
-  outline: 2px solid yellow;
+  box-shadow: inset 0 0 0 2px yellow;
   cursor: pointer;
 }
 .tile.revealed {
