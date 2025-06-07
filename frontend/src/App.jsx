@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import RoomTile from './components/RoomTile'
+import Hero from './components/Hero'
 import HeroPanel from './components/HeroPanel'
 import HeroSelect from './components/HeroSelect'
 import EncounterModal from './components/EncounterModal'
@@ -312,12 +313,22 @@ function App() {
                 <RoomTile
                   key={`${rIdx}-${cIdx}`}
                   tile={tile}
-                  hero={state.hero}
                   highlight={highlight}
                   onClick={() => moveHero(rIdx, cIdx)}
                 />
               )
             })
+          )}
+          {state.hero && (
+            <div
+              className="hero-overlay"
+              style={{
+                top: `calc(${state.hero.row} * (100% / ${BOARD_SIZE}))`,
+                left: `calc(${state.hero.col} * (100% / ${BOARD_SIZE}))`,
+              }}
+            >
+              <Hero hero={state.hero} />
+            </div>
           )}
         </div>
       <div className="side">

@@ -11,6 +11,21 @@
   gap: 0;
   width: min(90vmin, 600px);
   margin: 0 auto;
+  position: relative;
+}
+
+.hero-overlay {
+  position: absolute;
+  width: calc(100% / 7);
+  height: calc(100% / 7);
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: 2px;
+  pointer-events: none;
+  transition: top 0.2s, left 0.2s;
 }
 
 .main {

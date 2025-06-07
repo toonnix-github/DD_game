@@ -1,11 +1,9 @@
 import React from 'react'
-import Hero from './Hero'
 import './RoomTile.css'
 
 const DIRS = ['up', 'down', 'left', 'right']
 
-function RoomTile({ tile, hero, onClick, highlight }) {
-  const heroHere = hero && hero.row === tile.row && hero.col === tile.col
+function RoomTile({ tile, onClick, highlight }) {
   return (
     <div
       className={`tile ${tile.revealed ? 'revealed' : ''} ${highlight ? 'possible' : ''}`}
@@ -29,11 +27,6 @@ function RoomTile({ tile, hero, onClick, highlight }) {
       )}
       {tile.revealed && tile.goblin && (
         <span className="goblin-icon">{tile.goblin.icon}</span>
-      )}
-      {heroHere && (
-        <div className="hero-wrapper">
-          <Hero hero={hero} />
-        </div>
       )}
     </div>
   )
