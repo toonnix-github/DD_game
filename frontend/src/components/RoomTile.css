@@ -20,6 +20,7 @@
 }
 .tile.revealed {
   background-color: #555;
+  border-color: #aaa;
 }
 
 .hero-wrapper {
@@ -52,8 +53,8 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 90%;
-  height: 90%;
+  width: 95%;
+  height: 95%;
   background-color: #aaa;
   transform: translate(-50%, -50%);
 }
@@ -66,7 +67,7 @@
 .door-up {
   top: 0;
   left: 50%;
-  width: 6px;
+  width: 50%;
   height: 50%;
   transform: translateX(-50%);
 }
@@ -74,7 +75,7 @@
 .door-down {
   bottom: 0;
   left: 50%;
-  width: 6px;
+  width: 50%;
   height: 50%;
   transform: translateX(-50%);
 }
@@ -83,7 +84,7 @@
   left: 0;
   top: 50%;
   width: 50%;
-  height: 6px;
+  height: 50%;
   transform: translateY(-50%);
 }
 
@@ -91,7 +92,7 @@
   right: 0;
   top: 50%;
   width: 50%;
-  height: 6px;
+  height: 50%;
   transform: translateY(-50%);
 }
 
