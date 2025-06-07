@@ -2,6 +2,8 @@
 
 This project aims to build a digital adaptation of the board game **Tiny Epic Dungeon** using JavaScript and React.
 
+The current version includes a simple hero portrait generated with the HTML canvas and displays additional hero statistics.
+
 ## Getting Started
 
 1. Install dependencies:
@@ -29,4 +31,6 @@ This project aims to build a digital adaptation of the board game **Tiny Epic Du
   - HP
   - Activity points
   - Attack power
-  - Defence power
+- Defence power
+
+The hero panel now displays these attributes along with a small picture drawn on a canvas element.

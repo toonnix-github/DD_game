@@ -6,6 +6,10 @@ import './App.css'
 const BOARD_SIZE = 7
 const CENTER = Math.floor(BOARD_SIZE / 2)
 const START_MOVEMENT = 3
+const START_HP = 10
+const START_AP = 2
+const START_ATTACK = 3
+const START_DEFENCE = 1
 
 const DIRS = ['up', 'down', 'left', 'right']
 
@@ -56,6 +60,18 @@ function loadState() {
           })
         )
       }
+      if (parsed.hero) {
+        parsed.hero = {
+          row: parsed.hero.row,
+          col: parsed.hero.col,
+          movement: parsed.hero.movement ?? START_MOVEMENT,
+          icon: parsed.hero.icon ?? 'H',
+          hp: parsed.hero.hp ?? START_HP,
+          ap: parsed.hero.ap ?? START_AP,
+          attack: parsed.hero.attack ?? START_ATTACK,
+          defence: parsed.hero.defence ?? START_DEFENCE,
+        }
+      }
       return parsed
     } catch {
       /* ignore corrupted save */
@@ -71,7 +87,16 @@ function loadState() {
   }
   return {
     board,
-    hero: { row: CENTER, col: CENTER, movement: START_MOVEMENT, icon: 'H' },
+    hero: {
+      row: CENTER,
+      col: CENTER,
+      movement: START_MOVEMENT,
+      icon: 'H',
+      hp: START_HP,
+      ap: START_AP,
+      attack: START_ATTACK,
+      defence: START_DEFENCE,
+    },
     deck: Array.from({ length: 60 }, (_, i) => i + 1),
   }
 }
@@ -134,7 +159,12 @@ function App() {
         return
       }
 
-      const newHero = { ...hero, row: r, col: c, movement: hero.movement - 1 }
+      const newHero = {
+        ...hero,
+        row: r,
+        col: c,
+        movement: hero.movement - 1,
+      }
       setState({ board: newBoard, hero: newHero, deck: newDeck })
     },
     [state]
