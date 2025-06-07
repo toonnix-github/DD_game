@@ -2,9 +2,10 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import RoomTile from './components/RoomTile'
 import HeroPanel from './components/HeroPanel'
 import HeroSelect from './components/HeroSelect'
-import { ROOM_DECK } from './roomDeck'
+import { createShuffledDeck } from './roomDeck'
 import './App.css'
 import { HERO_TYPES } from './heroData'
+import { GOBLIN_TYPES, randomGoblinType } from './goblinData'
 
 const BOARD_SIZE = 7
 const CENTER = Math.floor(BOARD_SIZE / 2)
@@ -34,6 +35,22 @@ function opposite(dir) {
   }
 }
 
+function fightGoblin(hero, goblin) {
+  let heroHp = hero.hp
+  let goblinHp = goblin.hp
+  const heroDmg = Math.max(1, hero.attack - goblin.defence)
+  const goblinDmg = Math.max(1, goblin.attack - hero.defence)
+
+  goblinHp -= heroDmg
+  if (goblinHp > 0) {
+    heroHp -= goblinDmg
+  }
+  return {
+    hero: { ...hero, hp: heroHp },
+    goblin: { ...goblin, hp: goblinHp },
+  }
+}
+
 function createEmptyBoard() {
   return Array.from({ length: BOARD_SIZE }, (_, r) =>
     Array.from({ length: BOARD_SIZE }, (_, c) => ({
@@ -42,6 +59,7 @@ function createEmptyBoard() {
       roomId: null,
       revealed: false,
       paths: { up: false, down: false, left: false, right: false },
+      goblin: null,
     }))
   )
 }
@@ -55,6 +73,7 @@ function loadState() {
         parsed.board.forEach(row =>
           row.forEach(tile => {
             if (!tile.paths) tile.paths = { up: false, down: false, left: false, right: false }
+            if (!('goblin' in tile)) tile.goblin = null
           })
         )
       }
@@ -85,11 +104,12 @@ function loadState() {
     roomId: 'Start',
     revealed: true,
     paths: { up: true, down: true, left: true, right: true },
+    goblin: null,
   }
   return {
     board,
     hero: null,
-    deck: ROOM_DECK.slice(),
+    deck: createShuffledDeck(),
   }
 }
 
@@ -157,22 +177,39 @@ function App() {
         const paths = { ...room.paths }
         paths[incoming] = true
 
+        let goblin = null
+        if (room.goblin) {
+          const typeKey = room.goblin === 'king' ? 'king' : randomGoblinType()
+          goblin = { ...GOBLIN_TYPES[typeKey], type: typeKey }
+        }
+
         newBoard[r][c] = {
           row: r,
           col: c,
           roomId,
           revealed: true,
           paths,
+          goblin,
         }
       } else if (!target.paths[opposite(dir)]) {
         return
       }
 
-      const newHero = {
+      let newHero = {
         ...hero,
         row: r,
         col: c,
         movement: hero.movement - 1,
+      }
+
+      if (newBoard[r][c].goblin) {
+        const result = fightGoblin(newHero, newBoard[r][c].goblin)
+        newHero = result.hero
+        if (result.goblin.hp <= 0) {
+          newBoard[r][c].goblin = null
+        } else {
+          newBoard[r][c].goblin = result.goblin
+        }
       }
       setState({ board: newBoard, hero: newHero, deck: newDeck })
     },
