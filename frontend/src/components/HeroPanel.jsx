@@ -14,18 +14,28 @@ function HeroPanel({ hero }) {
         style={{ display: 'block', margin: '0 auto 8px' }}
       />
       <div className="stats">
-        <div className="label">Icon</div>
-        <div>{hero.icon}</div>
         <div className="label">Move</div>
-        <div>{hero.movement}</div>
+        <div className="icons">
+          {Array.from({ length: hero.movement }, (_, i) => (
+            <img key={i} src="/boot.svg" alt="move" className="stat-icon" />
+          ))}
+        </div>
         <div className="label">HP</div>
-        <div>{hero.hp}</div>
+        <div className="icons">
+          {Array.from({ length: hero.hp }, (_, i) => (
+            <img key={i} src="/heart.svg" alt="hp" className="stat-icon" />
+          ))}
+        </div>
         <div className="label">AP</div>
-        <div>{hero.ap}</div>
-        <div className="label">Atk</div>
+        <div className="icons">
+          {Array.from({ length: hero.ap }, (_, i) => (
+            <img key={i} src="/star.svg" alt="ap" className="stat-icon" />
+          ))}
+        </div>
+        <div className="label">STR</div>
         <div className="icons">
           {Array.from({ length: hero.attack }, (_, i) => (
-            <img key={i} src="/fist.svg" alt="attack" className="stat-icon" />
+            <img key={i} src="/fist.svg" alt="strength" className="stat-icon" />
           ))}
         </div>
         <div className="label">Def</div>
@@ -35,13 +45,29 @@ function HeroPanel({ hero }) {
           ))}
         </div>
         <div className="label">Agi</div>
-        <div>{hero.agility}</div>
-        <div className="label">Strength Dice</div>
-        <div>{hero.strengthDice}</div>
-        <div className="label">Agility Dice</div>
-        <div>{hero.agilityDice}</div>
+        <div className="icons">
+          {Array.from({ length: hero.agility }, (_, i) => (
+            <img key={i} src="/wing.svg" alt="agility" className="stat-icon" />
+          ))}
+        </div>
+        <div className="label">STR Dice</div>
+        <div className="icons">
+          {Array.from({ length: hero.strengthDice }, (_, i) => (
+            <img key={i} src="/dice.svg" alt="dice" className="stat-icon" />
+          ))}
+        </div>
+        <div className="label">Agi Dice</div>
+        <div className="icons">
+          {Array.from({ length: hero.agilityDice }, (_, i) => (
+            <img key={i} src="/dice.svg" alt="dice" className="stat-icon" />
+          ))}
+        </div>
         <div className="label">Magic Dice</div>
-        <div>{hero.magicDice}</div>
+        <div className="icons">
+          {Array.from({ length: hero.magicDice }, (_, i) => (
+            <img key={i} src="/dice.svg" alt="dice" className="stat-icon" />
+          ))}
+        </div>
       </div>
       <div className="weapons">
         {hero.weapons.map((w, idx) => (

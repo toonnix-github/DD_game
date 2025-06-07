@@ -80,7 +80,7 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
         <div className="stats">
           <div className="label">HP</div>
           <div>{goblin.hp}</div>
-          <div className="label">Atk</div>
+          <div className="label">STR</div>
           <div>{goblin.attack}</div>
           <div className="label">Def</div>
           <div>{goblin.defence}</div>
