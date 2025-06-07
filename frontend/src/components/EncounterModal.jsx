@@ -18,6 +18,15 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
     setStage('fight')
   }
 
+  const startFlee = () => {
+    const r = Array.from(
+      { length: hero.agilityDice },
+      () => Math.ceil(Math.random() * 6),
+    )
+    setRolls(r)
+    setStage('flee')
+  }
+
   const confirmFight = () => {
     const weapon = hero.weapons[weaponIdx]
     const res = fightGoblin(hero, goblin, weapon, rolls, baseIdx)
@@ -25,15 +34,13 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
     setStage('result')
   }
 
-  const handleFlee = () => {
-    const r = Array.from({ length: hero.agilityDice }, () => Math.ceil(Math.random() * 6))
-    const success = r.some(v => v >= 4)
+  const confirmFlee = () => {
+    const success = rolls.some(v => v >= 4)
     const heroDef = hero.defence + hero.weapons[weaponIdx].defence
     const damage = Math.max(1, goblin.attack - heroDef)
     const message = success
       ? 'You successfully fled.'
       : `Failed to flee and took ${damage} damage.`
-    setRolls(r)
     setResult({ type: 'flee', success, message })
     setStage('result')
   }
@@ -93,7 +100,7 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
             </div>
             <div className="buttons">
               <button onClick={startFight}>Fight</button>
-              <button onClick={handleFlee}>Flee</button>
+              <button onClick={startFlee}>Flee</button>
             </div>
           </>
         )}
@@ -130,6 +137,21 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
             </div>
             <div className="buttons">
               <button onClick={confirmFight} disabled={baseIdx === null}>Attack</button>
+            </div>
+          </div>
+        )}
+        {stage === 'flee' && (
+          <div className="fight-stage">
+            <div className="dice-container">
+              {rolls.map((v, idx) => (
+                <div key={idx} className="dice">
+                  {v}
+                </div>
+              ))}
+            </div>
+            <div className="info">Need a 4 or higher on any die to escape.</div>
+            <div className="buttons">
+              <button onClick={confirmFlee}>Run!</button>
             </div>
           </div>
         )}
