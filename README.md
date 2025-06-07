@@ -6,10 +6,13 @@ The current version includes a simple hero portrait generated with the HTML canv
 
 ## Getting Started
 
-1. Install dependencies:
+1. Install dependencies (this also installs frontend packages):
    ```bash
    npm install
-   cd frontend && npm install
+   ```
+   You can verify the setup by running the linter:
+   ```bash
+   npm run lint --prefix frontend
    ```
 2. Build the React app:
    ```bash
@@ -25,7 +28,8 @@ The current version includes a simple hero portrait generated with the HTML canv
 - Dungeon with a 7x7 grid of tiles.
 - 70 prepared room tiles.
 - Open new rooms only when a character moves to a connecting exit.
-- Two characters: knight and archer.
+- Two characters: knight and elf.
+- Choose your hero at the start of the game.
 - Characters have attributes:
   - Movement range
   - HP
@@ -37,6 +41,6 @@ The hero panel now displays these attributes along with a small picture drawn on
 
 ### Customizing Hero Stats
 
-Default hero values such as movement and health are defined in
-`frontend/src/heroData.js`. Edit this file to tweak the starting
-attributes without touching the game logic.
+Starting values for each hero type can be modified in
+`frontend/src/heroData.js`. Edit the stats there to tweak the characters
+without touching the game logic.

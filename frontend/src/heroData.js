@@ -1,6 +1,21 @@
-export const START_MOVEMENT = 3
-export const START_HP = 10
-export const START_AP = 2
-export const START_ATTACK = 3
-export const START_DEFENCE = 1
-export const HERO_ICON = 'H'
+export const HERO_TYPES = {
+  knight: {
+    name: 'Knight',
+    movement: 3,
+    hp: 12,
+    ap: 2,
+    attack: 4,
+    defence: 3,
+    icon: 'K',
+  },
+  elf: {
+    name: 'Elf',
+    movement: 4,
+    hp: 8,
+    ap: 3,
+    attack: 3,
+    defence: 1,
+    icon: 'E',
+  },
+}
+

@@ -1,16 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import RoomTile from './components/RoomTile'
 import HeroPanel from './components/HeroPanel'
+import HeroSelect from './components/HeroSelect'
 import { ROOM_DECK } from './roomDeck'
 import './App.css'
-import {
-  START_MOVEMENT,
-  START_HP,
-  START_AP,
-  START_ATTACK,
-  START_DEFENCE,
-  HERO_ICON,
-} from './heroData'
+import { HERO_TYPES } from './heroData'
 
 const BOARD_SIZE = 7
 const CENTER = Math.floor(BOARD_SIZE / 2)
@@ -65,15 +59,18 @@ function loadState() {
         )
       }
       if (parsed.hero) {
+        const type = parsed.hero.type || 'knight'
+        const base = HERO_TYPES[type]
         parsed.hero = {
           row: parsed.hero.row,
           col: parsed.hero.col,
-          movement: parsed.hero.movement ?? START_MOVEMENT,
-          icon: parsed.hero.icon ?? HERO_ICON,
-          hp: parsed.hero.hp ?? START_HP,
-          ap: parsed.hero.ap ?? START_AP,
-          attack: parsed.hero.attack ?? START_ATTACK,
-          defence: parsed.hero.defence ?? START_DEFENCE,
+          movement: parsed.hero.movement ?? base.movement,
+          icon: parsed.hero.icon ?? base.icon,
+          hp: parsed.hero.hp ?? base.hp,
+          ap: parsed.hero.ap ?? base.ap,
+          attack: parsed.hero.attack ?? base.attack,
+          defence: parsed.hero.defence ?? base.defence,
+          type,
         }
       }
       return parsed
@@ -91,16 +88,7 @@ function loadState() {
   }
   return {
     board,
-    hero: {
-      row: CENTER,
-      col: CENTER,
-      movement: START_MOVEMENT,
-      icon: HERO_ICON,
-      hp: START_HP,
-      ap: START_AP,
-      attack: START_ATTACK,
-      defence: START_DEFENCE,
-    },
+    hero: null,
     deck: ROOM_DECK.slice(),
   }
 }
@@ -108,21 +96,41 @@ function loadState() {
 function App() {
   const [state, setState] = useState(loadState)
 
+  const chooseHero = useCallback(type => {
+    const base = HERO_TYPES[type]
+    const hero = {
+      row: CENTER,
+      col: CENTER,
+      movement: base.movement,
+      icon: base.icon,
+      hp: base.hp,
+      ap: base.ap,
+      attack: base.attack,
+      defence: base.defence,
+      type,
+    }
+    setState(prev => ({ ...prev, hero }))
+  }, [])
+
   useEffect(() => {
     localStorage.setItem('dungeon-state', JSON.stringify(state))
   }, [state])
 
   const endTurn = useCallback(() => {
-    setState(prev => ({
-      ...prev,
-      hero: { ...prev.hero, movement: START_MOVEMENT },
-    }))
+    setState(prev => {
+      if (!prev.hero) return prev
+      const base = HERO_TYPES[prev.hero.type]
+      return {
+        ...prev,
+        hero: { ...prev.hero, movement: base.movement },
+      }
+    })
   }, [])
 
   const moveHero = useCallback(
     (r, c) => {
       const { hero, board, deck } = state
-      if (hero.movement <= 0) return
+      if (!hero || hero.movement <= 0) return
       const dr = r - hero.row
       const dc = c - hero.col
       if (Math.abs(dr) + Math.abs(dc) !== 1) return
@@ -168,7 +176,7 @@ function App() {
 
   const possibleMoves = useMemo(() => {
     const { hero, board } = state
-    if (hero.movement <= 0) return []
+    if (!hero || hero.movement <= 0) return []
     const tile = board[hero.row][hero.col]
     const moves = []
     if (tile.paths.up && hero.row > 0) {
@@ -191,6 +199,7 @@ function App() {
   }, [state])
 
   useEffect(() => {
+    if (!state.hero) return
     const handler = e => {
       const { row, col } = state.hero
       if (e.key === 'ArrowUp') moveHero(row - 1, col)
@@ -201,6 +210,10 @@ function App() {
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [state.hero, moveHero])
+
+  if (!state.hero) {
+    return <HeroSelect onSelect={chooseHero} />
+  }
 
   return (
     <>
