@@ -1,0 +1,14 @@
+.hero-select {
+  text-align: center;
+}
+
+.hero-options {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.hero-options button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+}

@@ -4,7 +4,8 @@
   "description": "I love the board game \"Tiny Epic Dungeon.\" I played with my son, and we loved it, so I want to have this in a digital version.",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "postinstall": "npm install --prefix frontend"
   },
   "keywords": [],
   "author": "",
