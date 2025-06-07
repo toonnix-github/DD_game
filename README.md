@@ -1,16 +1,20 @@
 # DD_game
 
-I love the board game "Tiny Epic Dungeon." I played with my son, and we loved it, so I want to have this in a digital version.
+A simple prototype for a digital version of the board game "Tiny Epic Dungeon".
+This project is in an early stage and currently provides a minimal dungeon board,
+character implementation and a command line interface for demonstrating basic
+movement.
 
-MVP
-- dungeon with 7x7 tiles
-- 60 prepared room tiles
-- Open new rooms when a character moves to the room, open only the tiles that connect to the exits from the current tile.
-- 2 characters, knight and archer.
-- A character can only move
-- Character has basic attributes
-- move - that tells how many steps they can move
-- hp
-- activity points
-- attack power
-- defence power
+## Requirements
+* Python 3.11+
+* `pytest` for running the tests
+
+## Running the game
+```
+python main.py
+```
+
+## Running the tests
+```
+pytest
+```
