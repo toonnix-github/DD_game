@@ -1,5 +1,6 @@
 import React from 'react'
 import './HeroPanel.css'
+import ItemCard from './ItemCard'
 
 function HeroPanel({ hero }) {
   return (
@@ -22,9 +23,17 @@ function HeroPanel({ hero }) {
         <div className="label">AP</div>
         <div>{hero.ap}</div>
         <div className="label">Atk</div>
-        <div>{hero.attack}</div>
+        <div className="icons">
+          {Array.from({ length: hero.attack }, (_, i) => (
+            <img key={i} src="/fist.svg" alt="attack" className="stat-icon" />
+          ))}
+        </div>
         <div className="label">Def</div>
-        <div>{hero.defence}</div>
+        <div className="icons">
+          {Array.from({ length: hero.defence }, (_, i) => (
+            <img key={i} src="/shield.svg" alt="defence" className="stat-icon" />
+          ))}
+        </div>
         <div className="label">Agi</div>
         <div>{hero.agility}</div>
         <div className="label">Strength Dice</div>
@@ -33,14 +42,11 @@ function HeroPanel({ hero }) {
         <div>{hero.agilityDice}</div>
         <div className="label">Magic Dice</div>
         <div>{hero.magicDice}</div>
-        <div className="label">Weapon 1</div>
-        <div>
-          {hero.weapons[0].name} (A{hero.weapons[0].attack} D{hero.weapons[0].defence} {hero.weapons[0].dice})
-        </div>
-        <div className="label">Weapon 2</div>
-        <div>
-          {hero.weapons[1].name} (A{hero.weapons[1].attack} D{hero.weapons[1].defence} {hero.weapons[1].dice})
-        </div>
+      </div>
+      <div className="weapons">
+        {hero.weapons.map((w, idx) => (
+          <ItemCard key={idx} item={w} />
+        ))}
       </div>
     </div>
   )

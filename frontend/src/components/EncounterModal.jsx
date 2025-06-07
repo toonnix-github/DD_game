@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import './EncounterModal.css'
+import ItemCard from './ItemCard'
 import { computeAttackBreakdown, fightGoblin } from '../fightUtils'
 
 function EncounterModal({ goblin, hero, onFight, onFlee }) {
@@ -81,13 +82,16 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
           <>
             <div className="weapon-select">
               {hero.weapons.map((w, idx) => (
-                <label key={idx}>
+                <label
+                  key={idx}
+                  className={`weapon-option ${weaponIdx === idx ? 'selected' : ''}`}
+                >
                   <input
                     type="radio"
                     checked={weaponIdx === idx}
                     onChange={() => setWeaponIdx(idx)}
                   />
-                  {w.name} (A{w.attack} D{w.defence} {w.dice})
+                  <ItemCard item={w} />
                 </label>
               ))}
             </div>
