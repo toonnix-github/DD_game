@@ -34,6 +34,9 @@ function RoomTile({ tile, onClick, highlight }) {
       {tile.revealed && tile.goblin && (
         <span className="goblin-icon">{tile.goblin.icon}</span>
       )}
+      {tile.revealed && tile.effect === 'death' && (
+        <img src="/star.svg" alt="defeated" className="death-effect" />
+      )}
       {tile.revealed && tile.trap && (
         <span
           className="trap-icon"

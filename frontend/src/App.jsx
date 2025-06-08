@@ -52,6 +52,7 @@ function createEmptyBoard() {
       revealed: false,
       paths: { up: false, down: false, left: false, right: false },
       goblin: null,
+      effect: null,
     }))
   )
 }
@@ -71,6 +72,7 @@ function loadState() {
               tile.trap = { ...TRAP_TYPES[tile.trap], id: tile.trap }
             }
             if (!('trapResolved' in tile)) tile.trapResolved = false
+            if (!('effect' in tile)) tile.effect = null
           })
         )
       }
@@ -113,6 +115,7 @@ function loadState() {
     revealed: true,
     paths: { up: true, down: true, left: true, right: true },
     goblin: null,
+    effect: null,
   }
   return {
     board,
@@ -214,6 +217,7 @@ function App() {
           goblin,
           trap: room.trap ? { ...TRAP_TYPES[room.trap], id: room.trap } : null,
           trapResolved: false,
+          effect: null,
         }
       } else if (!target.paths[opposite(dir)]) {
         return
@@ -287,8 +291,11 @@ function App() {
       let newHero = result.hero
       let discard = prev.discard
       tile.goblin = result.goblin
+      const row = encounter.position.row
+      const col = encounter.position.col
       if (result.goblin.hp <= 0) {
         tile.goblin = null
+        tile.effect = 'death'
         newEncounter = null
         const item = adaptTreasureItem(randomTreasure())
         newHero = { ...newHero, weapons: [...newHero.weapons, item] }
@@ -296,6 +303,14 @@ function App() {
         if (newHero.weapons.length > 2) {
           discard = { items: newHero.weapons }
         }
+        setTimeout(() => {
+          setState(p => {
+            const copy = p.board.map(r => r.map(t => ({ ...t })))
+            const t = copy[row][col]
+            if (t.effect === 'death') t.effect = null
+            return { ...p, board: copy }
+          })
+        }, 600)
       }
       return { ...prev, board: newBoard, hero: newHero, encounter: newEncounter, discard }
     })
