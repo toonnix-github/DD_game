@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import './EncounterModal.css'
+import { DISARM_RULE } from '../trapRules'
 
 function TrapModal({ hero, onResolve }) {
   const [rolls, setRolls] = useState([])
@@ -20,9 +21,12 @@ function TrapModal({ hero, onResolve }) {
       <div className="encounter-window">
         <h2>Trap!</h2>
         {rolls.length === 0 && (
-          <div className="buttons">
-            <button onClick={attempt}>Disarm</button>
-          </div>
+          <>
+            <p className="trap-info">{DISARM_RULE}</p>
+            <div className="buttons">
+              <button onClick={attempt}>Disarm</button>
+            </div>
+          </>
         )}
         {rolls.length > 0 && (
           <div className="fight-stage">

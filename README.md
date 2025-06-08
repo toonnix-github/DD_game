@@ -40,6 +40,15 @@ The current version shows a hero portrait drawn in a Hearthstone‑style. Each h
 
 The hero panel now displays these attributes along with a portrait image for the selected hero.
 
+### Trap Disarming
+
+When you enter a room with a trap you may attempt to disarm it. Roll your hero's
+*agility* dice (shown in the hero panel). If any die comes up **4** or higher the
+trap is disarmed and you receive a random treasure. Failure removes the trap but
+grants no reward, so knowing your agility dice helps decide whether to disarm or
+move on. Unresolved trap rooms are highlighted in red with a warning icon so you
+can easily spot them on the board.
+
 ### Customizing Hero Stats
 
 Starting values for each hero type can be modified in
