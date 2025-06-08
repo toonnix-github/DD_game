@@ -23,6 +23,23 @@
   border-color: #aaa;
 }
 
+.tile.trap-room {
+  background-color: #663333;
+  border-color: #ff6666;
+}
+
+.tile.trap-room .center,
+.tile.trap-room .door {
+  background-color: #ff9999;
+}
+
+.trap-icon {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 0.7rem;
+}
+
 
 .room-graphic {
   position: absolute;
