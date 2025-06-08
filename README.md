@@ -43,11 +43,7 @@ The hero panel now displays these attributes along with a portrait image for the
 ### Trap Disarming
 
 When you enter a room with a trap you may attempt to disarm it. Roll your hero's
-*agility* dice (shown in the hero panel). If any die comes up **4** or higher the
-trap is disarmed and you receive a random treasure. Failure removes the trap but
-grants no reward, so knowing your agility dice helps decide whether to disarm or
-move on. Unresolved trap rooms are highlighted in red with a warning icon so you
-can easily spot them on the board.
+*agility* dice and take the highest result. Add your hero's agility stat to this roll. If the total meets or exceeds the trap's listed difficulty the trap is disarmed and you receive a random treasure. Failure keeps the trap active and deals damage, so decide carefully. Unresolved trap rooms are highlighted in red with a warning icon so you can easily spot them on the board.
 
 ### Customizing Hero Stats
 
