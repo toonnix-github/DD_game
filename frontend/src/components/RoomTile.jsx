@@ -13,9 +13,10 @@ function RoomTile({ tile, onClick, highlight }) {
       onClick={onClick}
       title={
         tile.revealed
-          ? `${tile.roomId}${
-              tile.trap && !tile.trapResolved ? ' - ' + DISARM_RULE : ''
-            }`
+          ? tile.roomId +
+            (tile.trap && !tile.trapResolved
+              ? ` - ${DISARM_RULE} Need ${tile.trap.difficulty} points.`
+              : '')
           : undefined
       }
     >
@@ -33,8 +34,17 @@ function RoomTile({ tile, onClick, highlight }) {
       {tile.revealed && tile.goblin && (
         <span className="goblin-icon">{tile.goblin.icon}</span>
       )}
-      {tile.revealed && tile.trap && !tile.trapResolved && (
-        <span className="trap-icon" title={DISARM_RULE}>⚠️</span>
+      {tile.revealed && tile.trap && (
+        <span
+          className="trap-icon"
+          title={
+            tile.trapResolved
+              ? 'Trap disarmed'
+              : `${DISARM_RULE} Need ${tile.trap.difficulty} points.`
+          }
+        >
+          {tile.trapResolved ? '✅' : tile.trap.icon}
+        </span>
       )}
       {tile.revealed && <span className="room-name">{tile.roomId}</span>}
     </div>

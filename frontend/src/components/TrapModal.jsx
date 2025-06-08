@@ -2,14 +2,15 @@ import React, { useState } from 'react'
 import './EncounterModal.css'
 import { DISARM_RULE } from '../trapRules'
 
-function TrapModal({ hero, onResolve }) {
+function TrapModal({ hero, trap, onResolve }) {
   const [rolls, setRolls] = useState([])
   const [success, setSuccess] = useState(null)
 
   const attempt = () => {
     const r = Array.from({ length: hero.agilityDice }, () => Math.ceil(Math.random() * 6))
     setRolls(r)
-    setSuccess(r.some(v => v >= 4))
+    const points = r.filter(v => v >= 4).length
+    setSuccess(points >= trap.difficulty)
   }
 
   const close = () => {
@@ -22,7 +23,9 @@ function TrapModal({ hero, onResolve }) {
         <h2>Trap!</h2>
         {rolls.length === 0 && (
           <>
-            <p className="trap-info">{DISARM_RULE}</p>
+            <p className="trap-info">
+              {DISARM_RULE} Need {trap.difficulty} points.
+            </p>
             <div className="buttons">
               <button onClick={attempt}>Disarm</button>
             </div>

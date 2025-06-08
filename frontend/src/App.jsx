@@ -5,6 +5,7 @@ import HeroPanel from './components/HeroPanel'
 import HeroSelect from './components/HeroSelect'
 import EncounterModal from './components/EncounterModal'
 import TrapModal from './components/TrapModal'
+import { TRAP_TYPES } from './trapRules'
 import DiscardModal from './components/DiscardModal'
 import { createShuffledDeck } from './roomDeck'
 import './App.css'
@@ -65,7 +66,10 @@ function loadState() {
           row.forEach(tile => {
             if (!tile.paths) tile.paths = { up: false, down: false, left: false, right: false }
             if (!('goblin' in tile)) tile.goblin = null
-            if (!('trap' in tile)) tile.trap = false
+            if (!('trap' in tile)) tile.trap = null
+            if (tile.trap && typeof tile.trap === 'string') {
+              tile.trap = { ...TRAP_TYPES[tile.trap], id: tile.trap }
+            }
             if (!('trapResolved' in tile)) tile.trapResolved = false
           })
         )
@@ -208,7 +212,7 @@ function App() {
           revealed: true,
           paths,
           goblin,
-          trap: room.trap || false,
+          trap: room.trap ? { ...TRAP_TYPES[room.trap], id: room.trap } : null,
           trapResolved: false,
         }
       } else if (!target.paths[opposite(dir)]) {
@@ -239,7 +243,7 @@ function App() {
 
       if (newBoard[r][c].trap && !newBoard[r][c].trapResolved && !newEncounter) {
         newHero.movement = 0
-        newTrap = { position: { row: r, col: c } }
+        newTrap = { position: { row: r, col: c }, trap: newBoard[r][c].trap }
       }
 
       setState({ board: newBoard, hero: newHero, deck: newDeck, encounter: newEncounter, trap: newTrap })
@@ -332,9 +336,13 @@ function App() {
       if (success) {
         const item = adaptTreasureItem(randomTreasure())
         newHero.weapons = [...hero.weapons, item]
+        newHero.hp = hero.hp + tile.trap.reward
         if (newHero.weapons.length > 2) {
           discard = { items: newHero.weapons }
         }
+      }
+      if (!success) {
+        newHero.hp = hero.hp - tile.trap.damage
       }
       return { ...prev, board: newBoard, hero: newHero, trap: null, discard }
     })
@@ -406,7 +414,7 @@ function App() {
         />
       )}
       {state.trap && (
-        <TrapModal hero={state.hero} onResolve={handleTrapResolve} />
+        <TrapModal hero={state.hero} trap={state.trap.trap} onResolve={handleTrapResolve} />
       )}
       {state.discard && (
         <DiscardModal items={state.discard.items} onConfirm={handleDiscardConfirm} />
