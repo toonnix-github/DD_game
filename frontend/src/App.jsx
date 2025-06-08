@@ -101,7 +101,7 @@ function loadState() {
       parsed.encounter = null
       if (!parsed.trap) parsed.trap = null
       if (!parsed.discard) parsed.discard = null
-      if (!parsed.reward) parsed.reward = null
+      if (!parsed.reward || !parsed.reward.item) parsed.reward = null
       return parsed
     } catch {
       /* ignore corrupted save */
@@ -296,7 +296,7 @@ function App() {
         newEncounter = null
         const item = adaptTreasureItem(randomTreasure())
         newHero = { ...newHero, weapons: [...newHero.weapons, item] }
-        reward = item
+        reward = { item, hp: 0 }
         discard = null
       }
       return { ...prev, board: newBoard, hero: newHero, encounter: newEncounter, reward, discard }
@@ -340,7 +340,7 @@ function App() {
         const item = adaptTreasureItem(randomTreasure())
         newHero.weapons = [...hero.weapons, item]
         newHero.hp = hero.hp + tile.trap.reward
-        reward = item
+        reward = { item, hp: tile.trap.reward }
       }
       if (!success) {
         newHero.hp = hero.hp - tile.trap.damage
@@ -429,7 +429,7 @@ function App() {
         <TrapModal hero={state.hero} trap={state.trap.trap} onResolve={handleTrapResolve} />
       )}
       {state.reward && (
-        <RewardModal item={state.reward} onConfirm={handleRewardConfirm} />
+        <RewardModal reward={state.reward} onConfirm={handleRewardConfirm} />
       )}
       {state.discard && (
         <DiscardModal items={state.discard.items} onConfirm={handleDiscardConfirm} />
