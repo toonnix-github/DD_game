@@ -17,6 +17,31 @@
   text-align: center;
 }
 
+.goblin-image {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto;
+}
+
+.death-effect {
+  position: absolute;
+  inset: 10%;
+  pointer-events: none;
+  animation: fade-out 0.6s forwards;
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+}
+
 .encounter-window .stats {
   display: grid;
   grid-template-columns: auto 1fr;

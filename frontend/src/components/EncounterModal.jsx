@@ -63,20 +63,28 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
     <div className="encounter-overlay">
       <div className="encounter-window">
         <h2>{goblin.name}</h2>
-        <img
-          src={goblin.image}
-          alt={goblin.name}
-          width="100"
-          height="100"
-          className={
-            stage === 'result' &&
+        <div className="goblin-image">
+          <img
+            src={goblin.image}
+            alt={goblin.name}
+            width="100"
+            height="100"
+            className={
+              stage === 'result' &&
+              result &&
+              result.type === 'fight' &&
+              result.heroDmg > 0
+                ? 'shake'
+                : undefined
+            }
+          />
+          {stage === 'result' &&
             result &&
             result.type === 'fight' &&
-            result.heroDmg > 0
-              ? 'shake'
-              : undefined
-          }
-        />
+            result.goblin.hp <= 0 && (
+              <img src="/star.svg" alt="defeated" className="death-effect" />
+            )}
+        </div>
         <div className="stats">
           <div className="label">HP</div>
           <div>{goblin.hp}</div>
