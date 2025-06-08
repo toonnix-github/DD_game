@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState, useRef } from 'react'
 import RoomTile from './components/RoomTile'
 import Hero from './components/Hero'
 import HeroPanel from './components/HeroPanel'
@@ -126,6 +126,8 @@ function loadState() {
 
 function App() {
   const [state, setState] = useState(loadState)
+  const [heroDamaged, setHeroDamaged] = useState(false)
+  const prevHpRef = useRef(state.hero ? state.hero.hp : null)
 
   const chooseHero = useCallback(type => {
     const base = HERO_TYPES[type]
@@ -157,6 +159,17 @@ function App() {
   useEffect(() => {
     localStorage.setItem('dungeon-state', JSON.stringify(state))
   }, [state])
+
+  useEffect(() => {
+    if (!state.hero) return
+    if (prevHpRef.current != null && state.hero.hp < prevHpRef.current) {
+      setHeroDamaged(true)
+      const t = setTimeout(() => setHeroDamaged(false), 300)
+      prevHpRef.current = state.hero.hp
+      return () => clearTimeout(t)
+    }
+    prevHpRef.current = state.hero.hp
+  }, [state.hero])
 
   const endTurn = useCallback(() => {
     setState(prev => {
@@ -364,7 +377,7 @@ function App() {
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [state.hero, state.encounter, moveHero])
+  }, [state.hero, state.encounter, state.trap, state.discard, moveHero])
 
   if (!state.hero) {
     return <HeroSelect onSelect={chooseHero} />
@@ -389,19 +402,19 @@ function App() {
           )}
           {state.hero && (
             <div
-              className="hero-overlay"
+              className={`hero-overlay${heroDamaged ? ' shake' : ''}`}
               style={{
                 transform: `translate(${state.hero.col * 100 + (state.hero.offset?.x ?? 0)}%, ${
                   state.hero.row * 100 + (state.hero.offset?.y ?? 0)
                 }%)`,
               }}
             >
-              <Hero hero={state.hero} />
+              <Hero hero={state.hero} damaged={heroDamaged} />
             </div>
           )}
         </div>
       <div className="side">
-        <HeroPanel hero={state.hero} />
+        <HeroPanel hero={state.hero} damaged={heroDamaged} />
         <button onClick={endTurn} className="end-turn">End Turn</button>
         <button onClick={resetGame} className="reset-game">Reset Game</button>
       </div>
