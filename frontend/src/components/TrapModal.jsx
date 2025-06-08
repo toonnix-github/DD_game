@@ -9,8 +9,8 @@ function TrapModal({ hero, trap, onResolve }) {
   const attempt = () => {
     const r = Array.from({ length: hero.agilityDice }, () => Math.ceil(Math.random() * 6))
     setRolls(r)
-    const points = r.filter(v => v >= 4).length
-    setSuccess(points >= trap.difficulty)
+    const best = Math.max(...r)
+    setSuccess(best + hero.agility >= trap.difficulty)
   }
 
   const close = () => {
@@ -24,7 +24,7 @@ function TrapModal({ hero, trap, onResolve }) {
         {rolls.length === 0 && (
           <>
             <p className="trap-info">
-              {DISARM_RULE} Need {trap.difficulty} points.
+              {DISARM_RULE} Difficulty {trap.difficulty}.
             </p>
             <div className="buttons">
               <button onClick={attempt}>Disarm</button>

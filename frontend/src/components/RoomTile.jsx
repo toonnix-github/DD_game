@@ -15,7 +15,7 @@ function RoomTile({ tile, onClick, highlight }) {
         tile.revealed
           ? tile.roomId +
             (tile.trap && !tile.trapResolved
-              ? ` - ${DISARM_RULE} Need ${tile.trap.difficulty} points.`
+              ? ` - ${DISARM_RULE} Difficulty ${tile.trap.difficulty}.`
               : '')
           : undefined
       }
@@ -40,7 +40,7 @@ function RoomTile({ tile, onClick, highlight }) {
           title={
             tile.trapResolved
               ? 'Trap disarmed'
-              : `${DISARM_RULE} Need ${tile.trap.difficulty} points.`
+              : `${DISARM_RULE} Difficulty ${tile.trap.difficulty}.`
           }
         >
           {tile.trapResolved ? '✅' : tile.trap.icon}
