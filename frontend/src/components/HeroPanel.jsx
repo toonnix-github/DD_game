@@ -2,7 +2,7 @@ import React from 'react'
 import './HeroPanel.css'
 import ItemCard from './ItemCard'
 
-function HeroPanel({ hero }) {
+function HeroPanel({ hero, damaged }) {
   return (
     <div className="hero-panel">
       <h2>Hero</h2>
@@ -11,6 +11,7 @@ function HeroPanel({ hero }) {
         alt={hero.name}
         width="100"
         height="100"
+        className={damaged ? 'shake' : undefined}
         style={{ display: 'block', margin: '0 auto 8px' }}
       />
       <div className="stats">

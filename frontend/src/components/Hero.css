@@ -8,3 +8,25 @@
   align-items: center;
   border-radius: 4px;
 }
+
+@keyframes shake {
+  0% {
+    transform: translate(0);
+  }
+  25% {
+    transform: translate(-3px);
+  }
+  50% {
+    transform: translate(3px);
+  }
+  75% {
+    transform: translate(-3px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+.shake {
+  animation: shake 0.3s;
+}
