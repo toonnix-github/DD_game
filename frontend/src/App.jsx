@@ -7,6 +7,7 @@ import EncounterModal from './components/EncounterModal'
 import TrapModal from './components/TrapModal'
 import { TRAP_TYPES } from './trapRules'
 import DiscardModal from './components/DiscardModal'
+import RewardModal from './components/RewardModal'
 import { createShuffledDeck } from './roomDeck'
 import './App.css'
 import { HERO_TYPES } from './heroData'
@@ -100,6 +101,7 @@ function loadState() {
       parsed.encounter = null
       if (!parsed.trap) parsed.trap = null
       if (!parsed.discard) parsed.discard = null
+      if (!parsed.reward || !parsed.reward.item) parsed.reward = null
       return parsed
     } catch {
       /* ignore corrupted save */
@@ -121,6 +123,7 @@ function loadState() {
     encounter: null,
     trap: null,
     discard: null,
+    reward: null,
   }
 }
 
@@ -299,18 +302,17 @@ function App() {
       let newEncounter = { ...encounter, goblin: result.goblin }
       let newHero = result.hero
       let discard = prev.discard
+      let reward = prev.reward
       tile.goblin = result.goblin
       if (result.goblin.hp <= 0) {
         tile.goblin = null
         newEncounter = null
         const item = adaptTreasureItem(randomTreasure())
         newHero = { ...newHero, weapons: [...newHero.weapons, item] }
+        reward = { item, hp: 0 }
         discard = null
-        if (newHero.weapons.length > 2) {
-          discard = { items: newHero.weapons }
-        }
       }
-      return { ...prev, board: newBoard, hero: newHero, encounter: newEncounter, discard }
+      return { ...prev, board: newBoard, hero: newHero, encounter: newEncounter, reward, discard }
     })
   }, [])
 
@@ -346,18 +348,28 @@ function App() {
       tile.trapResolved = success
       let newHero = { ...hero }
       let discard = null
+      let reward = prev.reward
       if (success) {
         const item = adaptTreasureItem(randomTreasure())
         newHero.weapons = [...hero.weapons, item]
         newHero.hp = hero.hp + tile.trap.reward
-        if (newHero.weapons.length > 2) {
-          discard = { items: newHero.weapons }
-        }
+        reward = { item, hp: tile.trap.reward }
       }
       if (!success) {
         newHero.hp = hero.hp - tile.trap.damage
       }
-      return { ...prev, board: newBoard, hero: newHero, trap: null, discard }
+      return { ...prev, board: newBoard, hero: newHero, trap: null, reward, discard }
+    })
+  }, [])
+
+  const handleRewardConfirm = useCallback(() => {
+    setState(prev => {
+      if (!prev.reward) return prev
+      let discard = null
+      if (prev.hero.weapons.length > 2) {
+        discard = { items: prev.hero.weapons }
+      }
+      return { ...prev, reward: null, discard }
     })
   }, [])
 
@@ -368,7 +380,7 @@ function App() {
   useEffect(() => {
     if (!state.hero) return
     const handler = e => {
-      if (state.encounter || state.trap || state.discard) return
+      if (state.encounter || state.trap || state.discard || state.reward) return
       const { row, col } = state.hero
       if (e.key === 'ArrowUp') moveHero(row - 1, col)
       if (e.key === 'ArrowDown') moveHero(row + 1, col)
@@ -377,7 +389,7 @@ function App() {
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [state.hero, state.encounter, state.trap, state.discard, moveHero])
+  }, [state.hero, state.encounter, state.trap, state.discard, state.reward, moveHero])
 
   if (!state.hero) {
     return <HeroSelect onSelect={chooseHero} />
@@ -428,6 +440,9 @@ function App() {
       )}
       {state.trap && (
         <TrapModal hero={state.hero} trap={state.trap.trap} onResolve={handleTrapResolve} />
+      )}
+      {state.reward && (
+        <RewardModal reward={state.reward} onConfirm={handleRewardConfirm} />
       )}
       {state.discard && (
         <DiscardModal items={state.discard.items} onConfirm={handleDiscardConfirm} />
