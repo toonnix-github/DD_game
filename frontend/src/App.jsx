@@ -301,12 +301,12 @@ function App() {
     return moves
   }, [state])
 
-  const handleFight = useCallback((rolls, baseIdx, weaponIdx) => {
+  const handleFight = useCallback((rolls, baseIdx, weaponIdx, extraIdxs) => {
     setState(prev => {
       const { encounter, board, hero } = prev
       if (!encounter) return prev
       const weapon = hero.weapons[weaponIdx]
-      const result = fightGoblin(hero, encounter.goblin, weapon, rolls, baseIdx)
+      const result = fightGoblin(hero, encounter.goblin, weapon, rolls, baseIdx, extraIdxs)
       const newBoard = board.map(row => row.map(tile => ({ ...tile })))
       const tile = newBoard[encounter.position.row][encounter.position.col]
       let newEncounter = { ...encounter, goblin: result.goblin }

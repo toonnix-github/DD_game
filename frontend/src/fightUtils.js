@@ -1,28 +1,28 @@
 
-export function computeAttackBreakdown(hero, weapon, rolls, baseIdx) {
+export function computeAttackBreakdown(hero, weapon, rolls, baseIdx, extraIdxs = []) {
   const heroPart = hero.attack
   const weaponPart = weapon.attack
   let base = 0
   let extra = 0
   if (baseIdx != null && rolls[baseIdx] >= 3) {
     base = rolls[baseIdx]
-    rolls.forEach((v, idx) => {
-      if (idx !== baseIdx && v <= 2) extra += v
+    extraIdxs.forEach(idx => {
+      if (idx !== baseIdx && rolls[idx] <= 2) extra += rolls[idx]
     })
   }
   const total = heroPart + weaponPart + base + extra
   return { total, hero: heroPart, weapon: weaponPart, base, extra }
 }
 
-export function computeAttackPower(hero, weapon, rolls, baseIdx) {
-  return computeAttackBreakdown(hero, weapon, rolls, baseIdx).total
+export function computeAttackPower(hero, weapon, rolls, baseIdx, extraIdxs = []) {
+  return computeAttackBreakdown(hero, weapon, rolls, baseIdx, extraIdxs).total
 }
 
-export function fightGoblin(hero, goblin, weapon, rolls, baseIdx) {
+export function fightGoblin(hero, goblin, weapon, rolls, baseIdx, extraIdxs = []) {
   let heroHp = hero.hp
   let goblinHp = goblin.hp
 
-  const details = computeAttackBreakdown(hero, weapon, rolls, baseIdx)
+  const details = computeAttackBreakdown(hero, weapon, rolls, baseIdx, extraIdxs)
   const attackPower = details.total
   const heroDefence = hero.defence + weapon.defence
   const heroDmg = Math.max(1, attackPower - goblin.defence)
