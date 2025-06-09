@@ -1,4 +1,12 @@
 .hero-panel {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.hero-card {
   background-color: #d8c47d;
   color: #1a1a1a;
   padding: 8px;
@@ -43,7 +51,6 @@
 .weapons {
   display: flex;
   gap: 0.5rem;
-  margin-top: 0.5rem;
 }
 
 .icons {
