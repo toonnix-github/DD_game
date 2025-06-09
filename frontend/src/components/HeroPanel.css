@@ -111,6 +111,35 @@
   animation: shake 0.3s;
 }
 
+.movement-badge {
+  position: absolute;
+  top: 0.25rem;
+  left: 0.25rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  z-index: 3;
+  transform: rotate(-5deg);
+}
+
+.movement-badge img {
+  width: 100%;
+  height: 100%;
+}
+
+.movement-badge span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
 .defence-badge {
   position: absolute;
   bottom: 2%;
