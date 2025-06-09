@@ -1,14 +1,14 @@
-import React from 'react'
-import './HeroPanel.css'
+import React from 'react';
+import './HeroPanel.css';
 
 function renderDice(count, alt) {
   return Array.from({ length: count }, (_, i) => (
-    <img key={i} src="/dice.png" alt={alt} />
-  ))
+    <img key={i} src="/dice-red.png" alt={alt} />
+  ));
 }
 
 function HeroPanel({ hero, damaged }) {
-  if (!hero) return null
+  if (!hero) return null;
 
   return (
     <div className={`hero-panel${damaged ? ' shake' : ''}`}>
@@ -27,7 +27,7 @@ function HeroPanel({ hero, damaged }) {
         <div className="stat">
           <img src="/speed.png" alt="agility" />{hero.agility}
         </div>
-        <div className="stat">{renderDice(hero.strengthDice, 'strength die')}</div>
+        <div className="stat"><img src="/fist.png" alt="agility" />{renderDice(hero.strengthDice, 'strength die')}</div>
         <div className="stat">{renderDice(hero.agilityDice, 'agility die')}</div>
         <div className="stat">{renderDice(hero.magicDice, 'magic die')}</div>
       </div>
@@ -35,7 +35,7 @@ function HeroPanel({ hero, damaged }) {
         {Array.from({ length: hero.maxHp }, (_, i) => (
           <img
             key={i}
-            src="/icon/heart-icon.png"
+            src="/heart.png"
             className={i < hero.hp ? undefined : 'lost'}
             alt="hp"
           />
@@ -47,7 +47,7 @@ function HeroPanel({ hero, damaged }) {
       </div>
       <div className="description">{hero.skill}</div>
     </div>
-  )
+  );
 }
 
-export default HeroPanel
+export default HeroPanel;
