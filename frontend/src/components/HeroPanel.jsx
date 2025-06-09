@@ -10,40 +10,31 @@ function HeroPanel({ hero, damaged }) {
       <img className="card-image" src={hero.image} alt={hero.name} />
       <div className="stats-bar">
         <div className="stat">
-          <img src="/boot.png" alt="move" />
-          <span>{hero.movement}</span>
+          <img src="/boot.png" alt="move" />{hero.movement}
         </div>
         <div className="stat">
-          <img src="/heart.png" alt="hp" />
-          <span>{hero.hp}</span>
+          <img src="/heart.png" alt="hp" />{hero.hp}
         </div>
         <div className="stat">
-          <img src="/icon/starburst.png" alt="ap" />
-          <span>{hero.ap}</span>
+          <img src="/icon/starburst.png" alt="ap" />{hero.ap}
         </div>
         <div className="stat">
-          <img src="/fist.png" alt="strength" />
-          <span>{hero.attack}</span>
+          <img src="/fist.png" alt="strength" />{hero.attack}
         </div>
         <div className="stat">
-          <img src="/shield.png" alt="defence" />
-          <span>{hero.defence}</span>
+          <img src="/shield.png" alt="defence" />{hero.defence}
         </div>
         <div className="stat">
-          <img src="/speed.png" alt="agility" />
-          <span>{hero.agility}</span>
+          <img src="/speed.png" alt="agility" />{hero.agility}
         </div>
         <div className="stat">
-          <img src="/dice.png" alt="strength dice" />
-          <span>{hero.strengthDice}</span>
+          <img src="/dice.png" alt="strength dice" />{hero.strengthDice}
         </div>
         <div className="stat">
-          <img src="/dice.png" alt="agility dice" />
-          <span>{hero.agilityDice}</span>
+          <img src="/dice.png" alt="agility dice" />{hero.agilityDice}
         </div>
         <div className="stat">
-          <img src="/dice.png" alt="magic dice" />
-          <span>{hero.magicDice}</span>
+          <img src="/dice.png" alt="magic dice" />{hero.magicDice}
         </div>
       </div>
       <div className="description">{hero.skill}</div>
