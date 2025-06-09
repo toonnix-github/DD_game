@@ -111,6 +111,19 @@
   animation: shake 0.3s;
 }
 
+.movement-icons {
+  position: absolute;
+  bottom: 4rem;
+  right: 0.25rem;
+  z-index: 3;
+}
+
+.movement-icons img {
+  aspect-ratio: 92 / 134;
+  width: 1.1rem;
+  transform: rotate(13deg);
+}
+
 .defence-badge {
   position: absolute;
   bottom: 2%;
