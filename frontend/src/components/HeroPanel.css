@@ -113,10 +113,10 @@
 
 .movement-badge {
   position: absolute;
-  top: 0.25rem;
-  left: 0.25rem;
-  width: 2.5rem;
-  height: 2.5rem;
+  bottom: calc(12% + 2.4rem);
+  right: 0.25rem;
+  width: 2rem;
+  height: 2rem;
   z-index: 3;
   transform: rotate(-5deg);
 }
@@ -124,20 +124,6 @@
 .movement-badge img {
   width: 100%;
   height: 100%;
-}
-
-.movement-badge span {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-size: 1.2rem;
-  font-weight: bold;
 }
 
 .defence-badge {

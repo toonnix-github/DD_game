@@ -16,7 +16,6 @@ function HeroPanel({ hero, damaged }) {
       <img className="card-image" src={hero.image} alt={hero.name} />
       <div className="movement-badge">
         <img src="/icon/footprint.png" alt="movement" />
-        <span>{hero.movement}</span>
       </div>
       <div className="stats-bar">
         <span className="stat"><img src="/fist.png" alt="strength" />{renderDice(hero.strengthDice, 'strength die')}·</span>
