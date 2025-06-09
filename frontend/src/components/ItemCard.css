@@ -35,8 +35,8 @@
 }
 
   padding-left: 1rem;
-  z-index: 2;
-}
+  width: 0.6rem;
+  height: 0.6rem;
 
 .item-image {
   width: 100%;
