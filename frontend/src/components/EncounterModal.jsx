@@ -1,7 +1,27 @@
 import React, { useState } from 'react'
 import './EncounterModal.css'
 import ItemCard from './ItemCard'
-import { computeAttackBreakdown, fightGoblin } from '../fightUtils'
+import {
+  computeAttackBreakdown,
+  fightGoblin,
+  computeUnusedRewards,
+} from '../fightUtils'
+
+function rewardInfo(value) {
+  switch (value) {
+    case 1:
+      return { icon: '/icon/starburst.png', text: '+2' }
+    case 2:
+      return { icon: '/icon/starburst.png', text: '+3' }
+    case 3:
+    case 4:
+      return { icon: '/icon/starburst.png', text: '+1' }
+    case 6:
+      return { icon: '/heart.png', text: '+1' }
+    default:
+      return null
+  }
+}
 
 function EncounterModal({ goblin, hero, onFight, onFlee }) {
   const [stage, setStage] = useState('menu')
@@ -35,8 +55,15 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
 
   const confirmFight = () => {
     const weapon = hero.weapons[weaponIdx]
+    const rewards = computeUnusedRewards(rolls, baseIdx, extraIdxs)
     const res = fightGoblin(hero, goblin, weapon, rolls, baseIdx, extraIdxs)
-    setResult({ type: 'fight', ...res })
+    const parts = []
+    if (rewards.ap) parts.push(`${rewards.ap} ap`)
+    if (rewards.hp) parts.push(`${rewards.hp} hp`)
+    if (parts.length) {
+      res.message += ` Unused dice reward: ${parts.join(' and ')}.`
+    }
+    setResult({ type: 'fight', ...res, rewards })
     setStage('result')
   }
 
@@ -54,7 +81,7 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
   const closeResult = () => {
     if (!result) return
     if (result.type === 'fight') {
-      onFight(rolls, baseIdx, weaponIdx, extraIdxs)
+      onFight(rolls, baseIdx, weaponIdx, extraIdxs, result.rewards)
     } else if (result.type === 'flee') {
       onFlee(result.success)
     }
@@ -148,10 +175,19 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
                     )
                   }
                 }
+                const reward = rewardInfo(v)
                 return (
                   <div key={idx} className={classes.join(' ')} onClick={handleClick}>
-                    {v < 3 && <img src="/add-icon.png" alt="+" className="plus-icon" />}
-                    {v}
+                    <div className="dice-value">
+                      {v < 3 && <img src="/add-icon.png" alt="+" className="plus-icon" />}
+                      {v}
+                    </div>
+                    {reward && (
+                      <div className="dice-reward">
+                        <img src={reward.icon} alt="reward" />
+                        <span>{reward.text}</span>
+                      </div>
+                    )}
                   </div>
                 )
               })}

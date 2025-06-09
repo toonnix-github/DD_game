@@ -3,7 +3,7 @@ import './ItemCard.css';
 
 function ItemCard({ item }) {
   const typeIcons = {
-    melee: '/fist.svg',
+    melee: '/fist.png',
     magic: '/lightning.png',
     range: '/arrows.png',
   };

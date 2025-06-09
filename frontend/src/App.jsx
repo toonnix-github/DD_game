@@ -13,7 +13,7 @@ import { createShuffledDeck } from './roomDeck'
 import './App.css'
 import { HERO_TYPES } from './heroData'
 import { GOBLIN_TYPES, randomGoblinType } from './goblinData'
-import { fightGoblin } from './fightUtils'
+import { fightGoblin, computeUnusedRewards } from './fightUtils'
 import { randomTreasure, adaptTreasureItem } from './treasureDeck'
 
 const BOARD_SIZE = 7
@@ -301,7 +301,7 @@ function App() {
     return moves
   }, [state])
 
-  const handleFight = useCallback((rolls, baseIdx, weaponIdx, extraIdxs) => {
+  const handleFight = useCallback((rolls, baseIdx, weaponIdx, extraIdxs, rewards) => {
     setState(prev => {
       const { encounter, board, hero } = prev
       if (!encounter) return prev
@@ -316,6 +316,15 @@ function App() {
       tile.goblin = result.goblin
       const row = encounter.position.row
       const col = encounter.position.col
+      if (!rewards) {
+        rewards = computeUnusedRewards(rolls, baseIdx, extraIdxs)
+      }
+      newHero = {
+        ...newHero,
+        ap: newHero.ap + rewards.ap,
+        hp: Math.min(newHero.hp + rewards.hp, newHero.maxHp),
+      }
+
       if (result.goblin.hp <= 0) {
         tile.goblin = null
         tile.effect = 'death'

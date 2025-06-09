@@ -18,6 +18,32 @@ export function computeAttackPower(hero, weapon, rolls, baseIdx, extraIdxs = [])
   return computeAttackBreakdown(hero, weapon, rolls, baseIdx, extraIdxs).total
 }
 
+export function computeUnusedRewards(rolls, baseIdx, extraIdxs = []) {
+  let ap = 0
+  let hp = 0
+  rolls.forEach((v, idx) => {
+    if (idx === baseIdx || extraIdxs.includes(idx)) return
+    switch (v) {
+      case 1:
+        ap += 2
+        break
+      case 2:
+        ap += 3
+        break
+      case 3:
+      case 4:
+        ap += 1
+        break
+      case 6:
+        hp += 1
+        break
+      default:
+        break
+    }
+  })
+  return { ap, hp }
+}
+
 export function fightGoblin(hero, goblin, weapon, rolls, baseIdx, extraIdxs = []) {
   let heroHp = hero.hp
   let goblinHp = goblin.hp
