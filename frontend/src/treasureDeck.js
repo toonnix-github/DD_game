@@ -56,6 +56,7 @@ export function adaptTreasureItem(item) {
     attack: item.attack?.value || 0,
     defence: item.defend || 0,
     dice: 'strength',
-    image: '/dice.svg',
+    image: `/weapon/${item.id}.webp`,
+    attackType: item.attack?.type || 'melee',
   }
 }
