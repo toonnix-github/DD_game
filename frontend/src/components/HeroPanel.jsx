@@ -15,21 +15,9 @@ function HeroPanel({ hero, damaged }) {
       <div className="name-bar">{hero.name}</div>
       <img className="card-image" src={hero.image} alt={hero.name} />
       <div className="stats-bar">
-        <div className="stat">
-          <img src="/boot.png" alt="move" />{hero.movement}
-        </div>
-        <div className="stat">
-          <img src="/icon/starburst.png" alt="ap" />{hero.ap}
-        </div>
-        <div className="stat">
-          <img src="/fist.png" alt="strength" />{hero.attack}
-        </div>
-        <div className="stat">
-          <img src="/speed.png" alt="agility" />{hero.agility}
-        </div>
-        <div className="stat"><img src="/fist.png" alt="agility" />{renderDice(hero.strengthDice, 'strength die')}</div>
-        <div className="stat">{renderDice(hero.agilityDice, 'agility die')}</div>
-        <div className="stat">{renderDice(hero.magicDice, 'magic die')}</div>
+        <span className="stat"><img src="/fist.png" alt="strength" />{renderDice(hero.strengthDice, 'strength die')}·</span>
+        <span className="stat"><img src="/arrows.png" alt="agility" />{renderDice(hero.agilityDice, 'agility die')}·</span>
+        <span className="stat"><img src="/lightning.png" alt="magic" />{renderDice(hero.magicDice, 'magic die')}</span>
       </div>
       <div className="hp-hearts">
         {Array.from({ length: hero.maxHp }, (_, i) => (
