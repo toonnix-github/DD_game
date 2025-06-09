@@ -28,7 +28,7 @@ The current version shows a hero portrait drawn in a Hearthstone‑style. Each h
 - Dungeon with a 7x7 grid of tiles.
 - 70 prepared room tiles.
 - Open new rooms only when a character moves to a connecting exit.
-- Two characters: knight and elf.
+- Three characters: knight, elf and viking.
 - Choose your hero at the start of the game.
 - Characters have attributes:
   - Movement range

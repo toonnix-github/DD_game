@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState, useRef } from 'react'
 import RoomTile from './components/RoomTile'
 import Hero from './components/Hero'
 import HeroPanel from './components/HeroPanel'
+import ItemCard from './components/ItemCard'
 import HeroSelect from './components/HeroSelect'
 import EncounterModal from './components/EncounterModal'
 import TrapModal from './components/TrapModal'
@@ -83,6 +84,7 @@ function loadState() {
         parsed.hero = {
           row: parsed.hero.row,
           col: parsed.hero.col,
+          skill: parsed.hero.skill ?? base.skill,
           movement: parsed.hero.movement ?? base.movement,
           icon: parsed.hero.icon ?? base.icon,
           hp: parsed.hero.hp ?? base.hp,
@@ -141,6 +143,7 @@ function App() {
       row: CENTER,
       col: CENTER,
       name: base.name,
+      skill: base.skill,
       movement: base.movement,
       icon: base.icon,
       hp: base.hp,
@@ -442,6 +445,13 @@ function App() {
         </div>
       <div className="side">
         <HeroPanel hero={state.hero} damaged={heroDamaged} />
+        {state.hero && (
+          <div className="hero-items">
+            {state.hero.weapons.map((w, idx) => (
+              <ItemCard key={idx} item={w} />
+            ))}
+          </div>
+        )}
         <button onClick={endTurn} className="end-turn">End Turn</button>
         <button onClick={resetGame} className="reset-game">Reset Game</button>
       </div>
