@@ -32,13 +32,13 @@ The current version shows a hero portrait drawn in a Hearthstone‑style. Each h
 - Choose your hero at the start of the game.
 - Characters have attributes:
   - Movement range
-  - HP
+  - HP (capped by a max value)
   - Activity points
 - Attack power
 - Defence power
 - Fleeing now requires rolling agility dice, adding excitement to encounters.
 
-The hero panel now displays these attributes along with a portrait image for the selected hero.
+The hero panel now displays these attributes along with a portrait image for the selected hero. Lost HP is shown using the same heart icon tinted black via CSS so you can quickly gauge your health. Dice stats are represented by repeating dice icons rather than numbers.
 
 ### Trap Disarming
 
@@ -48,8 +48,8 @@ When you enter a room with a trap you may attempt to disarm it. Roll your hero's
 ### Customizing Hero Stats
 
 Starting values for each hero type can be modified in
-`frontend/src/heroData.js`. Edit the stats there to tweak the characters
-without touching the game logic.
+`frontend/src/heroData.js`. Edit the stats (including `maxHp`) there to tweak
+the characters without touching the game logic.
 
 ### Artwork Credits
 
