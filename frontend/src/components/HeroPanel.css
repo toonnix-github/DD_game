@@ -113,16 +113,15 @@
 
 .movement-icons {
   position: absolute;
-  top: 0.25rem;
-  left: 0.25rem;
-  display: flex;
-  gap: 0.1rem;
+  bottom: 4rem;
+  right: 0.25rem;
   z-index: 3;
+}
 
 .movement-icons img {
-  width: 1.2rem;
-  height: 1.2rem;
-  transform: rotate(10deg);
+  aspect-ratio: 92 / 134;
+  width: 1.1rem;
+  transform: rotate(13deg);
 }
 
 .defence-badge {

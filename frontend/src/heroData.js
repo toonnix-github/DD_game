@@ -13,7 +13,7 @@ export const HERO_TYPES = {
     agilityDice: 1,
     magicDice: 1,
     icon: 'K',
-    image: '/knight.svg',
+    image: '/knight.png',
     weapons: [
       {
         name: 'Sword',
@@ -88,7 +88,7 @@ export const HERO_TYPES = {
         attack: 3,
         defence: 0,
         dice: 'strength',
-        image: '/sword.png',
+        image: '/weapon/viking-axe.webp',
         attackType: 'melee',
       },
     ],
