@@ -5,14 +5,13 @@ import ItemCard from './ItemCard'
 function HeroPanel({ hero, damaged }) {
   return (
     <div className="hero-panel">
-      <h2>Hero</h2>
+      <div className="card-title">{hero.name}</div>
       <img
         src={hero.image}
         alt={hero.name}
         width="100"
         height="100"
-        className={damaged ? 'shake' : undefined}
-        style={{ display: 'block', margin: '0 auto 8px' }}
+        className={damaged ? 'hero-image shake' : 'hero-image'}
       />
       <div className="stats">
         <div className="label">Move</div>
