@@ -13,9 +13,6 @@ function HeroPanel({ hero, damaged }) {
           <img src="/boot.png" alt="move" />{hero.movement}
         </div>
         <div className="stat">
-          <img src="/heart.png" alt="hp" />{hero.hp}
-        </div>
-        <div className="stat">
           <img src="/icon/starburst.png" alt="ap" />{hero.ap}
         </div>
         <div className="stat">
@@ -36,6 +33,11 @@ function HeroPanel({ hero, damaged }) {
         <div className="stat">
           <img src="/dice.png" alt="magic dice" />{hero.magicDice}
         </div>
+      </div>
+      <div className="hp-hearts">
+        {Array.from({ length: hero.hp }, (_, i) => (
+          <img key={i} src="/heart.png" alt="hp" />
+        ))}
       </div>
       <div className="description">{hero.skill}</div>
     </div>
