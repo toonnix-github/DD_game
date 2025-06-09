@@ -64,12 +64,14 @@
 }
 
 .dice {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 34px;
   border: 1px solid white;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  padding: 2px 0;
   cursor: pointer;
   user-select: none;
 }
@@ -91,6 +93,23 @@
   width: 10px;
   height: 10px;
   margin-right: 2px;
+}
+.dice-value {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.dice-reward {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.6rem;
+}
+
+.dice-reward img {
+  width: 10px;
+  height: 10px;
 }
 
 .info {
