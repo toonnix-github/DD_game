@@ -10,8 +10,8 @@ function renderIcons(count, icon, alt) {
 function ItemCard({ item }) {
   return (
     <div className="item-card">
-      <img className="item-image" src={item.image} alt={item.name} width="40" height="40" />
       <div className="item-name">{item.name}</div>
+      <img className="item-image" src={item.image} alt={item.name} />
       <div className="item-stats">
         <div className="attack-icons">{renderIcons(item.attack, '/fist.svg', 'attack')}</div>
         <div className="defence-icons">{renderIcons(item.defence, '/shield.svg', 'defence')}</div>
