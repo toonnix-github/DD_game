@@ -1,6 +1,7 @@
 export const HERO_TYPES = {
   knight: {
     name: 'Knight',
+    skill: 'Defensive stance',
     movement: 3,
     hp: 12,
     ap: 2,
@@ -31,6 +32,7 @@ export const HERO_TYPES = {
   },
   elf: {
     name: 'Elf',
+    skill: 'Forest stealth',
     movement: 4,
     hp: 8,
     ap: 3,
@@ -56,6 +58,30 @@ export const HERO_TYPES = {
         defence: 1,
         dice: 'agility',
         image: '/dagger.svg',
+      },
+    ],
+  },
+  viking: {
+    name: 'Viking',
+    skill: 'Berserker rage',
+    movement: 3,
+    hp: 10,
+    ap: 2,
+    attack: 5,
+    defence: 2,
+    agility: 2,
+    strengthDice: 4,
+    agilityDice: 1,
+    magicDice: 0,
+    icon: 'V',
+    image: '/hero-viking.webp',
+    weapons: [
+      {
+        name: 'Axe',
+        attack: 3,
+        defence: 0,
+        dice: 'strength',
+        image: '/sword.png',
       },
     ],
   },
