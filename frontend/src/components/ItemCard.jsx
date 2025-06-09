@@ -1,4 +1,7 @@
-import React from 'react';
+        <div className="attack-value">
+          <img src="/add-icon.png" alt="attack" className="plus-icon" />
+          <span>{item.attack}</span>
+        </div>
 import './ItemCard.css';
 
 function renderIcons(count, icon, alt) {
