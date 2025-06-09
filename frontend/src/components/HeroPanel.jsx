@@ -33,7 +33,12 @@ function HeroPanel({ hero, damaged }) {
       </div>
       <div className="hp-hearts">
         {Array.from({ length: hero.maxHp }, (_, i) => (
-          <img key={i} src={i < hero.hp ? '/heart.png' : '/heart-black.svg'} alt="hp" />
+          <img
+            key={i}
+            src="/icon/heart-icon.png"
+            className={i < hero.hp ? undefined : 'lost'}
+            alt="hp"
+          />
         ))}
       </div>
       <div className="defence-badge">
