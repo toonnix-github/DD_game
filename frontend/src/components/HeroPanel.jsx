@@ -1,6 +1,12 @@
 import React from 'react'
 import './HeroPanel.css'
 
+function renderDice(count, alt) {
+  return Array.from({ length: count }, (_, i) => (
+    <img key={i} src="/dice.png" alt={alt} />
+  ))
+}
+
 function HeroPanel({ hero, damaged }) {
   if (!hero) return null
 
@@ -21,15 +27,9 @@ function HeroPanel({ hero, damaged }) {
         <div className="stat">
           <img src="/speed.png" alt="agility" />{hero.agility}
         </div>
-        <div className="stat">
-          <img src="/dice.png" alt="strength dice" />{hero.strengthDice}
-        </div>
-        <div className="stat">
-          <img src="/dice.png" alt="agility dice" />{hero.agilityDice}
-        </div>
-        <div className="stat">
-          <img src="/dice.png" alt="magic dice" />{hero.magicDice}
-        </div>
+        <div className="stat">{renderDice(hero.strengthDice, 'strength die')}</div>
+        <div className="stat">{renderDice(hero.agilityDice, 'agility die')}</div>
+        <div className="stat">{renderDice(hero.magicDice, 'magic die')}</div>
       </div>
       <div className="hp-hearts">
         {Array.from({ length: hero.maxHp }, (_, i) => (
