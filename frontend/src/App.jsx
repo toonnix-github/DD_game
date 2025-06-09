@@ -81,13 +81,15 @@ function loadState() {
       if (parsed.hero) {
         const type = parsed.hero.type || 'knight'
         const base = HERO_TYPES[type]
+        const maxHp = parsed.hero.maxHp ?? base.maxHp ?? base.hp
         parsed.hero = {
           row: parsed.hero.row,
           col: parsed.hero.col,
           skill: parsed.hero.skill ?? base.skill,
           movement: parsed.hero.movement ?? base.movement,
           icon: parsed.hero.icon ?? base.icon,
-          hp: parsed.hero.hp ?? base.hp,
+          hp: Math.min(parsed.hero.hp ?? base.hp, maxHp),
+          maxHp,
           ap: parsed.hero.ap ?? base.ap,
           attack: parsed.hero.attack ?? base.attack,
           defence: parsed.hero.defence ?? base.defence,
@@ -147,6 +149,7 @@ function App() {
       movement: base.movement,
       icon: base.icon,
       hp: base.hp,
+      maxHp: base.maxHp ?? base.hp,
       ap: base.ap,
       attack: base.attack,
       defence: base.defence,
@@ -370,7 +373,7 @@ function App() {
       if (success) {
         const item = adaptTreasureItem(randomTreasure())
         newHero.weapons = [...hero.weapons, item]
-        newHero.hp = hero.hp + tile.trap.reward
+        newHero.hp = Math.min(hero.hp + tile.trap.reward, hero.maxHp)
         reward = { item, hp: tile.trap.reward }
       }
       if (!success) {
