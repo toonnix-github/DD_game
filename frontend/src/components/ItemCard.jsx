@@ -1,12 +1,6 @@
 import React from 'react';
 import './ItemCard.css';
 
-function renderIcons(count, icon, alt) {
-  return Array.from({ length: count }, (_, i) => (
-    <img key={i} src={icon} alt={alt} className="stat-icon" />
-  ));
-}
-
 function ItemCard({ item }) {
   const typeIcons = {
     melee: '/fist.svg',

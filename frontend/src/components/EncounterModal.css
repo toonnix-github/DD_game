@@ -77,8 +77,20 @@
 .dice.base {
   background-color: #883333;
 }
+.dice.extra {
+  background-color: #333888;
+}
+.dice.disabled {
+  opacity: 0.5;
+  cursor: default;
+}
 .dice.selectable:hover {
   background-color: #555;
+}
+.dice .plus-icon {
+  width: 10px;
+  height: 10px;
+  margin-right: 2px;
 }
 
 .info {

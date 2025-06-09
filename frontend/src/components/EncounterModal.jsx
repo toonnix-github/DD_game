@@ -7,6 +7,7 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
   const [stage, setStage] = useState('menu')
   const [rolls, setRolls] = useState([])
   const [baseIdx, setBaseIdx] = useState(null)
+  const [extraIdxs, setExtraIdxs] = useState([])
   const [weaponIdx, setWeaponIdx] = useState(0)
   const [result, setResult] = useState(null)
 
@@ -16,6 +17,8 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
     const count = hero[diceKey]
     const r = Array.from({ length: count }, () => Math.ceil(Math.random() * 6))
     setRolls(r)
+    setBaseIdx(null)
+    setExtraIdxs([])
     setStage('fight')
   }
 
@@ -25,12 +28,14 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
       () => Math.ceil(Math.random() * 6),
     )
     setRolls(r)
+    setBaseIdx(null)
+    setExtraIdxs([])
     setStage('flee')
   }
 
   const confirmFight = () => {
     const weapon = hero.weapons[weaponIdx]
-    const res = fightGoblin(hero, goblin, weapon, rolls, baseIdx)
+    const res = fightGoblin(hero, goblin, weapon, rolls, baseIdx, extraIdxs)
     setResult({ type: 'fight', ...res })
     setStage('result')
   }
@@ -49,12 +54,13 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
   const closeResult = () => {
     if (!result) return
     if (result.type === 'fight') {
-      onFight(rolls, baseIdx, weaponIdx)
+      onFight(rolls, baseIdx, weaponIdx, extraIdxs)
     } else if (result.type === 'flee') {
       onFlee(result.success)
     }
     setRolls([])
     setBaseIdx(null)
+    setExtraIdxs([])
     setResult(null)
     setStage('menu')
   }
@@ -119,17 +125,36 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
         {stage === 'fight' && (
           <div className="fight-stage">
             <div className="dice-container">
-              {rolls.map((v, idx) => (
-                <div
-                  key={idx}
-                  className={`dice ${idx === baseIdx ? 'base' : ''} ${v >= 3 ? 'selectable' : ''}`}
-                  onClick={() => {
-                    if (v >= 3) setBaseIdx(idx)
-                  }}
-                >
-                  {v}
-                </div>
-              ))}
+              {rolls.map((v, idx) => {
+                const isBase = idx === baseIdx
+                const isExtra = extraIdxs.includes(idx)
+                const classes = ['dice']
+                if (isBase) classes.push('base')
+                if (v >= 3) {
+                  classes.push('selectable')
+                } else {
+                  classes.push(baseIdx === null ? 'disabled' : 'selectable')
+                  if (isExtra) classes.push('extra')
+                }
+                const handleClick = () => {
+                  if (v >= 3) {
+                    setBaseIdx(idx)
+                    setExtraIdxs([])
+                  } else if (baseIdx !== null) {
+                    setExtraIdxs(prev =>
+                      prev.includes(idx)
+                        ? prev.filter(i => i !== idx)
+                        : [...prev, idx],
+                    )
+                  }
+                }
+                return (
+                  <div key={idx} className={classes.join(' ')} onClick={handleClick}>
+                    {v < 3 && <img src="/add-icon.png" alt="+" className="plus-icon" />}
+                    {v}
+                  </div>
+                )
+              })}
             </div>
             <div className="info">
               {baseIdx === null
@@ -141,7 +166,8 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
                       hero,
                       hero.weapons[weaponIdx],
                       rolls,
-                      baseIdx
+                      baseIdx,
+                      extraIdxs
                     )
                     const parts = [`${details.hero} hero`, `${details.weapon} weapon`]
                     if (details.base) parts.push(`${details.base} base`)
