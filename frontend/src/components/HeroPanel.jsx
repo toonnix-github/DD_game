@@ -14,8 +14,10 @@ function HeroPanel({ hero, damaged }) {
     <div className={`hero-panel${damaged ? ' shake' : ''}`}>
       <div className="name-bar">{hero.name}</div>
       <img className="card-image" src={hero.image} alt={hero.name} />
-      <div className="movement-badge">
-        <img src="/icon/footprint.png" alt="movement" />
+      <div className="movement-icons">
+        {Array.from({ length: hero.movement }, (_, i) => (
+          <img key={i} src="/icon/footprint.png" alt="movement" />
+        ))}
       </div>
       <div className="stats-bar">
         <span className="stat"><img src="/fist.png" alt="strength" />{renderDice(hero.strengthDice, 'strength die')}·</span>
