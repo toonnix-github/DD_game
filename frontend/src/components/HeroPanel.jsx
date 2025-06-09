@@ -19,9 +19,6 @@ function HeroPanel({ hero, damaged }) {
           <img src="/fist.png" alt="strength" />{hero.attack}
         </div>
         <div className="stat">
-          <img src="/shield.png" alt="defence" />{hero.defence}
-        </div>
-        <div className="stat">
           <img src="/speed.png" alt="agility" />{hero.agility}
         </div>
         <div className="stat">
@@ -38,6 +35,10 @@ function HeroPanel({ hero, damaged }) {
         {Array.from({ length: hero.hp }, (_, i) => (
           <img key={i} src="/heart.png" alt="hp" />
         ))}
+      </div>
+      <div className="defence-badge">
+        <img src="/shield.png" alt="defence" />
+        <span>{hero.defence}</span>
       </div>
       <div className="description">{hero.skill}</div>
     </div>
