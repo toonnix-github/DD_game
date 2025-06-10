@@ -30,6 +30,7 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
   const [extraIdxs, setExtraIdxs] = useState([])
   const [weaponIdx, setWeaponIdx] = useState(0)
   const [result, setResult] = useState(null)
+  const [useSkill, setUseSkill] = useState(false)
 
   const startFight = () => {
     const weapon = hero.weapons[weaponIdx]
@@ -56,14 +57,15 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
   const confirmFight = () => {
     const weapon = hero.weapons[weaponIdx]
     const rewards = computeUnusedRewards(rolls, baseIdx, extraIdxs)
-    const res = fightGoblin(hero, goblin, weapon, rolls, baseIdx, extraIdxs)
+    const bonus = useSkill && hero.skill && hero.skill.bonus ? hero.skill.bonus : 0
+    const res = fightGoblin(hero, goblin, weapon, rolls, baseIdx, extraIdxs, bonus)
     const parts = []
     if (rewards.ap) parts.push(`${rewards.ap} ap`)
     if (rewards.hp) parts.push(`${rewards.hp} hp`)
     if (parts.length) {
       res.message += ` Unused dice reward: ${parts.join(' and ')}.`
     }
-    setResult({ type: 'fight', ...res, rewards })
+    setResult({ type: 'fight', ...res, rewards, skillUsed: useSkill })
     setStage('result')
   }
 
@@ -81,7 +83,7 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
   const closeResult = () => {
     if (!result) return
     if (result.type === 'fight') {
-      onFight(rolls, baseIdx, weaponIdx, extraIdxs, result.rewards)
+      onFight(rolls, baseIdx, weaponIdx, extraIdxs, result.rewards, result.skillUsed)
     } else if (result.type === 'flee') {
       onFlee(result.success)
     }
@@ -89,6 +91,7 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
     setBaseIdx(null)
     setExtraIdxs([])
     setResult(null)
+    setUseSkill(false)
     setStage('menu')
   }
 
@@ -143,6 +146,17 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
                 </label>
               ))}
             </div>
+            {hero.skill && hero.skill.title && (
+              <label className="use-skill-option">
+                <input
+                  type="checkbox"
+                  checked={useSkill}
+                  onChange={e => setUseSkill(e.target.checked)}
+                  disabled={hero.ap < (hero.skill.cost || 0)}
+                />
+                Use {hero.skill.title} (-{hero.skill.cost} AP)
+              </label>
+            )}
             <div className="buttons">
               <button onClick={startFight}>Fight</button>
               <button onClick={startFlee}>Flee</button>
@@ -203,7 +217,8 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
                       hero.weapons[weaponIdx],
                       rolls,
                       baseIdx,
-                      extraIdxs
+                      extraIdxs,
+                      useSkill && hero.skill && hero.skill.bonus ? hero.skill.bonus : 0
                     )
                     const parts = [`${details.weapon} weapon`]
                     if (details.hero > 0) parts.unshift(`${details.hero} hero`)

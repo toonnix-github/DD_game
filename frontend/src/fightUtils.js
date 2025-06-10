@@ -1,6 +1,6 @@
 
-export function computeAttackBreakdown(hero, weapon, rolls, baseIdx, extraIdxs = []) {
-  const heroPart = 0
+export function computeAttackBreakdown(hero, weapon, rolls, baseIdx, extraIdxs = [], bonus = 0) {
+  const heroPart = bonus
   const weaponPart = weapon.attack
   let base = 0
   let extra = 0
@@ -14,8 +14,8 @@ export function computeAttackBreakdown(hero, weapon, rolls, baseIdx, extraIdxs =
   return { total, hero: heroPart, weapon: weaponPart, base, extra }
 }
 
-export function computeAttackPower(hero, weapon, rolls, baseIdx, extraIdxs = []) {
-  return computeAttackBreakdown(hero, weapon, rolls, baseIdx, extraIdxs).total
+export function computeAttackPower(hero, weapon, rolls, baseIdx, extraIdxs = [], bonus = 0) {
+  return computeAttackBreakdown(hero, weapon, rolls, baseIdx, extraIdxs, bonus).total
 }
 
 export function computeUnusedRewards(rolls, baseIdx, extraIdxs = []) {
@@ -44,11 +44,11 @@ export function computeUnusedRewards(rolls, baseIdx, extraIdxs = []) {
   return { ap, hp }
 }
 
-export function fightGoblin(hero, goblin, weapon, rolls, baseIdx, extraIdxs = []) {
+export function fightGoblin(hero, goblin, weapon, rolls, baseIdx, extraIdxs = [], bonus = 0) {
   let heroHp = hero.hp
   let goblinHp = goblin.hp
 
-  const details = computeAttackBreakdown(hero, weapon, rolls, baseIdx, extraIdxs)
+  const details = computeAttackBreakdown(hero, weapon, rolls, baseIdx, extraIdxs, bonus)
   const attackPower = details.total
   const heroDefence = hero.defence + weapon.defence
   const heroDmg = Math.max(1, attackPower - goblin.defence)

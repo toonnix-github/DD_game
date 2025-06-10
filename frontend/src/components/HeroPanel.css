@@ -79,14 +79,26 @@
   bottom: 2.4rem;
   left: 0;
   right: 0;
-  height: 12%;
+  height: 4rem;
   background: rgba(255, 255, 255, 0.7);
   color: #000;
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
   padding: 0.25rem;
   font-size: 0.8rem;
+  text-align: left;
+}
+
+.skill-title {
+  font-weight: bold;
+  padding: 0.1rem 0.5rem;
+  margin-right: 0.3rem;
+  background: #000;
+  color: #fff;
+  margin-left: -0.3rem;
+  border-radius: 0 5px 5px 0;
+}
+
+.skill-desc {
+  font-size: 0.7rem;
 }
 
 @keyframes shake {
@@ -182,7 +194,7 @@
 
 .ap-flashes {
     position: absolute;
-    bottom: 4.5rem;
+    bottom: 6.4rem;
     right: 0.5rem;
     display: flex;
     z-index: 2;

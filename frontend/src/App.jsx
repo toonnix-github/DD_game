@@ -83,10 +83,11 @@ function loadState() {
         const base = HERO_TYPES[type]
         const maxHp = parsed.hero.maxHp ?? base.maxHp ?? base.hp
         const maxAp = parsed.hero.maxAp ?? base.maxAp ?? base.ap
+        const skill = parsed.hero.skill ?? base.skill
         parsed.hero = {
           row: parsed.hero.row,
           col: parsed.hero.col,
-          skill: parsed.hero.skill ?? base.skill,
+          skill: typeof skill === 'object' ? { ...skill } : skill,
           movement: parsed.hero.movement ?? base.movement,
           icon: parsed.hero.icon ?? base.icon,
           hp: Math.min(parsed.hero.hp ?? base.hp, maxHp),
@@ -141,11 +142,12 @@ function App() {
 
   const chooseHero = useCallback(type => {
     const base = HERO_TYPES[type]
+    const skill = base.skill
     const hero = {
       row: CENTER,
       col: CENTER,
       name: base.name,
-      skill: base.skill,
+      skill: typeof skill === 'object' ? { ...skill } : skill,
       movement: base.movement,
       icon: base.icon,
       hp: base.hp,
@@ -188,7 +190,11 @@ function App() {
       const base = HERO_TYPES[prev.hero.type]
       return {
         ...prev,
-        hero: { ...prev.hero, movement: base.movement },
+        hero: {
+          ...prev.hero,
+          movement: base.movement,
+          ap: prev.hero.maxAp,
+        },
       }
     })
   }, [])
@@ -300,12 +306,13 @@ function App() {
     return moves
   }, [state])
 
-  const handleFight = useCallback((rolls, baseIdx, weaponIdx, extraIdxs, rewards) => {
+  const handleFight = useCallback((rolls, baseIdx, weaponIdx, extraIdxs, rewards, skillUsed = false) => {
     setState(prev => {
       const { encounter, board, hero } = prev
       if (!encounter) return prev
       const weapon = hero.weapons[weaponIdx]
-      const result = fightGoblin(hero, encounter.goblin, weapon, rolls, baseIdx, extraIdxs)
+      const bonus = skillUsed && hero.skill && hero.skill.bonus ? hero.skill.bonus : 0
+      const result = fightGoblin(hero, encounter.goblin, weapon, rolls, baseIdx, extraIdxs, bonus)
       const newBoard = board.map(row => row.map(tile => ({ ...tile })))
       const tile = newBoard[encounter.position.row][encounter.position.col]
       let newEncounter = { ...encounter, goblin: result.goblin }
@@ -322,6 +329,9 @@ function App() {
         ...newHero,
         ap: Math.min(newHero.ap + rewards.ap, newHero.maxAp),
         hp: Math.min(newHero.hp + rewards.hp, newHero.maxHp),
+      }
+      if (skillUsed && hero.skill && hero.skill.cost) {
+        newHero.ap = Math.max(0, newHero.ap - hero.skill.cost)
       }
 
       if (result.goblin.hp <= 0) {

@@ -34,6 +34,7 @@ The current version shows a hero portrait drawn in a Hearthstone‑style. Each h
   - Movement range
   - HP (capped by a max value)
   - Activity points
+  - AP fully regenerates at the start of your turn
   - Defence power
   - Weapons determine attack power
   - Fleeing now requires rolling agility dice, adding excitement to encounters.
@@ -52,6 +53,12 @@ Starting values for each hero type can be modified in
 values) there to tweak the characters without touching the game logic. Heroes no
 longer have built-in attack or agility bonuses; their power comes solely from
 weapons and dice rolls.
+
+### Hero Skills
+
+Heroes may also possess special skills that consume action points. The first
+implemented example is the Viking's **Berserker Rage**. When toggled before a
+fight it spends 2 AP and grants +2 attack power for that encounter.
 
 ### Artwork Credits
 

@@ -71,7 +71,18 @@ function HeroPanel({ hero, damaged }) {
           />
         ))}
       </div>
-      <div className="description">{hero.skill}</div>
+      <div className="description">
+        {typeof hero.skill === 'object' ? (
+          <>
+            <span className="skill-title">{hero.skill.title}</span>
+            {hero.skill.description && (
+              <span className="skill-desc">{hero.skill.description}</span>
+            )}
+          </>
+        ) : (
+          hero.skill
+        )}
+      </div>
     </div>
   );
 }
