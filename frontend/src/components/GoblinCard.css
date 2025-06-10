@@ -11,7 +11,7 @@
   box-sizing: border-box;
 }
 
-.name-bar {
+.goblin-card .name-bar {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -27,14 +27,14 @@
   line-height: 1.2rem;
 }
 
-.card-image {
+.goblin-card .card-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.stats-bar {
+.goblin-card .stats-bar {
   position: absolute;
   display: flex;
   bottom: 1.2rem;
@@ -57,7 +57,7 @@
   margin-right: 0.05rem;
 }
 
-.hp-hearts {
+.goblin-card .hp-hearts {
   position: absolute;
   top: 0.25rem;
   left: 0.25rem;
@@ -66,12 +66,12 @@
   z-index: 2;
 }
 
-.hp-hearts img {
+.goblin-card .hp-hearts img {
   width: 1.2rem;
   height: 1.2rem;
 }
 
-.defence-badge {
+.goblin-card .defence-badge {
   position: absolute;
   bottom: 2%;
   right: -1%;
@@ -81,12 +81,12 @@
   transform: rotate(5deg);
 }
 
-.defence-badge img {
+.goblin-card .defence-badge img {
   width: 100%;
   height: 100%;
 }
 
-.defence-badge span {
+.goblin-card .defence-badge span {
   position: absolute;
   top: 0;
   left: 0;
@@ -102,10 +102,10 @@
 
 .monster-icon {
   position: absolute;
-  top: -0.4rem;
-  right: -0.4rem;
-  width: 2.5rem;
-  height: 2.5rem;
+  top: -0.25rem;
+  right: -0.25rem;
+  width: 2rem;
+  height: 2rem;
   border-radius: 50%;
   background: #fff;
   border: 0.25rem solid #000;

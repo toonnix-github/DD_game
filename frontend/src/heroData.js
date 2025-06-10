@@ -87,7 +87,7 @@ export const HERO_TYPES = {
     weapons: [
       {
         name: 'Axe',
-        attack: 3,
+        attack: 1,
         defence: 0,
         dice: 'strength',
         image: '/weapon/viking-axe.webp',
