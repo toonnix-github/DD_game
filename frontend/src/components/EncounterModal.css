@@ -8,13 +8,42 @@
   z-index: 10;
 }
 
+.screen-shake {
+  animation: screen-shake 0.4s;
+}
+
+@keyframes screen-shake {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-5px);
+  }
+  40% {
+    transform: translate(5px);
+  }
+  60% {
+    transform: translate(-5px);
+  }
+  80% {
+    transform: translate(5px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
 .encounter-window {
-  background-color: #444;
+  background: url('/room/dungeon-room-01.webp') center/cover no-repeat;
   color: white;
   padding: 1rem;
   border-radius: 4px;
-  width: 240px;
-  text-align: center;
+  width: 100%;
+  height: 80%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .goblin-image {
@@ -209,6 +238,73 @@
 
 .reward-card.revealed .reward-inner {
   transform: rotateY(180deg);
+}
+
+.encounter-side {
+  flex: 0 0 30%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hero-side .item-card {
+  width: 60px;
+  height: 60px;
+}
+
+.hero-items {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.encounter-middle {
+  flex: 1 1 auto;
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 0.5rem;
+}
+
+.enter-left {
+  animation: slide-in-left 0.4s forwards;
+}
+
+.enter-right {
+  animation: slide-in-right 0.4s forwards;
+}
+
+@keyframes slide-in-left {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.death-effect.red {
+  filter: drop-shadow(0 0 4px red);
 }
 
 .reward-face {

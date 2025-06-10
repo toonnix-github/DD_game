@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './EncounterModal.css'
 import ItemCard from './ItemCard'
 import {
@@ -31,6 +31,17 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
   const [weaponIdx, setWeaponIdx] = useState(0)
   const [result, setResult] = useState(null)
   const [useSkill, setUseSkill] = useState(false)
+  const [shake, setShake] = useState(true)
+  const [entered, setEntered] = useState(false)
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setShake(false), 400)
+    const t2 = setTimeout(() => setEntered(true), 20)
+    return () => {
+      clearTimeout(t1)
+      clearTimeout(t2)
+    }
+  }, [])
 
   const startFight = () => {
     const weapon = hero.weapons[weaponIdx]
@@ -96,173 +107,189 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
   }
 
   return (
-    <div className="encounter-overlay">
+    <div className={`encounter-overlay${shake ? ' screen-shake' : ''}`}>
       <div className="encounter-window">
-        <h2>{goblin.name}</h2>
-        <div className="goblin-image">
-          <img
-            src={goblin.image}
-            alt={goblin.name}
-            width="100"
-            height="100"
-            className={
-              stage === 'result' &&
+        <div className={`encounter-side goblin-side${entered ? ' enter-left' : ''}`}>
+          <h2>{goblin.name}</h2>
+          <div className="goblin-image">
+            <img
+              src={goblin.image}
+              alt={goblin.name}
+              width="100"
+              height="100"
+              className={
+                stage === 'result' &&
+                result &&
+                result.type === 'fight' &&
+                result.heroDmg > 0
+                  ? 'shake'
+                  : undefined
+              }
+            />
+            {stage === 'result' &&
               result &&
               result.type === 'fight' &&
-              result.heroDmg > 0
-                ? 'shake'
-                : undefined
-            }
-          />
-          {stage === 'result' &&
-            result &&
-            result.type === 'fight' &&
-            result.goblin.hp <= 0 && (
-              <img src="/star.svg" alt="defeated" className="death-effect" />
-            )}
+              result.goblin.hp <= 0 && (
+                <img src="/skull.png" alt="defeated" className="death-effect red" />
+              )}
+          </div>
+          <div className="stats">
+            <div className="label">HP</div>
+            <div>{goblin.hp}</div>
+            <div className="label">STR</div>
+            <div>{goblin.attack}</div>
+            <div className="label">Def</div>
+            <div>{goblin.defence}</div>
+          </div>
         </div>
-        <div className="stats">
-          <div className="label">HP</div>
-          <div>{goblin.hp}</div>
-          <div className="label">STR</div>
-          <div>{goblin.attack}</div>
-          <div className="label">Def</div>
-          <div>{goblin.defence}</div>
-        </div>
-        {stage === 'menu' && (
-          <>
-            <div className="weapon-select">
-              {hero.weapons.map((w, idx) => (
-                <label
-                  key={idx}
-                  className={`weapon-option ${weaponIdx === idx ? 'selected' : ''}`}
-                >
+
+        <div className="encounter-middle">
+          {stage === 'menu' && (
+            <>
+              <div className="weapon-select">
+                {hero.weapons.map((w, idx) => (
+                  <label
+                    key={idx}
+                    className={`weapon-option ${weaponIdx === idx ? 'selected' : ''}`}
+                  >
+                    <input
+                      type="radio"
+                      checked={weaponIdx === idx}
+                      onChange={() => setWeaponIdx(idx)}
+                    />
+                    <ItemCard item={w} />
+                  </label>
+                ))}
+              </div>
+              {hero.skill && hero.skill.title && (
+                <label className="use-skill-option">
                   <input
-                    type="radio"
-                    checked={weaponIdx === idx}
-                    onChange={() => setWeaponIdx(idx)}
+                    type="checkbox"
+                    checked={useSkill}
+                    onChange={e => setUseSkill(e.target.checked)}
+                    disabled={hero.ap < (hero.skill.cost || 0)}
                   />
-                  <ItemCard item={w} />
+                  Use {hero.skill.title} (-{hero.skill.cost} AP)
                 </label>
-              ))}
-            </div>
-            {hero.skill && hero.skill.title && (
-              <label className="use-skill-option">
-                <input
-                  type="checkbox"
-                  checked={useSkill}
-                  onChange={e => setUseSkill(e.target.checked)}
-                  disabled={hero.ap < (hero.skill.cost || 0)}
-                />
-                Use {hero.skill.title} (-{hero.skill.cost} AP)
-              </label>
-            )}
-            <div className="buttons">
-              <button onClick={startFight}>Fight</button>
-              <button onClick={startFlee}>Flee</button>
-            </div>
-          </>
-        )}
-        {stage === 'fight' && (
-          <div className="fight-stage">
-            <div className="dice-container">
-              {rolls.map((v, idx) => {
-                const isBase = idx === baseIdx
-                const isExtra = extraIdxs.includes(idx)
-                const classes = ['dice']
-                if (isBase) classes.push('base')
-                if (v >= 3) {
-                  classes.push('selectable')
-                } else {
-                  classes.push(baseIdx === null ? 'disabled' : 'selectable')
-                  if (isExtra) classes.push('extra')
-                }
-                const handleClick = () => {
+              )}
+              <div className="buttons">
+                <button onClick={startFight}>Fight</button>
+                <button onClick={startFlee}>Flee</button>
+              </div>
+            </>
+          )}
+          {stage === 'fight' && (
+            <div className="fight-stage">
+              <div className="dice-container">
+                {rolls.map((v, idx) => {
+                  const isBase = idx === baseIdx
+                  const isExtra = extraIdxs.includes(idx)
+                  const classes = ['dice']
+                  if (isBase) classes.push('base')
                   if (v >= 3) {
-                    setBaseIdx(idx)
-                    setExtraIdxs([])
-                  } else if (baseIdx !== null) {
-                    setExtraIdxs(prev =>
-                      prev.includes(idx)
-                        ? prev.filter(i => i !== idx)
-                        : [...prev, idx],
-                    )
+                    classes.push('selectable')
+                  } else {
+                    classes.push(baseIdx === null ? 'disabled' : 'selectable')
+                    if (isExtra) classes.push('extra')
                   }
-                }
-                const reward = rewardInfo(v)
-                return (
-                  <div key={idx} className={classes.join(' ')} onClick={handleClick}>
-                    <div className="dice-value">
-                      {v < 3 && <img src="/add-icon.png" alt="+" className="plus-icon" />}
-                      {v}
-                    </div>
-                    {reward && (
-                      <div className="dice-reward">
-                        <img src={reward.icon} alt="reward" />
-                        <span>{reward.text}</span>
+                  const handleClick = () => {
+                    if (v >= 3) {
+                      setBaseIdx(idx)
+                      setExtraIdxs([])
+                    } else if (baseIdx !== null) {
+                      setExtraIdxs(prev =>
+                        prev.includes(idx)
+                          ? prev.filter(i => i !== idx)
+                          : [...prev, idx],
+                      )
+                    }
+                  }
+                  const reward = rewardInfo(v)
+                  return (
+                    <div key={idx} className={classes.join(' ')} onClick={handleClick}>
+                      <div className="dice-value">
+                        {v < 3 && <img src="/add-icon.png" alt="+" className="plus-icon" />}
+                        {v}
                       </div>
-                    )}
+                      {reward && (
+                        <div className="dice-reward">
+                          <img src={reward.icon} alt="reward" />
+                          <span>{reward.text}</span>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+              <div className="info">
+                {baseIdx === null
+                  ? rolls.some(v => v >= 3)
+                    ? 'Choose a base die (>=3).'
+                    : 'No die is high enough for a base roll.'
+                  : (() => {
+                      const details = computeAttackBreakdown(
+                        hero,
+                        hero.weapons[weaponIdx],
+                        rolls,
+                        baseIdx,
+                        extraIdxs,
+                        useSkill && hero.skill && hero.skill.bonus ? hero.skill.bonus : 0
+                      )
+                      const parts = [`${details.weapon} weapon`]
+                      if (details.hero > 0) parts.unshift(`${details.hero} hero`)
+                      if (details.base) parts.push(`${details.base} base`)
+                      if (details.extra) parts.push(`${details.extra} extra`)
+                      return `Power ${details.total} (${parts.join(' + ')}) vs defence ${goblin.defence}`
+                    })()}
+              </div>
+              <div className="buttons">
+                <button
+                  onClick={confirmFight}
+                  disabled={rolls.some(v => v >= 3) && baseIdx === null}
+                >
+                  Attack
+                </button>
+              </div>
+            </div>
+          )}
+          {stage === 'flee' && (
+            <div className="fight-stage">
+              <div className="dice-container">
+                {rolls.map((v, idx) => (
+                  <div key={idx} className="dice">
+                    {v}
                   </div>
-                )
-              })}
+                ))}
+              </div>
+              <div className="info">Need a 4 or higher on any die to escape.</div>
+              <div className="buttons">
+                <button onClick={confirmFlee}>Run!</button>
+              </div>
             </div>
-            <div className="info">
-              {baseIdx === null
-                ? rolls.some(v => v >= 3)
-                  ? 'Choose a base die (>=3).'
-                  : 'No die is high enough for a base roll.'
-                : (() => {
-                    const details = computeAttackBreakdown(
-                      hero,
-                      hero.weapons[weaponIdx],
-                      rolls,
-                      baseIdx,
-                      extraIdxs,
-                      useSkill && hero.skill && hero.skill.bonus ? hero.skill.bonus : 0
-                    )
-                    const parts = [`${details.weapon} weapon`]
-                    if (details.hero > 0) parts.unshift(`${details.hero} hero`)
-                    if (details.base) parts.push(`${details.base} base`)
-                    if (details.extra) parts.push(`${details.extra} extra`)
-                    return `Power ${details.total} (${parts.join(' + ')}) vs defence ${goblin.defence}`
-                  })()}
+          )}
+          {stage === 'result' && result && (
+            <div className="result-stage">
+              <div className="result-message">{result.message}</div>
+              <div className="buttons">
+                <button onClick={closeResult}>OK</button>
+              </div>
             </div>
-            <div className="buttons">
-              <button
-                onClick={confirmFight}
-                disabled={rolls.some(v => v >= 3) && baseIdx === null}
-              >
-                Attack
-              </button>
-            </div>
+          )}
+        </div>
+
+        <div className={`encounter-side hero-side${entered ? ' enter-right' : ''}`}>
+          <h2>{hero.name}</h2>
+          <img src={hero.image} alt={hero.name} width="100" height="100" />
+          <div className="hero-items">
+            {hero.weapons.map((w, idx) => (
+              <ItemCard key={idx} item={w} />
+            ))}
           </div>
-        )}
-        {stage === 'flee' && (
-          <div className="fight-stage">
-            <div className="dice-container">
-              {rolls.map((v, idx) => (
-                <div key={idx} className="dice">
-                  {v}
-                </div>
-              ))}
-            </div>
-            <div className="info">Need a 4 or higher on any die to escape.</div>
-            <div className="buttons">
-              <button onClick={confirmFlee}>Run!</button>
-            </div>
-          </div>
-        )}
-        {stage === 'result' && result && (
-          <div className="result-stage">
-            <div className="result-message">{result.message}</div>
-            <div className="buttons">
-              <button onClick={closeResult}>OK</button>
-            </div>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   )
 }
 
 export default EncounterModal
+
