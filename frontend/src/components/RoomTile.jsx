@@ -4,12 +4,12 @@ import { DISARM_RULE } from '../trapRules'
 
 const DIRS = ['up', 'down', 'left', 'right']
 
-function RoomTile({ tile, onClick, highlight }) {
+function RoomTile({ tile, onClick, highlight, disabled }) {
   return (
     <div
       className={`tile ${tile.revealed ? 'revealed' : ''} ${highlight ? 'possible' : ''} ${
-        tile.revealed && tile.trap && !tile.trapResolved ? 'trap-room' : ''
-      }`}
+        disabled ? 'disabled' : ''
+      } ${tile.revealed && tile.trap && !tile.trapResolved ? 'trap-room' : ''}`}
       onClick={onClick}
       title={
         tile.revealed
