@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import './EncounterModal.css'
 import ItemCard from './ItemCard'
+import GoblinCard from './GoblinCard'
 import {
   computeAttackBreakdown,
   fightGoblin,
@@ -110,37 +111,21 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
     <div className={`encounter-overlay${shake ? ' screen-shake' : ''}`}>
       <div className="encounter-window">
         <div className={`encounter-side goblin-side${entered ? ' enter-left' : ''}`}>
-          <h2>{goblin.name}</h2>
-          <div className="goblin-image">
-            <img
-              src={goblin.image}
-              alt={goblin.name}
-              width="100"
-              height="100"
-              className={
-                stage === 'result' &&
-                result &&
-                result.type === 'fight' &&
-                result.heroDmg > 0
-                  ? 'shake'
-                  : undefined
-              }
-            />
-            {stage === 'result' &&
+          <GoblinCard
+            goblin={result && result.goblin ? result.goblin : goblin}
+            damaged={
+              stage === 'result' &&
               result &&
               result.type === 'fight' &&
-              result.goblin.hp <= 0 && (
-                <img src="/skull.png" alt="defeated" className="death-effect red" />
-              )}
-          </div>
-          <div className="stats">
-            <div className="label">HP</div>
-            <div>{goblin.hp}</div>
-            <div className="label">STR</div>
-            <div>{goblin.attack}</div>
-            <div className="label">Def</div>
-            <div>{goblin.defence}</div>
-          </div>
+              result.heroDmg > 0
+            }
+            defeated={
+              stage === 'result' &&
+              result &&
+              result.type === 'fight' &&
+              result.goblin.hp <= 0
+            }
+          />
         </div>
 
         <div className="encounter-middle">
