@@ -53,6 +53,12 @@ values) there to tweak the characters without touching the game logic. Heroes no
 longer have built-in attack or agility bonuses; their power comes solely from
 weapons and dice rolls.
 
+### Hero Skills
+
+Heroes may also possess special skills that consume action points. The first
+implemented example is the Viking's **Berserker Rage**. When toggled before a
+fight it spends 2 AP and grants +2 attack power for that encounter.
+
 ### Artwork Credits
 
 The colored knight and elf portraits shown in the game are custom SVG assets

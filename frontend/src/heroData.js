@@ -67,7 +67,12 @@ export const HERO_TYPES = {
   },
   viking: {
     name: 'Viking',
-    skill: 'Berserker rage',
+    skill: {
+      title: 'Berserker Rage',
+      description: 'Spend 2 AP to gain +2 attack power in combat.',
+      cost: 2,
+      bonus: 2,
+    },
     movement: 3,
     hp: 10,
     maxHp: 10,
