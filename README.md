@@ -48,8 +48,10 @@ When you enter a room with a trap you may attempt to disarm it. Roll your hero's
 ### Customizing Hero Stats
 
 Starting values for each hero type can be modified in
-`frontend/src/heroData.js`. Edit the stats (including `maxHp`) there to tweak
-the characters without touching the game logic.
+`frontend/src/heroData.js`. Edit the stats (including `maxHp` and weapon attack
+values) there to tweak the characters without touching the game logic. Heroes no
+longer have built-in attack or agility bonuses; their power comes solely from
+weapons and dice rolls.
 
 ### Artwork Credits
 

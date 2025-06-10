@@ -205,7 +205,8 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
                       baseIdx,
                       extraIdxs
                     )
-                    const parts = [`${details.hero} hero`, `${details.weapon} weapon`]
+                    const parts = [`${details.weapon} weapon`]
+                    if (details.hero > 0) parts.unshift(`${details.hero} hero`)
                     if (details.base) parts.push(`${details.base} base`)
                     if (details.extra) parts.push(`${details.extra} extra`)
                     return `Power ${details.total} (${parts.join(' + ')}) vs defence ${goblin.defence}`
