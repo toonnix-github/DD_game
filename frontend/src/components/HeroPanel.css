@@ -181,18 +181,17 @@
 }
 
 .ap-flashes {
-  position: absolute;
-  bottom: 3.6rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 0.125rem;
-  z-index: 2;
+    position: absolute;
+    bottom: 4.5rem;
+    right: 0.5rem;
+    display: flex;
+    z-index: 2;
 }
 
 .ap-flashes img {
   width: 1.2rem;
   height: 1.2rem;
+  margin-right: -0.5rem;
 }
 
 .ap-flashes img.used {
