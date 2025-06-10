@@ -79,9 +79,9 @@ export const HERO_TYPES = {
     maxAp: 2,
     ap: 2,
     defence: 2,
-    strengthDice: 4,
+    strengthDice: 3,
     agilityDice: 1,
-    magicDice: 0,
+    magicDice: 1,
     icon: 'V',
     image: '/hero-viking.webp',
     weapons: [
