@@ -9,15 +9,27 @@ function renderDice(count, alt) {
 
 function HeroPanel({ hero, damaged }) {
   const [movePulse, setMovePulse] = useState(false);
+  const [apPulse, setApPulse] = useState(false);
   const prevMoveRef = useRef(hero?.movement ?? 0);
+  const prevApRef = useRef(hero?.ap ?? 0);
 
   useEffect(() => {
+    let t1;
+    let t2;
     if (hero && prevMoveRef.current !== hero.movement) {
       setMovePulse(true);
-      const t = setTimeout(() => setMovePulse(false), 300);
+      t1 = setTimeout(() => setMovePulse(false), 300);
       prevMoveRef.current = hero.movement;
-      return () => clearTimeout(t);
     }
+    if (hero && prevApRef.current !== hero.ap) {
+      setApPulse(true);
+      t2 = setTimeout(() => setApPulse(false), 300);
+      prevApRef.current = hero.ap;
+    }
+    return () => {
+      if (t1) clearTimeout(t1);
+      if (t2) clearTimeout(t2);
+    };
   }, [hero]);
 
   if (!hero) return null;
@@ -30,6 +42,11 @@ function HeroPanel({ hero, damaged }) {
         <img className="foot-icon" src="/icon/footprint.png" alt="movement" />
         <img className="cross-icon" src="/icon/cross.png" alt="x" />
         <span className="move-count">{hero.movement}</span>
+      </div>
+      <div className={`ap-display${apPulse ? ' change' : ''}`}>
+        <img className="flash-icon" src="/flash.png" alt="action" />
+        <img className="cross-icon" src="/icon/cross.png" alt="x" />
+        <span className="ap-count">{hero.ap}</span>
       </div>
       <div className="stats-bar">
         <span className="stat"><img src="/fist.png" alt="strength" />{renderDice(hero.strengthDice, 'strength die')}·</span>

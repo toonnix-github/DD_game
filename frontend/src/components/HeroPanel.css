@@ -122,6 +122,17 @@
   color: #fff;
 }
 
+.ap-display {
+  position: absolute;
+  top: 1.25rem;
+  left: 0.25rem;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  color: #fff;
+}
+
 .movement-display .foot-icon {
   width: 1.1rem;
   height: auto;
@@ -135,7 +146,23 @@
   margin: 0 0.1rem;
 }
 
+.ap-display .flash-icon {
+  width: 1.1rem;
+  height: auto;
+  margin-right: 0.1rem;
+}
+
+.ap-display .cross-icon {
+  width: 0.9rem;
+  height: auto;
+  margin: 0 0.1rem;
+}
+
 .movement-display.change {
+  animation: pop 0.3s;
+}
+
+.ap-display.change {
   animation: pop 0.3s;
 }
 
