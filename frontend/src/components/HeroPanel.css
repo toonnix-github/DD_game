@@ -179,3 +179,25 @@
   font-size: 1.4rem;
   font-weight: bold;
 }
+
+.ap-flashes {
+    position: absolute;
+    bottom: 4.5rem;
+    right: 0.5rem;
+    display: flex;
+    z-index: 2;
+}
+
+.ap-flashes img {
+  width: 1.2rem;
+  height: 1.2rem;
+  margin-right: -0.5rem;
+}
+
+.ap-flashes img.used {
+  filter: brightness(0);
+}
+
+.ap-flashes.change {
+  animation: pop 0.3s;
+}

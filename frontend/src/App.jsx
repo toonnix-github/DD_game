@@ -82,6 +82,7 @@ function loadState() {
         const type = parsed.hero.type || 'knight'
         const base = HERO_TYPES[type]
         const maxHp = parsed.hero.maxHp ?? base.maxHp ?? base.hp
+        const maxAp = parsed.hero.maxAp ?? base.maxAp ?? base.ap
         parsed.hero = {
           row: parsed.hero.row,
           col: parsed.hero.col,
@@ -90,7 +91,8 @@ function loadState() {
           icon: parsed.hero.icon ?? base.icon,
           hp: Math.min(parsed.hero.hp ?? base.hp, maxHp),
           maxHp,
-          ap: parsed.hero.ap ?? base.ap,
+          ap: Math.min(parsed.hero.ap ?? base.ap, maxAp),
+          maxAp,
           attack: parsed.hero.attack ?? base.attack,
           defence: parsed.hero.defence ?? base.defence,
           agility: parsed.hero.agility ?? base.agility,
@@ -151,6 +153,7 @@ function App() {
       hp: base.hp,
       maxHp: base.maxHp ?? base.hp,
       ap: base.ap,
+      maxAp: base.maxAp ?? base.ap,
       attack: base.attack,
       defence: base.defence,
       agility: base.agility,
@@ -321,7 +324,7 @@ function App() {
       }
       newHero = {
         ...newHero,
-        ap: newHero.ap + rewards.ap,
+        ap: Math.min(newHero.ap + rewards.ap, newHero.maxAp),
         hp: Math.min(newHero.hp + rewards.hp, newHero.maxHp),
       }
 
