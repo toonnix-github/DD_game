@@ -3,7 +3,7 @@ import './GoblinCard.css'
 
 function GoblinCard({ goblin, damaged, defeated }) {
   return (
-    <div className={`goblin-card${damaged ? ' shake' : ''}`}>
+    <div className={`goblin-card${damaged ? ' attack-slide' : ''}`}>
       <div className="name-bar">{goblin.name}</div>
       <img className="card-image" src={goblin.image} alt={goblin.name} />
       {defeated && <img src="/skull.png" alt="defeated" className="death-effect red" />}

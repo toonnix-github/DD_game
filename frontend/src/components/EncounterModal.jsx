@@ -117,7 +117,7 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
               stage === 'result' &&
               result &&
               result.type === 'fight' &&
-              result.heroDmg > 0
+              (result.heroDmg > 0 || (result.counter && result.counter.damage > 0))
             }
             defeated={
               stage === 'result' &&
