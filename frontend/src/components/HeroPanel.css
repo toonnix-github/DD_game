@@ -111,17 +111,43 @@
   animation: shake 0.3s;
 }
 
-.movement-icons {
+.movement-display {
   position: absolute;
-  bottom: 4rem;
-  right: 0.25rem;
+  top: 0.25rem;
+  left: 0.25rem;
   z-index: 3;
+  display: flex;
+  align-items: center;
+  font-weight: bold;
 }
 
-.movement-icons img {
-  aspect-ratio: 92 / 134;
+.movement-display .foot-icon {
   width: 1.1rem;
+  height: auto;
+  margin-right: 0.1rem;
   transform: rotate(13deg);
+}
+
+.movement-display .cross-icon {
+  width: 0.9rem;
+  height: auto;
+  margin: 0 0.1rem;
+}
+
+.movement-display.change {
+  animation: pop 0.3s;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .defence-badge {
