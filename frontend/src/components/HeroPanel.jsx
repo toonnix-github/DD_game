@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './HeroPanel.css';
 
 function renderDice(count, alt) {
@@ -8,16 +8,28 @@ function renderDice(count, alt) {
 }
 
 function HeroPanel({ hero, damaged }) {
+  const [movePulse, setMovePulse] = useState(false);
+  const prevMoveRef = useRef(hero?.movement ?? 0);
+
+  useEffect(() => {
+    if (hero && prevMoveRef.current !== hero.movement) {
+      setMovePulse(true);
+      const t = setTimeout(() => setMovePulse(false), 300);
+      prevMoveRef.current = hero.movement;
+      return () => clearTimeout(t);
+    }
+  }, [hero]);
+
   if (!hero) return null;
 
   return (
     <div className={`hero-panel${damaged ? ' shake' : ''}`}>
       <div className="name-bar">{hero.name}</div>
       <img className="card-image" src={hero.image} alt={hero.name} />
-      <div className="movement-icons">
-        {Array.from({ length: hero.movement }, (_, i) => (
-          <img key={i} src="/icon/footprint.png" alt="movement" />
-        ))}
+      <div className={`movement-display${movePulse ? ' change' : ''}`}>
+        <img className="foot-icon" src="/icon/footprint.png" alt="movement" />
+        <img className="cross-icon" src="/icon/cross.png" alt="x" />
+        <span className="move-count">{hero.movement}</span>
       </div>
       <div className="stats-bar">
         <span className="stat"><img src="/fist.png" alt="strength" />{renderDice(hero.strengthDice, 'strength die')}·</span>
