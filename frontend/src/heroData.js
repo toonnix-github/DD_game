@@ -45,7 +45,7 @@ export const HERO_TYPES = {
     agilityDice: 2,
     magicDice: 2,
     icon: 'E',
-    image: '/elf.svg',
+    image: '/elf.png',
     weapons: [
       {
         name: 'Bow',

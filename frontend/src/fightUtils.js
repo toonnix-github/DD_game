@@ -51,7 +51,11 @@ export function fightGoblin(hero, goblin, weapon, rolls, baseIdx, extraIdxs = []
   const details = computeAttackBreakdown(hero, weapon, rolls, baseIdx, extraIdxs, bonus)
   const attackPower = details.total
   const heroDefence = hero.defence + weapon.defence
-  const heroDmg = Math.max(1, attackPower - goblin.defence)
+  // If the hero's attack power does not overcome the goblin's defence
+  // they shouldn't inflict any damage. Previously a minimum of 1 damage
+  // was always applied which could kill low HP goblins even when the
+  // attack was too weak. This now properly allows zero damage.
+  const heroDmg = Math.max(0, attackPower - goblin.defence)
   const goblinDmg = Math.max(1, goblin.attack - heroDefence)
 
   goblinHp -= heroDmg
