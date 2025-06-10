@@ -17,6 +17,10 @@
   box-shadow: inset 0 0 0 2px yellow;
   cursor: pointer;
 }
+.tile.disabled {
+  opacity: 0.5;
+  cursor: default;
+}
 .tile.revealed {
   background-color: #555;
   border-color: #aaa;
@@ -52,13 +56,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: repeating-linear-gradient(
-    45deg,
-    #222,
-    #222 10px,
-    #333 10px,
-    #333 20px
-  );
+  background-image: url('/cover.png');
+  background-size: cover;
+  background-position: center;
 }
 
 .center {

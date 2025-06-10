@@ -441,11 +441,13 @@ function App() {
           {state.board.map((row, rIdx) =>
             row.map((tile, cIdx) => {
               const highlight = possibleMoves.some(p => p.row === rIdx && p.col === cIdx)
+              const disabled = !highlight && (state.hero.row !== rIdx || state.hero.col !== cIdx)
               return (
                 <RoomTile
                   key={`${rIdx}-${cIdx}`}
                   tile={tile}
                   highlight={highlight}
+                  disabled={disabled}
                   onClick={() => moveHero(rIdx, cIdx)}
                 />
               )
