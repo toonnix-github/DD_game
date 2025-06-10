@@ -1,5 +1,5 @@
 export const DISARM_RULE =
-  "Roll your hero's agility dice. Take the highest roll and add your agility stat. If the total meets or exceeds the trap difficulty, it is disarmed.";
+  "Roll your hero's agility dice and take the highest result. If it meets or exceeds the trap difficulty, the trap is disarmed.";
 
 export const TRAP_TYPES = {
   snare: {

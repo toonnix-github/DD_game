@@ -1,6 +1,6 @@
 
 export function computeAttackBreakdown(hero, weapon, rolls, baseIdx, extraIdxs = []) {
-  const heroPart = hero.attack
+  const heroPart = 0
   const weaponPart = weapon.attack
   let base = 0
   let extra = 0

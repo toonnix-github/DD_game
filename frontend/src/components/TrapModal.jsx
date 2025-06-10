@@ -10,7 +10,7 @@ function TrapModal({ hero, trap, onResolve }) {
     const r = Array.from({ length: hero.agilityDice }, () => Math.ceil(Math.random() * 6))
     setRolls(r)
     const best = Math.max(...r)
-    setSuccess(best + hero.agility >= trap.difficulty)
+    setSuccess(best >= trap.difficulty)
   }
 
   const close = () => {

@@ -34,16 +34,16 @@ The current version shows a hero portrait drawn in a Hearthstone‑style. Each h
   - Movement range
   - HP (capped by a max value)
   - Activity points
-- Attack power
-- Defence power
-- Fleeing now requires rolling agility dice, adding excitement to encounters.
+  - Defence power
+  - Weapons determine attack power
+  - Fleeing now requires rolling agility dice, adding excitement to encounters.
 
 The hero panel now displays these attributes along with a portrait image for the selected hero. Lost HP is shown using the same heart icon tinted black via CSS so you can quickly gauge your health. Dice stats are represented by repeating dice icons rather than numbers.
 
 ### Trap Disarming
 
 When you enter a room with a trap you may attempt to disarm it. Roll your hero's
-*agility* dice and take the highest result. Add your hero's agility stat to this roll. If the total meets or exceeds the trap's listed difficulty the trap is disarmed and you receive a random treasure. Failure keeps the trap active and deals damage, so decide carefully. Unresolved trap rooms are highlighted in red with a warning icon so you can easily spot them on the board.
+*agility* dice and take the highest result. If the roll meets or exceeds the trap's listed difficulty the trap is disarmed and you receive a random treasure. Failure keeps the trap active and deals damage, so decide carefully. Unresolved trap rooms are highlighted in red with a warning icon so you can easily spot them on the board.
 
 ### Customizing Hero Stats
 
