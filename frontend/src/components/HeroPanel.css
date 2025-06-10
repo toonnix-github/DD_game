@@ -57,7 +57,7 @@
 
 .hp-hearts {
   position: absolute;
-  top: 2rem;
+  top: 0.25rem;
   right: 0.25rem;
   display: grid;
   grid-template-columns: repeat(2, 1rem);
