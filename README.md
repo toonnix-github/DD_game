@@ -34,6 +34,7 @@ The current version shows a hero portrait drawn in a Hearthstone‑style. Each h
   - Movement range
   - HP (capped by a max value)
   - Activity points
+  - AP fully regenerates at the start of your turn
   - Defence power
   - Weapons determine attack power
   - Fleeing now requires rolling agility dice, adding excitement to encounters.

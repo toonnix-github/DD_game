@@ -190,7 +190,11 @@ function App() {
       const base = HERO_TYPES[prev.hero.type]
       return {
         ...prev,
-        hero: { ...prev.hero, movement: base.movement },
+        hero: {
+          ...prev.hero,
+          movement: base.movement,
+          ap: prev.hero.maxAp,
+        },
       }
     })
   }, [])
