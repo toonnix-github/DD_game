@@ -10,12 +10,23 @@ function renderDice(count, alt) {
 function HeroPanel({ hero, damaged }) {
   const [movePulse, setMovePulse] = useState(false);
   const prevMoveRef = useRef(hero?.movement ?? 0);
+  const [apPulse, setApPulse] = useState(false);
+  const prevApRef = useRef(hero?.ap ?? 0);
 
   useEffect(() => {
     if (hero && prevMoveRef.current !== hero.movement) {
       setMovePulse(true);
       const t = setTimeout(() => setMovePulse(false), 300);
       prevMoveRef.current = hero.movement;
+      return () => clearTimeout(t);
+    }
+  }, [hero]);
+
+  useEffect(() => {
+    if (hero && prevApRef.current !== hero.ap) {
+      setApPulse(true);
+      const t = setTimeout(() => setApPulse(false), 300);
+      prevApRef.current = hero.ap;
       return () => clearTimeout(t);
     }
   }, [hero]);
@@ -49,6 +60,16 @@ function HeroPanel({ hero, damaged }) {
       <div className="defence-badge">
         <img src="/shield.png" alt="defence" />
         <span>{hero.defence}</span>
+      </div>
+      <div className={`ap-flashes${apPulse ? ' change' : ''}`}>
+        {Array.from({ length: hero.maxAp }, (_, i) => (
+          <img
+            key={i}
+            src="/flash.png"
+            className={i < hero.ap ? undefined : 'used'}
+            alt="ap"
+          />
+        ))}
       </div>
       <div className="description">{hero.skill}</div>
     </div>
