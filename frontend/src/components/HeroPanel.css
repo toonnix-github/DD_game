@@ -119,6 +119,7 @@
   display: flex;
   align-items: center;
   font-weight: bold;
+  color: #fff;
 }
 
 .movement-display .foot-icon {
