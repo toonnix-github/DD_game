@@ -9,11 +9,11 @@ import TrapModal from './components/TrapModal'
 import { TRAP_TYPES } from './trapRules'
 import DiscardModal from './components/DiscardModal'
 import RewardModal from './components/RewardModal'
+import EventLog from './components/EventLog'
 import { createShuffledDeck } from './roomDeck'
 import './App.css'
 import { HERO_TYPES } from './heroData'
 import { GOBLIN_TYPES, randomGoblinType } from './goblinData'
-import { fightGoblin, computeUnusedRewards } from './fightUtils'
 import { randomTreasure, adaptTreasureItem } from './treasureDeck'
 
 const BOARD_SIZE = 7
@@ -138,11 +138,17 @@ function loadState() {
 function App() {
   const [state, setState] = useState(loadState)
   const [heroDamaged, setHeroDamaged] = useState(false)
+  const [eventLog, setEventLog] = useState([])
   const prevHpRef = useRef(state.hero ? state.hero.hp : null)
 
-  const chooseHero = useCallback(type => {
-    const base = HERO_TYPES[type]
-    const skill = base.skill
+  const addLog = useCallback(msg => {
+    setEventLog(prev => [...prev, msg])
+  }, [])
+
+  const chooseHero = useCallback(
+    type => {
+      const base = HERO_TYPES[type]
+      const skill = base.skill
     const hero = {
       row: CENTER,
       col: CENTER,
@@ -167,7 +173,8 @@ function App() {
       },
     }
     setState(prev => ({ ...prev, hero }))
-  }, [])
+    addLog(`${hero.name} enters the dungeon.`)
+  }, [addLog])
 
   useEffect(() => {
     localStorage.setItem('dungeon-state', JSON.stringify(state))
@@ -202,6 +209,7 @@ function App() {
   const resetGame = useCallback(() => {
     localStorage.removeItem('dungeon-state')
     setState(loadState())
+    setEventLog([])
   }, [])
 
   const moveHero = useCallback(
@@ -278,8 +286,14 @@ function App() {
       }
 
       setState({ board: newBoard, hero: newHero, deck: newDeck, encounter: newEncounter, trap: newTrap })
+      addLog(`${hero.name} moves ${dir}`)
+      if (newEncounter) addLog(`Encountered ${newEncounter.goblin.name}`)
+      if (newTrap) {
+        const t = newTrap.trap
+        addLog(`Found trap: ${t.id} (difficulty ${t.difficulty})`)
+      }
     },
-    [state]
+    [state, addLog]
   )
 
   const possibleMoves = useMemo(() => {
@@ -316,27 +330,14 @@ function App() {
     [state.board],
   )
 
-  const handleFight = useCallback((rolls, baseIdx, weaponIdx, extraIdxs, rewards, skillUsed = false) => {
+  const handleFight = useCallback(fightResult => {
+    const logs = []
+    const rewardVals = fightResult?.rewards || { ap: 0, hp: 0 }
     setState(prev => {
       const { encounter, board, hero } = prev
-      if (!encounter) return prev
-      const weapon = hero.weapons[weaponIdx]
-      const bonus = skillUsed && hero.skill && hero.skill.bonus ? hero.skill.bonus : 0
-      const alive = board.reduce(
-        (acc, row) =>
-          acc + row.reduce((a, t) => a + (t.goblin && t.goblin.hp > 0 ? 1 : 0), 0),
-        0,
-      )
-      const result = fightGoblin(
-        hero,
-        encounter.goblin,
-        weapon,
-        rolls,
-        baseIdx,
-        extraIdxs,
-        bonus,
-        alive,
-      )
+      if (!encounter || !fightResult) return prev
+      const { skillUsed } = fightResult
+      const result = fightResult
       const newBoard = board.map(row => row.map(tile => ({ ...tile })))
       const tile = newBoard[encounter.position.row][encounter.position.col]
       let newEncounter = {
@@ -349,13 +350,10 @@ function App() {
       tile.goblin = { ...result.goblin, defence: result.defenceAfter }
       const row = encounter.position.row
       const col = encounter.position.col
-      if (!rewards) {
-        rewards = computeUnusedRewards(rolls, baseIdx, extraIdxs)
-      }
       newHero = {
         ...newHero,
-        ap: Math.min(newHero.ap + rewards.ap, newHero.maxAp),
-        hp: Math.min(newHero.hp + rewards.hp, newHero.maxHp),
+        ap: Math.min(newHero.ap + rewardVals.ap, newHero.maxAp),
+        hp: Math.min(newHero.hp + rewardVals.hp, newHero.maxHp),
       }
       if (skillUsed && hero.skill && hero.skill.cost) {
         newHero.ap = Math.max(0, newHero.ap - hero.skill.cost)
@@ -381,11 +379,70 @@ function App() {
         // end encounter after counterattack
         newEncounter = null
       }
-      return { ...prev, board: newBoard, hero: newHero, encounter: newEncounter, reward, discard }
+      const updated = {
+        ...prev,
+        board: newBoard,
+        hero: newHero,
+        encounter: newEncounter,
+        reward,
+        discard,
+      }
+      return updated
     })
-  }, [])
+    // create log details after state update
+    if (fightResult) {
+      const { goblin, details, attackPower, shieldDamage, heroDmg, counter, brokeShield, rolls, baseIdx, extraIdxs } = fightResult
+      const weapon = fightResult.hero.weapons[fightResult.weaponIdx]
+      logs.push(`Rolls: ${rolls.join(', ')}`)
+      if (baseIdx != null) {
+        const extras = extraIdxs.map(i => rolls[i]).join(', ')
+        logs.push(`Using base ${rolls[baseIdx]}${extras ? ` with extras ${extras}` : ''}`)
+      }
+      const goblinDefBefore = fightResult.defenceAfter + shieldDamage
+      const parts = []
+      if (details.hero) parts.push(`${details.hero} hero`)
+      parts.push(`${details.weapon} weapon`)
+      if (details.base) parts.push(`${details.base} base`)
+      if (details.extra) parts.push(`${details.extra} extra`)
+      logs.push(`Attack with ${weapon.name}: power ${attackPower} (${parts.join(' + ')}) vs defence ${goblinDefBefore}.`)
+      if (shieldDamage > 0) {
+        logs.push(brokeShield ? `Shield takes ${shieldDamage} damage and breaks.` : `Shield takes ${shieldDamage} damage.`)
+      } else {
+        logs.push('The shield absorbs the blow.')
+      }
+      if (heroDmg > 0) logs.push(`Goblin loses ${heroDmg} HP.`)
+      if (goblin.hp - heroDmg <= 0) logs.push('Goblin defeated!')
+      if (counter) {
+        if (counter.roll != null || counter.effect) {
+          logs.push(`Goblin counter roll: ${counter.roll != null ? counter.roll : counter.effect}`)
+        }
+        const bd = counter.breakdown
+        const parts2 = [`${bd.attack} attack`]
+        if (bd.roll) parts2.push(`${bd.roll} roll`)
+        if (bd.extra) parts2.push(`${bd.extra} mod`)
+        logs.push(`Counterattack power ${bd.total} (${parts2.join(' + ')}) vs defence ${counter.defenceBefore}.`)
+        if (counter.effect === 'shieldBreak') {
+          logs.push(`Shield break! You take ${counter.damage} damage.`)
+        } else if (counter.brokeShield) {
+          logs.push(`Shield broken! You take ${counter.damage} damage.`)
+        } else if (counter.damage > 0) {
+          logs.push(`You take ${counter.damage} damage.`)
+        } else {
+          logs.push('The shield absorbs the blow.')
+        }
+      }
+      if (rewardVals.ap || rewardVals.hp) {
+        const rewardParts = []
+        if (rewardVals.ap) rewardParts.push(`${rewardVals.ap} ap`)
+        if (rewardVals.hp) rewardParts.push(`${rewardVals.hp} hp`)
+        logs.push(`Unused dice reward: ${rewardParts.join(' and ')}.`)
+      }
+    }
+    logs.forEach(addLog)
+  }, [addLog])
 
   const handleFlee = useCallback(success => {
+    let msg = ''
     setState(prev => {
       if (!prev.encounter) return prev
       const { encounter, board, hero } = prev
@@ -400,15 +457,21 @@ function App() {
           y: Math.random() * 40 - 20,
         }
         newEncounter = null
+        msg = 'Fled successfully.'
       } else {
         const damage = Math.max(1, encounter.goblin.attack - hero.defence)
         newHero.hp = hero.hp - damage
+        msg = `Failed to flee and took ${damage} damage.`
       }
       return { ...prev, board: newBoard, hero: newHero, encounter: newEncounter }
     })
-  }, [])
+    addLog(msg)
+  }, [addLog])
 
-  const handleTrapResolve = useCallback(success => {
+  const handleTrapResolve = useCallback(result => {
+    if (!result) return
+    const { success, rolls } = typeof result === 'object' ? result : { success: result, rolls: [] }
+    let msg = ''
     setState(prev => {
       const { trap, board, hero } = prev
       if (!trap) return prev
@@ -423,15 +486,26 @@ function App() {
         newHero.weapons = [...hero.weapons, item]
         newHero.hp = Math.min(hero.hp + tile.trap.reward, hero.maxHp)
         reward = { item, hp: tile.trap.reward }
+        msg = `Disarmed trap and gained ${tile.trap.reward} hp.`
       }
       if (!success) {
         newHero.hp = hero.hp - tile.trap.damage
+        msg = `Hit by trap for ${tile.trap.damage} damage.`
       }
       return { ...prev, board: newBoard, hero: newHero, trap: null, reward, discard }
     })
-  }, [])
+    const rollMsg = rolls && rolls.length
+      ? `Rolled ${rolls.join(', ')} (best ${Math.max(...rolls)})`
+      : ''
+    addLog(
+      rollMsg
+        ? `${rollMsg}. ${msg}`
+        : msg,
+    )
+  }, [addLog])
 
   const handleRewardConfirm = useCallback(() => {
+    let msg = 'Collected reward'
     setState(prev => {
       if (!prev.reward) return prev
       let discard = null
@@ -440,11 +514,13 @@ function App() {
       }
       return { ...prev, reward: null, discard }
     })
-  }, [])
+    addLog(msg)
+  }, [addLog])
 
   const handleDiscardConfirm = useCallback(items => {
     setState(prev => ({ ...prev, hero: { ...prev.hero, weapons: items }, discard: null }))
-  }, [])
+    addLog('Chose items to keep')
+  }, [addLog])
 
   useEffect(() => {
     if (!state.hero) return
@@ -507,6 +583,7 @@ function App() {
         )}
         <button onClick={endTurn} className="end-turn">End Turn</button>
         <button onClick={resetGame} className="reset-game">Reset Game</button>
+        <EventLog log={eventLog} />
       </div>
       {state.encounter && (
         <EncounterModal

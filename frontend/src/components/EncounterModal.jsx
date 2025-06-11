@@ -45,10 +45,15 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
   const [shake, setShake] = useState(true)
   const [entered, setEntered] = useState(false)
   const [displayGoblin, setDisplayGoblin] = useState(goblin)
+  const [displayHero, setDisplayHero] = useState(hero)
 
   useEffect(() => {
     setDisplayGoblin(goblin)
   }, [goblin])
+
+  useEffect(() => {
+    setDisplayHero(hero)
+  }, [hero])
 
   useEffect(() => {
     const t1 = setTimeout(() => setShake(false), 400)
@@ -75,21 +80,33 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
       }, 1000)
     } else if (counterPhase === 'show') {
       t = setTimeout(() => {
-        if (result.counter.effect === 'shieldBreak') {
-          setCounterMsg(
-            `Shield break! You take ${result.counter.damage} damage.`,
-          )
-        } else if (result.counter.effect === 'torchDown') {
+        if (result.counter.effect === 'torchDown') {
           setCounterMsg('Torch down!')
         } else {
-          setCounterMsg(`Counterattack deals ${result.counter.damage} damage.`)
+          const bd = result.counter.breakdown
+          const parts = [`${bd.attack} attack`]
+          if (bd.roll) parts.push(`${bd.roll} roll`)
+          if (bd.extra) parts.push(`${bd.extra} mod`)
+          const detail = parts.join(' + ')
+          const baseMsg = `Counterattack power ${bd.total} (${detail}) vs defence ${result.counter.defenceBefore}.`
+          if (result.counter.effect === 'shieldBreak') {
+            setCounterMsg(`${baseMsg} Shield break! You take ${result.counter.damage} damage.`)
+          } else if (result.counter.brokeShield) {
+            setCounterMsg(`${baseMsg} Shield broken! You take ${result.counter.damage} damage.`)
+          } else if (result.counter.damage > 0) {
+            setCounterMsg(`${baseMsg} You take ${result.counter.damage} damage.`)
+          } else {
+            setCounterMsg(`${baseMsg} The shield absorbs the blow.`)
+          }
         }
         setCounterPhase('effect')
       }, 1000)
     } else if (counterPhase === 'effect') {
       setHeroHpDmg(result.counter.damage)
-      if (result.counter.effect === 'shieldBreak') setHeroShieldBroken(true)
+      if (result.counter.effect === 'shieldBreak' || result.counter.brokeShield)
+        setHeroShieldBroken(true)
       t = setTimeout(() => {
+        setDisplayHero(result.hero)
         setHeroHpDmg(null)
         setHeroShieldBroken(false)
         setCounterPhase(null)
@@ -121,11 +138,7 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
           setAttackMsg('The shield shatters!')
           t2 = setTimeout(() => {
             setShieldBroken(false)
-            if (result.heroDmg > 0) {
-              setAttackPhase('hpHit')
-            } else {
-              setAttackPhase('finish')
-            }
+            setAttackPhase(result.heroDmg > 0 ? 'hpHit' : 'finish')
           }, 600)
         } else {
           setAttackMsg('The blow fails to break the shield.')
@@ -201,6 +214,7 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
       res.message += ` Unused dice reward: ${parts.join(' and ')}.`
     }
     setResult({ type: 'fight', ...res, rewards, skillUsed: useSkill })
+    setDisplayHero(hero)
     setDisplayGoblin(goblin)
     setAttackPhase('swing')
     setAttackMsg(`You swing your ${weapon.name}...`)
@@ -221,7 +235,7 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
   const closeResult = () => {
     if (!result) return
     if (result.type === 'fight') {
-      onFight(rolls, baseIdx, weaponIdx, extraIdxs, result.rewards, result.skillUsed)
+      onFight({ ...result, weaponIdx, rolls, baseIdx, extraIdxs })
     } else if (result.type === 'flee') {
       onFlee(result.success)
     }
@@ -234,6 +248,7 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
     setShieldDmg(null)
     setShieldBroken(false)
     setDisplayGoblin(goblin)
+    setDisplayHero(hero)
     setUseSkill(false)
     setStage('menu')
   }
@@ -436,7 +451,7 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
 
         <div className={`encounter-side hero-side${entered ? ' enter-right' : ''}`}>
           <HeroPanel
-            hero={result ? { ...result.hero, defence: result.heroDefenceAfter } : hero}
+            hero={displayHero}
             hpDamage={heroHpDmg}
             shieldBroken={heroShieldBroken}
           />
