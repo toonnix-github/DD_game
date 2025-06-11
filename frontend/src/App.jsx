@@ -285,7 +285,6 @@ function App() {
     (r, c) => {
       const { hero, board, encounter } = state
       if (!hero || encounter) return
-      if (board[hero.row][hero.col].goblin) return
       const tile = board[r][c]
       if (!tile.goblin || tile.goblin.hp <= 0) return
 
@@ -340,7 +339,6 @@ function App() {
   const rangedTargets = useMemo(() => {
     const { hero, board, encounter } = state
     if (!hero || encounter) return []
-    if (board[hero.row][hero.col].goblin) return []
     const targets = []
     hero.weapons.forEach(w => {
       if (w.attackType === 'range' && w.dice === 'agility' && w.range > 0) {
