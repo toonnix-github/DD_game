@@ -93,12 +93,12 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
     if (attackPhase === 'swing') {
       t = setTimeout(() => {
         setAttackPhase('impact')
-        setAttackMsg('The goblin\'s shield shakes!')
+        setAttackMsg("The goblin's shield shakes!")
         setShieldDmg(result.heroDmg)
       }, 1000)
     } else if (attackPhase === 'impact') {
       t = setTimeout(() => {
-        if (result.heroDmg > goblin.defence) {
+        if (result.brokeShield) {
           setShieldBroken(true)
           setAttackMsg('The shield shatters!')
         } else {
@@ -120,7 +120,7 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
       }, 1000)
     }
     return () => clearTimeout(t)
-  }, [stage, attackPhase, result, goblin])
+  }, [stage, attackPhase, result])
 
   const startFight = () => {
     const weapon = hero.weapons[weaponIdx]
@@ -205,7 +205,13 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
       <div className="encounter-window">
         <div className={`encounter-side goblin-side${entered ? ' enter-left' : ''}`}>
           <GoblinCard
-            goblin={result && result.goblin ? result.goblin : goblin}
+            goblin={
+              stage === 'attack' && attackPhase === 'swing'
+                ? goblin
+                : result && result.goblin
+                ? { ...result.goblin, defence: result.defenceAfter }
+                : goblin
+            }
             damaged={
               stage === 'attack' && attackPhase !== 'swing' &&
               result &&

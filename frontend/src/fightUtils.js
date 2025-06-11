@@ -65,6 +65,8 @@ export function fightGoblin(
   // was always applied which could kill low HP goblins even when the
   // attack was too weak. This now properly allows zero damage.
   const heroDmg = Math.max(0, attackPower - goblin.defence)
+  const brokeShield = heroDmg > goblin.defence
+  const defenceAfter = brokeShield ? 0 : goblin.defence
   const goblinDmg = Math.max(1, goblin.attack - heroDefence)
 
   goblinHp -= heroDmg
@@ -101,6 +103,8 @@ export function fightGoblin(
       heroDmg,
       goblinDmg,
       counter,
+      brokeShield,
+      defenceAfter,
       message,
     }
   } else {
@@ -116,6 +120,8 @@ export function fightGoblin(
       heroDmg,
       goblinDmg: 0,
       counter: null,
+      brokeShield,
+      defenceAfter,
       message,
     }
   }
