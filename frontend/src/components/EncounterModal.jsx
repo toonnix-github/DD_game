@@ -393,11 +393,27 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee, onReward, 
                         extraIdxs,
                         useSkill && hero.skill && hero.skill.bonus ? hero.skill.bonus : 0
                       )
+                      const rewards = computeUnusedRewards(rolls, baseIdx, extraIdxs)
+                      const rewardParts = []
+                      if (rewards.ap) rewardParts.push(`${rewards.ap} ap`)
+                      if (rewards.hp) rewardParts.push(`${rewards.hp} hp`)
                       const parts = [`${details.weapon} weapon`]
                       if (details.hero > 0) parts.unshift(`${details.hero} hero`)
                       if (details.base) parts.push(`${details.base} base`)
                       if (details.extra) parts.push(`${details.extra} extra`)
-                      return `Power ${details.total} (${parts.join(' + ')}) vs defence ${goblin.defence}`
+                      return (
+                        <>
+                          {`defence ${goblin.defence}`}
+                          <br />vs<br />
+                          {`Power ${details.total} (${parts.join(' + ')})`}
+                          {rewardParts.length ? (
+                            <>
+                              <br />
+                              {`Unused dice reward: ${rewardParts.join(' and ')}`}
+                            </>
+                          ) : null}
+                        </>
+                      )
                     })()}
               </div>
               <div className="buttons">
