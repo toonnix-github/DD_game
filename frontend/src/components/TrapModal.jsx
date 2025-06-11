@@ -19,7 +19,7 @@ function TrapModal({ hero, trap, onResolve }) {
 
   return (
     <div className="encounter-overlay">
-      <div className="encounter-window">
+      <div className="encounter-window trap-window">
         <h2>Trap!</h2>
         {rolls.length === 0 && (
           <>

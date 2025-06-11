@@ -65,6 +65,10 @@
   }
 }
 
+.encounter-window.trap-window {
+  background: url('/room/trap-room.png') center/cover no-repeat;
+}
+
 .goblin-image {
   position: relative;
   width: 100px;
