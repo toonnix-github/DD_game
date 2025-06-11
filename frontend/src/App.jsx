@@ -351,12 +351,23 @@ function App() {
     [addLog],
   )
 
+  const applySkillCost = useCallback(
+    cost => {
+      if (!cost) return
+      setState(prev => {
+        const hero = prev.hero
+        if (!hero) return prev
+        return { ...prev, hero: { ...hero, ap: Math.max(0, hero.ap - cost) } }
+      })
+    },
+    [],
+  )
+
   const handleFight = useCallback(fightResult => {
     const logs = []
     setState(prev => {
-      const { encounter, board, hero } = prev
+      const { encounter, board } = prev
       if (!encounter || !fightResult) return prev
-      const { skillUsed } = fightResult
       const result = fightResult
       const newBoard = board.map(row => row.map(tile => ({ ...tile })))
       const tile = newBoard[encounter.position.row][encounter.position.col]
@@ -370,9 +381,6 @@ function App() {
       tile.goblin = { ...result.goblin, defence: result.defenceAfter }
       const row = encounter.position.row
       const col = encounter.position.col
-      if (skillUsed && hero.skill && hero.skill.cost) {
-        newHero.ap = Math.max(0, newHero.ap - hero.skill.cost)
-      }
 
       if (result.goblin.hp <= 0) {
         tile.goblin = null
@@ -413,9 +421,17 @@ function App() {
         const extras = extraIdxs.map(i => rolls[i]).join(', ')
         logs.push(`Using base ${rolls[baseIdx]}${extras ? ` with extras ${extras}` : ''}`)
       }
-      const goblinDefBefore = fightResult.defenceAfter + shieldDamage
+      if (fightResult.skillUsed && fightResult.hero.skill && fightResult.hero.skill.title) {
+        logs.push(`Used ${fightResult.hero.skill.title} (-${fightResult.hero.skill.cost} AP).`)
+      }
+      const goblinDefBefore = goblin.defence
       const parts = []
-      if (details.hero) parts.push(`${details.hero} hero`)
+      if (details.hero) {
+        const label = fightResult.skillUsed && fightResult.hero.skill && fightResult.hero.skill.title
+          ? fightResult.hero.skill.title
+          : 'hero'
+        parts.push(`${details.hero} ${label}`)
+      }
       parts.push(`${details.weapon} weapon`)
       if (details.base) parts.push(`${details.base} base`)
       if (details.extra) parts.push(`${details.extra} extra`)
@@ -431,19 +447,23 @@ function App() {
         if (counter.roll != null || counter.effect) {
           logs.push(`Goblin counter roll: ${counter.roll != null ? counter.roll : counter.effect}`)
         }
-        const bd = counter.breakdown
-        const parts2 = [`${bd.attack} attack`]
-        if (bd.roll) parts2.push(`${bd.roll} roll`)
-        if (bd.extra) parts2.push(`${bd.extra} mod`)
-        logs.push(`Counterattack power ${bd.total} (${parts2.join(' + ')}) vs defence ${counter.defenceBefore}.`)
-        if (counter.effect === 'shieldBreak') {
-          logs.push(`Shield break! You take ${counter.damage} damage.`)
-        } else if (counter.brokeShield) {
-          logs.push(`Shield broken! You take ${counter.damage} damage.`)
-        } else if (counter.damage > 0) {
-          logs.push(`You take ${counter.damage} damage.`)
+        if (counter.effect !== 'torchDown') {
+          const bd = counter.breakdown
+          const parts2 = [`${bd.attack} attack`]
+          if (bd.roll) parts2.push(`${bd.roll} roll`)
+          if (bd.extra) parts2.push(`${bd.extra} mod`)
+          logs.push(`Counterattack power ${bd.total} (${parts2.join(' + ')}) vs defence ${counter.defenceBefore}.`)
+          if (counter.effect === 'shieldBreak') {
+            logs.push(`Shield break! You take ${counter.damage} damage.`)
+          } else if (counter.brokeShield) {
+            logs.push(`Shield broken! You take ${counter.damage} damage.`)
+          } else if (counter.damage > 0) {
+            logs.push(`You take ${counter.damage} damage.`)
+          } else {
+            logs.push('The shield absorbs the blow.')
+          }
         } else {
-          logs.push('The shield absorbs the blow.')
+          logs.push('Torch down! No counterattack.')
         }
       }
       // reward already applied when dice were selected
@@ -601,6 +621,7 @@ function App() {
           hero={state.hero}
           goblinCount={goblinCount}
           onReward={applyDiceRewards}
+          onSkill={applySkillCost}
           onFight={handleFight}
           onFlee={handleFlee}
         />

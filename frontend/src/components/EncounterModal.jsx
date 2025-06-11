@@ -25,7 +25,7 @@ function rewardInfo(value) {
   }
 }
 
-function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee, onReward }) {
+function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee, onReward, onSkill }) {
   const [stage, setStage] = useState('menu')
   const [rolls, setRolls] = useState([])
   const [baseIdx, setBaseIdx] = useState(null)
@@ -203,6 +203,12 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee, onReward }
       ...hero,
       ap: Math.min(hero.ap + rewards.ap, hero.maxAp),
       hp: Math.min(hero.hp + rewards.hp, hero.maxHp),
+    }
+    if (useSkill && hero.skill && hero.skill.cost) {
+      heroWithRewards.ap = Math.max(0, heroWithRewards.ap - hero.skill.cost)
+      if (onSkill) {
+        onSkill(hero.skill.cost)
+      }
     }
     const bonus = useSkill && hero.skill && hero.skill.bonus ? hero.skill.bonus : 0
     const res = fightGoblin(
