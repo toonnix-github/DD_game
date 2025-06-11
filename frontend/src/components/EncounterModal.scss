@@ -191,6 +191,28 @@
   margin-bottom: 0.5rem;
 }
 
+.trap-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.trap-icon {
+  font-size: 1.5rem;
+}
+
+.trap-name {
+  text-transform: capitalize;
+  font-weight: bold;
+}
+
+.trap-difficulty {
+  margin-bottom: 0.5rem;
+}
+
 .label {
   text-align: right;
   opacity: 0.8;
