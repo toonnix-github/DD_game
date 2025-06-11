@@ -167,31 +167,37 @@
   0% {
     transform: rotate(-2deg) translateX(0);
   }
+
   50% {
-    transform: rotate(-2deg) translateX(1rem);
+    transform: rotate(-2deg) translateX(4rem);
   }
+
   100% {
     transform: rotate(-2deg) translateX(0);
   }
 }
 
 .shake {
-  animation: shake 0.3s;
+  animation: shake 0.5s;
 }
 
 @keyframes shake {
   0% {
     transform: translate(0);
   }
+
   25% {
-    transform: translate(-3px);
+    transform: translate(-5px);
   }
+
   50% {
-    transform: translate(3px);
+    transform: translate(4px);
   }
+
   75% {
     transform: translate(-3px);
   }
+
   100% {
     transform: translate(0);
   }
@@ -202,6 +208,7 @@
     opacity: 1;
     transform: translate(-50%, 0);
   }
+
   100% {
     opacity: 0;
     transform: translate(-50%, -1.3rem);
