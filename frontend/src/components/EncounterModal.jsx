@@ -44,6 +44,11 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
   const [useSkill, setUseSkill] = useState(false)
   const [shake, setShake] = useState(true)
   const [entered, setEntered] = useState(false)
+  const [displayGoblin, setDisplayGoblin] = useState(goblin)
+
+  useEffect(() => {
+    setDisplayGoblin(goblin)
+  }, [goblin])
 
   useEffect(() => {
     const t1 = setTimeout(() => setShake(false), 400)
@@ -96,29 +101,48 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
 
   useEffect(() => {
     if (stage !== 'attack' || !result) return
-    let t
+    let t1
+    let t2
     if (attackPhase === 'swing') {
-      t = setTimeout(() => {
-        setAttackPhase('impact')
+      t1 = setTimeout(() => {
+        setAttackPhase('shieldHit')
         setAttackMsg("The goblin's shield shakes!")
         setShieldDmg(result.shieldDamage)
       }, 1000)
-    } else if (attackPhase === 'impact') {
-      t = setTimeout(() => {
+    } else if (attackPhase === 'shieldHit') {
+      t1 = setTimeout(() => {
+        setShieldDmg(null)
+        setDisplayGoblin(g => ({
+          ...g,
+          defence: Math.max(0, g.defence - result.shieldDamage),
+        }))
         if (result.brokeShield) {
           setShieldBroken(true)
-          setHpDmg(result.heroDmg)
           setAttackMsg('The shield shatters!')
+          t2 = setTimeout(() => {
+            setShieldBroken(false)
+            if (result.heroDmg > 0) {
+              setAttackPhase('hpHit')
+            } else {
+              setAttackPhase('finish')
+            }
+          }, 600)
         } else {
           setAttackMsg('The blow fails to break the shield.')
+          setAttackPhase('finish')
         }
-        setAttackPhase('finish')
+      }, 1000)
+    } else if (attackPhase === 'hpHit') {
+      t1 = setTimeout(() => {
+        setHpDmg(result.heroDmg)
+        t2 = setTimeout(() => {
+          setDisplayGoblin(g => ({ ...g, hp: result.goblin.hp }))
+          setHpDmg(null)
+          setAttackPhase('finish')
+        }, 600)
       }, 1000)
     } else if (attackPhase === 'finish') {
-      t = setTimeout(() => {
-        setShieldDmg(null)
-        setShieldBroken(false)
-        setHpDmg(null)
+      t1 = setTimeout(() => {
         if (result.counter) {
           setCounterPhase('roll')
           setCounterMsg('Goblin rolls for counterattack...')
@@ -128,7 +152,10 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
         }
       }, 1000)
     }
-    return () => clearTimeout(t)
+    return () => {
+      clearTimeout(t1)
+      clearTimeout(t2)
+    }
   }, [stage, attackPhase, result])
 
   const startFight = () => {
@@ -174,6 +201,7 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
       res.message += ` Unused dice reward: ${parts.join(' and ')}.`
     }
     setResult({ type: 'fight', ...res, rewards, skillUsed: useSkill })
+    setDisplayGoblin(goblin)
     setAttackPhase('swing')
     setAttackMsg(`You swing your ${weapon.name}...`)
     setStage('attack')
@@ -205,6 +233,7 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
     setAttackMsg('')
     setShieldDmg(null)
     setShieldBroken(false)
+    setDisplayGoblin(goblin)
     setUseSkill(false)
     setStage('menu')
   }
@@ -215,14 +244,15 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
         <div className={`encounter-side goblin-side${entered ? ' enter-left' : ''}`}>
           <GoblinCard
             goblin={
-              stage === 'attack' && attackPhase === 'swing'
-                ? goblin
+              stage === 'attack'
+                ? displayGoblin
                 : result && result.goblin
                 ? { ...result.goblin, defence: result.defenceAfter }
                 : goblin
             }
             damaged={
-              stage === 'attack' && attackPhase !== 'swing' &&
+              stage === 'attack' &&
+              attackPhase === 'hpHit' &&
               result &&
               result.type === 'fight' &&
               result.heroDmg > 0
