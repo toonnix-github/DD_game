@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "postinstall": "npm install --prefix frontend",
-    "test": "echo \"No tests specified\" && exit 0"
+    "test": "node tests/fightFlow.test.mjs"
   },
   "keywords": [],
   "author": "",
