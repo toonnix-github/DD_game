@@ -17,6 +17,12 @@ function ItemCard({ item }) {
           <img src="/add-icon.png" alt="attack" className="plus-icon" />
           <span>{item.attack}</span>
         </div>
+        {item.range ? (
+          <div className="attack-range">
+            <img src="/icon/range-location.png" alt="range" className="range-icon" />
+            <span>{item.range}</span>
+          </div>
+        ) : null}
       </div>
       <div className="weapon-type">
         <img src={typeIcon} alt={item.attackType || 'melee'} />

@@ -54,6 +54,7 @@ export const HERO_TYPES = {
         dice: 'agility',
         image: '/bow.svg',
         attackType: 'range',
+        range: 3,
       },
       {
         name: 'Dagger',

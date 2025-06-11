@@ -16,6 +16,7 @@ import { HERO_TYPES } from './heroData'
 import { GOBLIN_TYPES, randomGoblinType } from './goblinData'
 import { randomTreasure, adaptTreasureItem } from './treasureDeck'
 import { formatFightLogs } from './fightUtils'
+import { getRangedTargets } from './boardUtils'
 
 const BOARD_SIZE = 7
 const CENTER = Math.floor(BOARD_SIZE / 2)
@@ -296,6 +297,37 @@ function App() {
     [state, addLog]
   )
 
+  const shootGoblin = useCallback(
+    (r, c) => {
+      const { hero, board, encounter } = state
+      if (!hero || encounter) return
+      const tile = board[r][c]
+      if (!tile.goblin || tile.goblin.hp <= 0) return
+
+      const inRange = hero.weapons.some(
+        w =>
+          w.attackType === 'range' &&
+          w.dice === 'agility' &&
+          w.range > 0 &&
+          getRangedTargets(board, hero, w.range).some(
+            t => t.row === r && t.col === c,
+          ),
+      )
+      if (!inRange) return
+
+      setState(prev => ({
+        ...prev,
+        encounter: {
+          goblin: { ...tile.goblin },
+          position: { row: r, col: c },
+          prev: { row: hero.row, col: hero.col },
+        },
+      }))
+      addLog(`${hero.name} attacks ${tile.goblin.name} from afar`)
+    },
+    [state, addLog],
+  )
+
   const possibleMoves = useMemo(() => {
     const { hero, board, encounter } = state
     if (!hero || hero.movement <= 0 || encounter) return []
@@ -318,6 +350,22 @@ function App() {
       if (!t.revealed || t.paths.left) moves.push({ row: hero.row, col: hero.col + 1 })
     }
     return moves
+  }, [state])
+
+  const rangedTargets = useMemo(() => {
+    const { hero, board, encounter } = state
+    if (!hero || encounter) return []
+    const targets = []
+    hero.weapons.forEach(w => {
+      if (w.attackType === 'range' && w.dice === 'agility' && w.range > 0) {
+        getRangedTargets(board, hero, w.range).forEach(t => {
+          if (!targets.some(pt => pt.row === t.row && pt.col === t.col)) {
+            targets.push(t)
+          }
+        })
+      }
+    })
+    return targets
   }, [state])
 
   const goblinCount = useMemo(
@@ -552,15 +600,16 @@ function App() {
         <div className="board">
           {state.board.map((row, rIdx) =>
             row.map((tile, cIdx) => {
-              const highlight = possibleMoves.some(p => p.row === rIdx && p.col === cIdx)
-              const disabled = !highlight && (state.hero.row !== rIdx || state.hero.col !== cIdx)
+              const move = possibleMoves.some(p => p.row === rIdx && p.col === cIdx)
+              const attack = rangedTargets.some(p => p.row === rIdx && p.col === cIdx)
+              const disabled = !move && !attack && (state.hero.row !== rIdx || state.hero.col !== cIdx)
               return (
                 <RoomTile
                   key={`${rIdx}-${cIdx}`}
                   tile={tile}
-                  highlight={highlight}
+                  highlight={move || attack}
                   disabled={disabled}
-                  onClick={() => moveHero(rIdx, cIdx)}
+                  onClick={() => (move ? moveHero(rIdx, cIdx) : attack ? shootGoblin(rIdx, cIdx) : null)}
                 />
               )
             })

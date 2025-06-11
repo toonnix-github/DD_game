@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "postinstall": "npm install --prefix frontend",
-    "test": "node tests/fightFlow.test.mjs"
+    "test": "node tests/fightFlow.test.mjs && node tests/rangeWeapon.test.mjs"
   },
   "keywords": [],
   "author": "",
