@@ -287,7 +287,10 @@ function App() {
       setState({ board: newBoard, hero: newHero, deck: newDeck, encounter: newEncounter, trap: newTrap })
       addLog(`${hero.name} moves ${dir}`)
       if (newEncounter) addLog(`Encountered ${newEncounter.goblin.name}`)
-      if (newTrap) addLog(`Found trap: ${newTrap.trap.name}`)
+      if (newTrap) {
+        const t = newTrap.trap
+        addLog(`Found trap: ${t.id} (difficulty ${t.difficulty})`)
+      }
     },
     [state, addLog]
   )
@@ -387,8 +390,13 @@ function App() {
     })
     // create log details after state update
     if (fightResult) {
-      const { goblin, details, attackPower, shieldDamage, heroDmg, goblinDmg, counter, brokeShield } = fightResult
+      const { goblin, details, attackPower, shieldDamage, heroDmg, goblinDmg, counter, brokeShield, rolls, baseIdx, extraIdxs } = fightResult
       const weapon = fightResult.hero.weapons[fightResult.weaponIdx]
+      logs.push(`Rolls: ${rolls.join(', ')}`)
+      if (baseIdx != null) {
+        const extras = extraIdxs.map(i => rolls[i]).join(', ')
+        logs.push(`Using base ${rolls[baseIdx]}${extras ? ` with extras ${extras}` : ''}`)
+      }
       const goblinDefBefore = fightResult.defenceAfter + shieldDamage
       const parts = []
       if (details.hero) parts.push(`${details.hero} hero`)
@@ -405,6 +413,9 @@ function App() {
       if (goblin.hp - heroDmg <= 0) logs.push('Goblin defeated!')
       if (goblinDmg > 0) logs.push(`Goblin strikes back for ${goblinDmg} damage.`)
       if (counter) {
+        if (counter.roll != null || counter.effect) {
+          logs.push(`Goblin counter roll: ${counter.roll != null ? counter.roll : counter.effect}`)
+        }
         const bd = counter.breakdown
         const parts2 = [`${bd.attack} attack`]
         if (bd.roll) parts2.push(`${bd.roll} roll`)
@@ -457,7 +468,9 @@ function App() {
     addLog(msg)
   }, [addLog])
 
-  const handleTrapResolve = useCallback(success => {
+  const handleTrapResolve = useCallback(result => {
+    if (!result) return
+    const { success, rolls } = typeof result === 'object' ? result : { success: result, rolls: [] }
     let msg = ''
     setState(prev => {
       const { trap, board, hero } = prev
@@ -481,7 +494,14 @@ function App() {
       }
       return { ...prev, board: newBoard, hero: newHero, trap: null, reward, discard }
     })
-    addLog(msg)
+    const rollMsg = rolls && rolls.length
+      ? `Rolled ${rolls.join(', ')} (best ${Math.max(...rolls)})`
+      : ''
+    addLog(
+      rollMsg
+        ? `${rollMsg}. ${msg}`
+        : msg,
+    )
   }, [addLog])
 
   const handleRewardConfirm = useCallback(() => {

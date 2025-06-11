@@ -14,7 +14,7 @@ function TrapModal({ hero, trap, onResolve }) {
   }
 
   const close = () => {
-    if (success !== null) onResolve(success)
+    if (success !== null) onResolve({ success, rolls })
   }
 
   return (
