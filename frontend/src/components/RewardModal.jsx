@@ -9,7 +9,9 @@ function RewardModal({ reward, onConfirm }) {
       <div className="encounter-window">
         <h2>You got a reward!</h2>
         <p className="reward-info">
-          1 random item{reward.hp ? ` and ${reward.hp} hp` : ''}
+          1 random item
+          {reward.hp ? ` and ${reward.hp} hp` : ''}
+          {reward.ap ? ` and ${reward.ap} ap` : ''}
         </p>
         <div
           className={`reward-card ${revealed ? 'revealed' : ''}`}

@@ -1,6 +1,6 @@
 import React from 'react';
 import './RoomTile.scss';
-import { DISARM_RULE } from '../trapRules';
+import { DISARM_RULE, EVASION_RULE } from '../trapRules';
 
 const DIRS = ['up', 'down', 'left', 'right'];
 
@@ -13,9 +13,9 @@ function RoomTile({ tile, onClick, highlight, disabled }) {
       title={
         tile.revealed
           ? tile.roomId +
-          (tile.trap && !tile.trapResolved
-            ? ` - ${DISARM_RULE} Difficulty ${tile.trap.difficulty}.`
-            : '')
+            (tile.trap && !tile.trapResolved
+              ? ` - ${EVASION_RULE} Difficulty ${tile.trap.difficulty}. ${DISARM_RULE}`
+              : '')
           : undefined
       }
     >
@@ -42,7 +42,7 @@ function RoomTile({ tile, onClick, highlight, disabled }) {
           title={
             tile.trapResolved
               ? 'Trap disarmed'
-              : `${DISARM_RULE} Difficulty ${tile.trap.difficulty}.`
+              : `${EVASION_RULE} Difficulty ${tile.trap.difficulty}. ${DISARM_RULE}`
           }
         >
           {tile.trapResolved ? '✅' : tile.trap.icon}
