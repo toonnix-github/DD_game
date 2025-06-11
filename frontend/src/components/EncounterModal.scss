@@ -65,6 +65,15 @@
   }
 }
 
+.encounter-window.trap-window {
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+    url('/room/trap-room.png') center/cover no-repeat;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  text-shadow: 0 0 4px #000;
+}
+
 .goblin-image {
   position: relative;
   width: 100px;
@@ -184,6 +193,29 @@
 
 .trap-info {
   font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.trap-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.trap-icon {
+  font-size: 1.5rem;
+}
+
+.trap-name {
+  text-transform: capitalize;
+  font-weight: bold;
+}
+
+.trap-difficulty {
   margin-bottom: 0.5rem;
 }
 
