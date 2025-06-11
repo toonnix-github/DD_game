@@ -63,16 +63,19 @@ export function fightGoblin(hero, goblin, weapon, rolls, baseIdx, extraIdxs = []
   if (goblinHp > 0) {
     heroHp -= goblinDmg
     message += ` Goblin strikes back for ${goblinDmg}.`
-    const counterRoll = Math.floor(Math.random() * 4) + 2
-    let counter = { roll: counterRoll, effect: null, damage: 0 }
-    if (counterRoll === 5) {
-      counter.effect = 'torchDown'
-      message += ' Counter roll 5 - torch down.'
-    } else {
-      counter.effect = 'shieldBreak'
-      counter.damage = goblin.attack
-      heroHp -= goblin.attack
-      message += ` Counter roll ${counterRoll} - shield break deals ${goblin.attack} damage.`
+    let counter = null
+    if (heroHp > 0) {
+      const faces = ['torchDown', 2, 3, 4, 5, 'shieldBreak']
+      const face = faces[Math.floor(Math.random() * faces.length)]
+      counter = {
+        roll: typeof face === 'number' ? face : null,
+        effect: face === 'shieldBreak' || face === 'torchDown' ? face : null,
+        damage: 0,
+      }
+      if (face === 'shieldBreak') {
+        counter.damage = goblin.attack
+        heroHp -= goblin.attack
+      }
     }
     if (heroHp <= 0) {
       message += ' You have fallen.'

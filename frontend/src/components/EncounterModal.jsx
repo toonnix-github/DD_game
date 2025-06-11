@@ -51,8 +51,14 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
     let t
     if (counterPhase === 'roll') {
       t = setTimeout(() => {
+        const label =
+          result.counter.roll != null
+            ? result.counter.roll
+            : result.counter.effect === 'shieldBreak'
+            ? 'shield break'
+            : 'torch down'
         setCounterPhase('show')
-        setCounterMsg(`Rolled ${result.counter.roll}`)
+        setCounterMsg(`Rolled ${label}`)
       }, 1000)
     } else if (counterPhase === 'show') {
       t = setTimeout(() => {
@@ -290,8 +296,24 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
             <div className="result-stage">
               <div className="result-message">{counterMsg}</div>
               <div className="dice-container">
-                <div className="dice">
-                  {counterPhase === 'roll' ? '?' : result.counter.roll}
+                <div
+                  className={`monster-dice${
+                    counterPhase === 'roll' ? ' dice-shake' : ''
+                  }`}
+                >
+                  {counterPhase === 'roll'
+                    ? ''
+                    : result.counter.effect === 'shieldBreak'
+                    ? (
+                        <img src="/shield.png" alt="shield break" />
+                      )
+                    : result.counter.effect === 'torchDown'
+                    ? (
+                        <span className="torch-icon">🔥</span>
+                      )
+                    : (
+                        result.counter.roll
+                      )}
                 </div>
               </div>
             </div>
