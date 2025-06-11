@@ -451,7 +451,13 @@ function App() {
 
   const handleTrapResolve = useCallback(result => {
     if (!result) return
-    const { evaded, disarm, evasionRolls = [], disarmRolls = [] } = result
+    const {
+      evaded,
+      disarm,
+      evasionRolls = [],
+      disarmRolls = [],
+      rewards = { ap: 0, hp: 0 },
+    } = result
     let messageParts = []
     setState(prev => {
       const { trap, board, hero } = prev
@@ -468,14 +474,18 @@ function App() {
         messageParts.push('Evaded trap.')
       }
       if (disarm !== undefined) {
-        newHero.ap = Math.max(0, hero.ap - 1)
+        newHero.ap = Math.max(0, Math.min(hero.maxAp, hero.ap - 1 + (disarm ? rewards.ap : 0)))
         if (disarm) {
           tile.trapResolved = true
           const item = adaptTreasureItem(randomTreasure())
           newHero.weapons = [...hero.weapons, item]
-          newHero.hp = Math.min(newHero.hp + tile.trap.reward, hero.maxHp)
-          reward = { item, hp: tile.trap.reward }
-          messageParts.push(`Disarmed trap and gained ${tile.trap.reward} hp.`)
+          newHero.hp = Math.min(newHero.hp + tile.trap.reward + (rewards.hp || 0), hero.maxHp)
+          reward = { item, hp: tile.trap.reward + (rewards.hp || 0), ap: rewards.ap }
+          const rewardMsg = []
+          if (tile.trap.reward) rewardMsg.push(`${tile.trap.reward} hp`)
+          if (rewards.ap) rewardMsg.push(`${rewards.ap} ap`)
+          if (rewards.hp) rewardMsg.push(`${rewards.hp} bonus hp`)
+          messageParts.push(`Disarmed trap and gained ${rewardMsg.join(' and ')}.`)
         } else {
           newHero.hp = newHero.hp - tile.trap.damage
           messageParts.push(`Failed to disarm and took ${tile.trap.damage} damage.`)

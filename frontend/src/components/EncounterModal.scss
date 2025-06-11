@@ -299,6 +299,16 @@
   }
 }
 
+.hero-dice {
+  width: 40px;
+  height: 40px;
+  background: url('/dice.png') center/contain no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
 .dice-shake {
   animation: shake 0.6s;
 }
