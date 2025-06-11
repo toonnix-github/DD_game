@@ -31,7 +31,10 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee, onReward, 
   const [rolls, setRolls] = useState([])
   const [baseIdx, setBaseIdx] = useState(null)
   const [extraIdxs, setExtraIdxs] = useState([])
-  const [weaponIdx, setWeaponIdx] = useState(0)
+  const firstMeleeIdx = hero.weapons.findIndex(w => w.attackType !== 'range')
+  const [weaponIdx, setWeaponIdx] = useState(
+    firstMeleeIdx >= 0 ? firstMeleeIdx : 0,
+  )
   const [result, setResult] = useState(null)
   const [counterPhase, setCounterPhase] = useState(null)
   const [counterMsg, setCounterMsg] = useState('')
@@ -54,6 +57,11 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee, onReward, 
 
   useEffect(() => {
     setDisplayHero(hero)
+  }, [hero])
+
+  useEffect(() => {
+    const idx = hero.weapons.findIndex(w => w.attackType !== 'range')
+    setWeaponIdx(idx >= 0 ? idx : 0)
   }, [hero])
 
   useEffect(() => {
@@ -314,6 +322,7 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee, onReward, 
                       type="radio"
                       checked={weaponIdx === idx}
                       onChange={() => setWeaponIdx(idx)}
+                      disabled={w.attackType === 'range'}
                     />
                     <ItemCard item={w} />
                   </label>
@@ -331,7 +340,12 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee, onReward, 
                 </label>
               )}
               <div className="buttons">
-                <button onClick={startFight}>Fight</button>
+                <button
+                  onClick={startFight}
+                  disabled={hero.weapons[weaponIdx].attackType === 'range'}
+                >
+                  Fight
+                </button>
                 <button onClick={startFlee}>Flee</button>
               </div>
             </>
