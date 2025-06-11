@@ -9,6 +9,7 @@ import TrapModal from './components/TrapModal'
 import { TRAP_TYPES } from './trapRules'
 import DiscardModal from './components/DiscardModal'
 import RewardModal from './components/RewardModal'
+import EventLog from './components/EventLog'
 import { createShuffledDeck } from './roomDeck'
 import './App.css'
 import { HERO_TYPES } from './heroData'
@@ -137,11 +138,17 @@ function loadState() {
 function App() {
   const [state, setState] = useState(loadState)
   const [heroDamaged, setHeroDamaged] = useState(false)
+  const [eventLog, setEventLog] = useState([])
   const prevHpRef = useRef(state.hero ? state.hero.hp : null)
 
-  const chooseHero = useCallback(type => {
-    const base = HERO_TYPES[type]
-    const skill = base.skill
+  const addLog = useCallback(msg => {
+    setEventLog(prev => [...prev, msg])
+  }, [])
+
+  const chooseHero = useCallback(
+    type => {
+      const base = HERO_TYPES[type]
+      const skill = base.skill
     const hero = {
       row: CENTER,
       col: CENTER,
@@ -166,7 +173,8 @@ function App() {
       },
     }
     setState(prev => ({ ...prev, hero }))
-  }, [])
+    addLog(`${hero.name} enters the dungeon.`)
+  }, [addLog])
 
   useEffect(() => {
     localStorage.setItem('dungeon-state', JSON.stringify(state))
@@ -277,8 +285,11 @@ function App() {
       }
 
       setState({ board: newBoard, hero: newHero, deck: newDeck, encounter: newEncounter, trap: newTrap })
+      addLog(`${hero.name} moves ${dir}`)
+      if (newEncounter) addLog(`Encountered ${newEncounter.goblin.name}`)
+      if (newTrap) addLog(`Found trap: ${newTrap.trap.name}`)
     },
-    [state]
+    [state, addLog]
   )
 
   const possibleMoves = useMemo(() => {
@@ -363,7 +374,7 @@ function App() {
         // end encounter after counterattack
         newEncounter = null
       }
-      return {
+      const updated = {
         ...prev,
         board: newBoard,
         hero: newHero,
@@ -371,8 +382,10 @@ function App() {
         reward,
         discard,
       }
+      addLog(result.message)
+      return updated
     })
-  }, [])
+  }, [addLog])
 
   const handleFlee = useCallback(success => {
     setState(prev => {
@@ -393,9 +406,11 @@ function App() {
         const damage = Math.max(1, encounter.goblin.attack - hero.defence)
         newHero.hp = hero.hp - damage
       }
-      return { ...prev, board: newBoard, hero: newHero, encounter: newEncounter }
+      const updated = { ...prev, board: newBoard, hero: newHero, encounter: newEncounter }
+      addLog(success ? 'Fled successfully.' : `Failed to flee and took ${hero.hp - newHero.hp} damage.`)
+      return updated
     })
-  }, [])
+  }, [addLog])
 
   const handleTrapResolve = useCallback(success => {
     setState(prev => {
@@ -416,9 +431,11 @@ function App() {
       if (!success) {
         newHero.hp = hero.hp - tile.trap.damage
       }
-      return { ...prev, board: newBoard, hero: newHero, trap: null, reward, discard }
+      const updated = { ...prev, board: newBoard, hero: newHero, trap: null, reward, discard }
+      addLog(success ? `Disarmed trap and gained ${tile.trap.reward} hp.` : `Hit by trap for ${tile.trap.damage} damage.`)
+      return updated
     })
-  }, [])
+  }, [addLog])
 
   const handleRewardConfirm = useCallback(() => {
     setState(prev => {
@@ -427,13 +444,19 @@ function App() {
       if (prev.hero.weapons.length > 2) {
         discard = { items: prev.hero.weapons }
       }
-      return { ...prev, reward: null, discard }
+      const updated = { ...prev, reward: null, discard }
+      addLog('Collected reward')
+      return updated
     })
-  }, [])
+  }, [addLog])
 
   const handleDiscardConfirm = useCallback(items => {
-    setState(prev => ({ ...prev, hero: { ...prev.hero, weapons: items }, discard: null }))
-  }, [])
+    setState(prev => {
+      const updated = { ...prev, hero: { ...prev.hero, weapons: items }, discard: null }
+      addLog('Chose items to keep')
+      return updated
+    })
+  }, [addLog])
 
   useEffect(() => {
     if (!state.hero) return
@@ -496,6 +519,7 @@ function App() {
         )}
         <button onClick={endTurn} className="end-turn">End Turn</button>
         <button onClick={resetGame} className="reset-game">Reset Game</button>
+        <EventLog log={eventLog} />
       </div>
       {state.encounter && (
         <EncounterModal
