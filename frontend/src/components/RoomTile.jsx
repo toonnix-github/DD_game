@@ -4,7 +4,7 @@ import { DISARM_RULE, EVASION_RULE } from '../trapRules';
 
 const DIRS = ['up', 'down', 'left', 'right'];
 
-function RoomTile({ tile, onClick, highlight, disabled }) {
+function RoomTile({ tile, onClick, highlight, disabled, attackable }) {
   return (
     <div
       className={`tile ${tile.revealed ? 'revealed' : ''} ${highlight ? 'possible' : ''} ${!tile.revealed && disabled ? 'disabled' : ''
@@ -31,7 +31,10 @@ function RoomTile({ tile, onClick, highlight, disabled }) {
         </div>
       )}
       {tile.revealed && tile.goblin && (
-        <span className="goblin-icon">{tile.goblin.icon}</span>
+        <div className={`goblin-container${attackable ? ' attackable' : ''}`}>
+          <span className="goblin-icon">{tile.goblin.icon}</span>
+          {attackable && <div className="attack-balloon">Attack?</div>}
+        </div>
       )}
       {tile.revealed && tile.effect === 'death' && (
         <img src="/star.svg" alt="defeated" className="death-effect" />

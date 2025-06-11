@@ -263,6 +263,7 @@ function App() {
           goblin: { ...newBoard[r][c].goblin },
           position: { row: r, col: c },
           prev: { row: hero.row, col: hero.col },
+          allowRanged: false,
         }
       }
 
@@ -305,6 +306,7 @@ function App() {
           goblin: { ...tile.goblin },
           position: { row: r, col: c },
           prev: { row: hero.row, col: hero.col },
+          allowRanged: true,
         },
       }))
       addLog(`${hero.name} attacks ${tile.goblin.name} from afar`)
@@ -592,6 +594,7 @@ function App() {
                   key={`${rIdx}-${cIdx}`}
                   tile={tile}
                   highlight={move || attack}
+                  attackable={attack}
                   disabled={disabled}
                   onClick={() => (move ? moveHero(rIdx, cIdx) : attack ? shootGoblin(rIdx, cIdx) : null)}
                 />
@@ -629,6 +632,7 @@ function App() {
           goblin={state.encounter.goblin}
           hero={state.hero}
           goblinCount={goblinCount}
+          allowRanged={state.encounter.allowRanged}
           onReward={applyDiceRewards}
           onSkill={applySkillCost}
           onFight={handleFight}

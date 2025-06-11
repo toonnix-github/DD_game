@@ -26,14 +26,21 @@ function rewardInfo(value) {
   }
 }
 
-function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee, onReward, onSkill }) {
+function EncounterModal({ goblin, hero, goblinCount, allowRanged = false, onFight, onFlee, onReward, onSkill }) {
   const [stage, setStage] = useState('menu')
   const [rolls, setRolls] = useState([])
   const [baseIdx, setBaseIdx] = useState(null)
   const [extraIdxs, setExtraIdxs] = useState([])
+  const firstRangedIdx = hero.weapons.findIndex(w => w.attackType === 'range')
   const firstMeleeIdx = hero.weapons.findIndex(w => w.attackType !== 'range')
   const [weaponIdx, setWeaponIdx] = useState(
-    firstMeleeIdx >= 0 ? firstMeleeIdx : 0,
+    allowRanged
+      ? firstRangedIdx >= 0
+        ? firstRangedIdx
+        : 0
+      : firstMeleeIdx >= 0
+      ? firstMeleeIdx
+      : 0,
   )
   const [result, setResult] = useState(null)
   const [counterPhase, setCounterPhase] = useState(null)
@@ -60,9 +67,11 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee, onReward, 
   }, [hero])
 
   useEffect(() => {
-    const idx = hero.weapons.findIndex(w => w.attackType !== 'range')
+    const idx = allowRanged
+      ? hero.weapons.findIndex(w => w.attackType === 'range')
+      : hero.weapons.findIndex(w => w.attackType !== 'range')
     setWeaponIdx(idx >= 0 ? idx : 0)
-  }, [hero])
+  }, [hero, allowRanged])
 
   useEffect(() => {
     const t1 = setTimeout(() => setShake(false), 400)
@@ -322,7 +331,7 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee, onReward, 
                       type="radio"
                       checked={weaponIdx === idx}
                       onChange={() => setWeaponIdx(idx)}
-                      disabled={w.attackType === 'range'}
+                      disabled={!allowRanged && w.attackType === 'range'}
                     />
                     <ItemCard item={w} />
                   </label>
@@ -342,7 +351,7 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee, onReward, 
               <div className="buttons">
                 <button
                   onClick={startFight}
-                  disabled={hero.weapons[weaponIdx].attackType === 'range'}
+                  disabled={!allowRanged && hero.weapons[weaponIdx].attackType === 'range'}
                 >
                   Fight
                 </button>

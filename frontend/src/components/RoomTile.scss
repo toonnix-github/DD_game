@@ -118,11 +118,36 @@
     }
   }
 
-  .goblin-icon {
+  .goblin-container {
     position: absolute;
     bottom: 2px;
     left: 2px;
     font-size: 0.7rem;
+
+    &.attackable:hover .attack-balloon {
+      display: block;
+    }
+  }
+
+  .goblin-icon {
+    position: relative;
+    z-index: 1;
+  }
+
+  .attack-balloon {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translate(-50%, -2px);
+    background: white;
+    color: black;
+    border: 1px solid black;
+    border-radius: 3px;
+    padding: 0 2px;
+    white-space: nowrap;
+    font-size: 0.55rem;
+    pointer-events: none;
   }
 
   .death-effect {
