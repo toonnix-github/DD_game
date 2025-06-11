@@ -9,13 +9,13 @@ function GoblinCard({
   shieldBroken,
   hpDamage,
 }) {
-  const [maxHp, setMaxHp] = useState(goblin.hp)
+  const [maxHp, setMaxHp] = useState(goblin.hp);
 
   useEffect(() => {
-    setMaxHp(m => Math.max(m, goblin.hp))
-  }, [goblin.hp])
+    setMaxHp(m => Math.max(m, goblin.hp));
+  }, [goblin.hp]);
   return (
-    <div className="goblin-card">
+    <div className={`goblin-card${defeated ? ' shake' : ''}`}>
       <div className="name-bar">{goblin.name}</div>
       <img className={`card-image${defeated ? ' defeated' : ''}`} src={goblin.image} alt={goblin.name} />
       {defeated && <img src="/skull.png" alt="defeated" className="death-effect red" />}
@@ -37,9 +37,8 @@ function GoblinCard({
       </div>
       {(goblin.defence > 0 || shieldDamage != null || shieldBroken) && (
         <div
-          className={`defence-badge${shieldDamage ? ' shake' : ''}${
-            goblin.defence <= 0 ? ' broken' : ''
-          }`}
+          className={`defence-badge${shieldDamage ? ' shake' : ''}${goblin.defence <= 0 ? ' broken' : ''
+            }`}
         >
           {goblin.defence > 0 && (
             <>
