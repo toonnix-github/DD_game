@@ -16,7 +16,7 @@ import { HERO_TYPES } from './heroData'
 import { GOBLIN_TYPES, randomGoblinType } from './goblinData'
 import { randomTreasure, adaptTreasureItem } from './treasureDeck'
 import { formatFightLogs } from './fightUtils'
-import { getRangedTargets, opposite } from './boardUtils'
+import { getRangedTargets, opposite, distanceToTarget } from './boardUtils'
 
 const BOARD_SIZE = 7
 const CENTER = Math.floor(BOARD_SIZE / 2)
@@ -263,7 +263,7 @@ function App() {
           goblin: { ...newBoard[r][c].goblin },
           position: { row: r, col: c },
           prev: { row: hero.row, col: hero.col },
-          allowRanged: false,
+          distance: 0,
         }
       }
 
@@ -300,13 +300,16 @@ function App() {
       )
       if (!inRange) return
 
+      const dist = distanceToTarget(board, hero, r, c)
+      if (dist === Infinity) return
+
       setState(prev => ({
         ...prev,
         encounter: {
           goblin: { ...tile.goblin },
           position: { row: r, col: c },
           prev: { row: hero.row, col: hero.col },
-          allowRanged: true,
+          distance: dist,
         },
       }))
       addLog(`${hero.name} attacks ${tile.goblin.name} from afar`)
@@ -632,7 +635,7 @@ function App() {
           goblin={state.encounter.goblin}
           hero={state.hero}
           goblinCount={goblinCount}
-          allowRanged={state.encounter.allowRanged}
+          distance={state.encounter.distance}
           onReward={applyDiceRewards}
           onSkill={applySkillCost}
           onFight={handleFight}

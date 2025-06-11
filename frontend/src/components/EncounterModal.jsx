@@ -26,22 +26,16 @@ function rewardInfo(value) {
   }
 }
 
-function EncounterModal({ goblin, hero, goblinCount, allowRanged = false, onFight, onFlee, onReward, onSkill }) {
+function EncounterModal({ goblin, hero, goblinCount, distance = 0, onFight, onFlee, onReward, onSkill }) {
   const [stage, setStage] = useState('menu')
   const [rolls, setRolls] = useState([])
   const [baseIdx, setBaseIdx] = useState(null)
   const [extraIdxs, setExtraIdxs] = useState([])
-  const firstRangedIdx = hero.weapons.findIndex(w => w.attackType === 'range')
-  const firstMeleeIdx = hero.weapons.findIndex(w => w.attackType !== 'range')
-  const [weaponIdx, setWeaponIdx] = useState(
-    allowRanged
-      ? firstRangedIdx >= 0
-        ? firstRangedIdx
-        : 0
-      : firstMeleeIdx >= 0
-      ? firstMeleeIdx
-      : 0,
-  )
+  const firstUsableIdx = hero.weapons.findIndex(w => {
+    if (distance === 0) return w.attackType !== 'range'
+    return w.attackType === 'range' && w.range >= distance
+  })
+  const [weaponIdx, setWeaponIdx] = useState(firstUsableIdx >= 0 ? firstUsableIdx : 0)
   const [result, setResult] = useState(null)
   const [counterPhase, setCounterPhase] = useState(null)
   const [counterMsg, setCounterMsg] = useState('')
@@ -67,11 +61,12 @@ function EncounterModal({ goblin, hero, goblinCount, allowRanged = false, onFigh
   }, [hero])
 
   useEffect(() => {
-    const idx = allowRanged
-      ? hero.weapons.findIndex(w => w.attackType === 'range')
-      : hero.weapons.findIndex(w => w.attackType !== 'range')
+    const idx = hero.weapons.findIndex(w => {
+      if (distance === 0) return w.attackType !== 'range'
+      return w.attackType === 'range' && w.range >= distance
+    })
     setWeaponIdx(idx >= 0 ? idx : 0)
-  }, [hero, allowRanged])
+  }, [hero, distance])
 
   useEffect(() => {
     const t1 = setTimeout(() => setShake(false), 400)
@@ -331,7 +326,7 @@ function EncounterModal({ goblin, hero, goblinCount, allowRanged = false, onFigh
                       type="radio"
                       checked={weaponIdx === idx}
                       onChange={() => setWeaponIdx(idx)}
-                      disabled={!allowRanged && w.attackType === 'range'}
+                      disabled={distance === 0 ? w.attackType === 'range' : !(w.attackType === 'range' && w.range >= distance)}
                     />
                     <ItemCard item={w} />
                   </label>
@@ -351,7 +346,11 @@ function EncounterModal({ goblin, hero, goblinCount, allowRanged = false, onFigh
               <div className="buttons">
                 <button
                   onClick={startFight}
-                  disabled={!allowRanged && hero.weapons[weaponIdx].attackType === 'range'}
+                  disabled={
+                    distance === 0
+                      ? hero.weapons[weaponIdx].attackType === 'range'
+                      : !(hero.weapons[weaponIdx].attackType === 'range' && hero.weapons[weaponIdx].range >= distance)
+                  }
                 >
                   Fight
                 </button>

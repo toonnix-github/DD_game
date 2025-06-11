@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { getRangedTargets } from '../frontend/src/boardUtils.js';
+import { getRangedTargets, distanceToTarget } from '../frontend/src/boardUtils.js';
 
 function makeTile(row, col, paths, goblin=null) {
   return { row, col, revealed: true, paths, goblin };
@@ -44,10 +44,28 @@ function testOutOfRange() {
   assert.strictEqual(targets.length, 0);
 }
 
+function testDistance() {
+  const board = createBoard();
+  board[1][3].goblin = { hp: 2 };
+  const hero = { row: 1, col: 1 };
+  const dist = distanceToTarget(board, hero, 1, 3);
+  assert.strictEqual(dist, 2);
+}
+
+function testDistanceBlocked() {
+  const board = createBoard();
+  board[1][2].paths.left = false;
+  const hero = { row: 1, col: 1 };
+  const dist = distanceToTarget(board, hero, 1, 3);
+  assert.strictEqual(dist, Infinity);
+}
+
 function run() {
   testRangedTarget();
   testBlockedPath();
   testOutOfRange();
+  testDistance();
+  testDistanceBlocked();
   console.log('All range weapon tests passed');
 }
 
