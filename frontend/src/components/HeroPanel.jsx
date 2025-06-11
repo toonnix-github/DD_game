@@ -7,7 +7,7 @@ function renderDice(count, alt) {
   ));
 }
 
-function HeroPanel({ hero, damaged }) {
+function HeroPanel({ hero, damaged, hpDamage = null, shieldBroken = false }) {
   const [movePulse, setMovePulse] = useState(false);
   const prevMoveRef = useRef(hero?.movement ?? 0);
   const [apPulse, setApPulse] = useState(false);
@@ -56,11 +56,25 @@ function HeroPanel({ hero, damaged }) {
             alt="hp"
           />
         ))}
+        {hpDamage != null && <span className="hp-damage">-{hpDamage}</span>}
       </div>
-      <div className="defence-badge">
-        <img src="/shield.png" alt="defence" />
-        <span>{hero.defence}</span>
-      </div>
+      {(hero.defence > 0 || shieldBroken) && (
+        <div className={`defence-badge${shieldBroken ? ' broken' : ''}`}>
+          {hero.defence > 0 && (
+            <>
+              <img src="/shield.png" alt="defence" />
+              <span>{hero.defence}</span>
+            </>
+          )}
+          {shieldBroken && (
+            <img
+              src="/icon/starburst.png"
+              alt="shield broken"
+              className="shield-break"
+            />
+          )}
+        </div>
+      )}
       <div className={`ap-flashes${apPulse ? ' change' : ''}`}>
         {Array.from({ length: hero.maxAp }, (_, i) => (
           <img

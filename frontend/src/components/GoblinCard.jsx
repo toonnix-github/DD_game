@@ -1,7 +1,14 @@
 import React from 'react';
 import './GoblinCard.css';
 
-function GoblinCard({ goblin, damaged, defeated, shieldDamage, shieldBroken }) {
+function GoblinCard({
+  goblin,
+  damaged,
+  defeated,
+  shieldDamage,
+  shieldBroken,
+  hpDamage,
+}) {
   return (
     <div className={`goblin-card${damaged ? ' attack-slide' : ''}`}>
       <div className="name-bar">{goblin.name}</div>
@@ -11,6 +18,7 @@ function GoblinCard({ goblin, damaged, defeated, shieldDamage, shieldBroken }) {
         {Array.from({ length: goblin.hp }, (_, i) => (
           <img key={i} src="/heart.png" alt="hp" />
         ))}
+        {hpDamage != null && <span className="hp-damage">-{hpDamage}</span>}
       </div>
       <div className="stats-bar">
         <span className="stat">
