@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import './EncounterModal.scss'
 import { DISARM_RULE, EVASION_RULE } from '../trapRules'
 import { computeAttackBreakdown, computeUnusedRewards } from '../fightUtils'
+import HeroPanel from './HeroPanel'
 
 function TrapModal({ hero, trap, onResolve }) {
   const [stage, setStage] = useState('evasionReady')
@@ -341,6 +342,7 @@ function TrapModal({ hero, trap, onResolve }) {
             </div>
           </div>
         )}
+        <HeroPanel hero={hero} />
       </div>
     </div>
   )
