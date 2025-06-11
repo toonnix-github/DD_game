@@ -352,15 +352,16 @@ function App() {
   )
 
   const applySkillCost = useCallback(
-    cost => {
+    (cost, title) => {
       if (!cost) return
+      addLog(`Used ${title} (-${cost} AP).`)
       setState(prev => {
         const hero = prev.hero
         if (!hero) return prev
         return { ...prev, hero: { ...hero, ap: Math.max(0, hero.ap - cost) } }
       })
     },
-    [],
+    [addLog],
   )
 
   const handleFight = useCallback(fightResult => {
@@ -420,9 +421,6 @@ function App() {
       if (baseIdx != null) {
         const extras = extraIdxs.map(i => rolls[i]).join(', ')
         logs.push(`Using base ${rolls[baseIdx]}${extras ? ` with extras ${extras}` : ''}`)
-      }
-      if (fightResult.skillUsed && fightResult.hero.skill && fightResult.hero.skill.title) {
-        logs.push(`Used ${fightResult.hero.skill.title} (-${fightResult.hero.skill.cost} AP).`)
       }
       const goblinDefBefore = goblin.defence
       const parts = []

@@ -176,6 +176,9 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee, onReward, 
     const diceKey = `${weapon.dice}Dice`
     const count = hero[diceKey]
     const r = Array.from({ length: count }, () => Math.ceil(Math.random() * 6))
+    if (useSkill && hero.skill && hero.skill.cost && onSkill) {
+      onSkill(hero.skill.cost, hero.skill.title)
+    }
     setRolls(r)
     setBaseIdx(null)
     setExtraIdxs([])
@@ -203,12 +206,6 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee, onReward, 
       ...hero,
       ap: Math.min(hero.ap + rewards.ap, hero.maxAp),
       hp: Math.min(hero.hp + rewards.hp, hero.maxHp),
-    }
-    if (useSkill && hero.skill && hero.skill.cost) {
-      heroWithRewards.ap = Math.max(0, heroWithRewards.ap - hero.skill.cost)
-      if (onSkill) {
-        onSkill(hero.skill.cost)
-      }
     }
     const bonus = useSkill && hero.skill && hero.skill.bonus ? hero.skill.bonus : 0
     const res = fightGoblin(
