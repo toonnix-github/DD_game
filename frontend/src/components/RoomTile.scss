@@ -24,16 +24,13 @@
   }
 
   &.revealed {
-    background-color: #555;
-    border-color: #aaa;
-    background-image: url('/dungeon-pattern.png');
-    background-size: cover;
+    background-color: #000;
+    border-color: #000;
   }
 
   &.trap-room {
     background-color: #663333;
     border-color: #ff6666;
-    background-image: url('/dungeon-pattern.png');
 
     .center,
     .door {
@@ -51,6 +48,15 @@
   .room-graphic {
     position: absolute;
     inset: 0;
+  }
+
+  &.revealed {
+
+    .center,
+    .door {
+      background-image: url('/dungeon-pattern.png');
+      background-size: cover;
+    }
   }
 
   .card-back {
@@ -131,17 +137,22 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 100%;
+    width: 80%;
     text-align: center;
-    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
     pointer-events: none;
     font-family: 'MedievalSharp', serif;
   }
 }
 
 @keyframes fade-out {
-  from { opacity: 1; transform: scale(0.5); }
-  to { opacity: 0; transform: scale(1.2); }
+  from {
+    opacity: 1;
+    transform: scale(0.5);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(1.2);
+  }
 }

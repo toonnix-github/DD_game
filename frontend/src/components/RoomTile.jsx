@@ -1,22 +1,21 @@
-import React from 'react'
-import './RoomTile.scss'
-import { DISARM_RULE } from '../trapRules'
+import React from 'react';
+import './RoomTile.scss';
+import { DISARM_RULE } from '../trapRules';
 
-const DIRS = ['up', 'down', 'left', 'right']
+const DIRS = ['up', 'down', 'left', 'right'];
 
 function RoomTile({ tile, onClick, highlight, disabled }) {
   return (
     <div
-      className={`tile ${tile.revealed ? 'revealed' : ''} ${highlight ? 'possible' : ''} ${
-        disabled ? 'disabled' : ''
-      } ${tile.revealed && tile.trap && !tile.trapResolved ? 'trap-room' : ''}`}
+      className={`tile ${tile.revealed ? 'revealed' : ''} ${highlight ? 'possible' : ''} ${!tile.revealed && disabled ? 'disabled' : ''
+        } ${tile.revealed && tile.trap && !tile.trapResolved ? 'trap-room' : ''}`}
       onClick={onClick}
       title={
         tile.revealed
           ? tile.roomId +
-            (tile.trap && !tile.trapResolved
-              ? ` - ${DISARM_RULE} Difficulty ${tile.trap.difficulty}.`
-              : '')
+          (tile.trap && !tile.trapResolved
+            ? ` - ${DISARM_RULE} Difficulty ${tile.trap.difficulty}.`
+            : '')
           : undefined
       }
     >
@@ -51,7 +50,7 @@ function RoomTile({ tile, onClick, highlight, disabled }) {
       )}
       {tile.revealed && <span className="room-name">{tile.roomId}</span>}
     </div>
-  )
+  );
 }
 
-export default RoomTile
+export default RoomTile;
