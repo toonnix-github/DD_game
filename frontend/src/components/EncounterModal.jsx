@@ -7,6 +7,7 @@ import {
   computeAttackBreakdown,
   fightGoblin,
   computeUnusedRewards,
+  formatFightMessage,
 } from '../fightUtils'
 
 function rewardInfo(value) {
@@ -176,6 +177,9 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee, onReward, 
     const diceKey = `${weapon.dice}Dice`
     const count = hero[diceKey]
     const r = Array.from({ length: count }, () => Math.ceil(Math.random() * 6))
+    if (useSkill && hero.skill && hero.skill.cost && onSkill) {
+      onSkill(hero.skill.cost, hero.skill.title)
+    }
     setRolls(r)
     setBaseIdx(null)
     setExtraIdxs([])
@@ -204,12 +208,6 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee, onReward, 
       ap: Math.min(hero.ap + rewards.ap, hero.maxAp),
       hp: Math.min(hero.hp + rewards.hp, hero.maxHp),
     }
-    if (useSkill && hero.skill && hero.skill.cost) {
-      heroWithRewards.ap = Math.max(0, heroWithRewards.ap - hero.skill.cost)
-      if (onSkill) {
-        onSkill(hero.skill.cost)
-      }
-    }
     const bonus = useSkill && hero.skill && hero.skill.bonus ? hero.skill.bonus : 0
     const res = fightGoblin(
       heroWithRewards,
@@ -221,13 +219,18 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee, onReward, 
       bonus,
       goblinCount,
     )
-    const parts = []
-    if (rewards.ap) parts.push(`${rewards.ap} ap`)
-    if (rewards.hp) parts.push(`${rewards.hp} hp`)
-    if (parts.length) {
-      res.message += ` Unused dice reward: ${parts.join(' and ')}.`
+    const resultObj = {
+      type: 'fight',
+      ...res,
+      rewards,
+      skillUsed: useSkill,
+      weaponIdx,
+      rolls,
+      baseIdx,
+      extraIdxs,
     }
-    setResult({ type: 'fight', ...res, rewards, skillUsed: useSkill })
+    resultObj.message = formatFightMessage(resultObj)
+    setResult(resultObj)
     setDisplayHero(heroWithRewards)
     setDisplayGoblin(goblin)
     setAttackPhase('swing')
@@ -390,11 +393,27 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee, onReward, 
                         extraIdxs,
                         useSkill && hero.skill && hero.skill.bonus ? hero.skill.bonus : 0
                       )
+                      const rewards = computeUnusedRewards(rolls, baseIdx, extraIdxs)
+                      const rewardParts = []
+                      if (rewards.ap) rewardParts.push(`${rewards.ap} ap`)
+                      if (rewards.hp) rewardParts.push(`${rewards.hp} hp`)
                       const parts = [`${details.weapon} weapon`]
                       if (details.hero > 0) parts.unshift(`${details.hero} hero`)
                       if (details.base) parts.push(`${details.base} base`)
                       if (details.extra) parts.push(`${details.extra} extra`)
-                      return `Power ${details.total} (${parts.join(' + ')}) vs defence ${goblin.defence}`
+                      return (
+                        <>
+                          {`defence ${goblin.defence}`}
+                          <br />vs<br />
+                          {`Power ${details.total} (${parts.join(' + ')})`}
+                          {rewardParts.length ? (
+                            <>
+                              <br />
+                              {`Unused dice reward: ${rewardParts.join(' and ')}`}
+                            </>
+                          ) : null}
+                        </>
+                      )
                     })()}
               </div>
               <div className="buttons">

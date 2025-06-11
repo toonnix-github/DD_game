@@ -86,6 +86,42 @@ export function computeUnusedRewards(rolls, baseIdx, extraIdxs = []) {
   return { ap, hp }
 }
 
+export function heroAttack(hero, goblin, weapon, rolls, baseIdx, extraIdxs = [], bonus = 0) {
+  const details = computeAttackBreakdown(hero, weapon, rolls, baseIdx, extraIdxs, bonus)
+  const attackPower = details.total
+  const shieldDamage = Math.min(attackPower, goblin.defence)
+  const brokeShield = attackPower > goblin.defence && goblin.defence > 0
+  const heroDmg = brokeShield ? attackPower - goblin.defence : 0
+  const defenceAfter = brokeShield ? 0 : goblin.defence
+  const goblinHp = goblin.hp - heroDmg
+  const message = brokeShield
+    ? `Hero smashes the shield and deals ${heroDmg} damage.`
+    : `The shield absorbs the blow.`
+
+  return {
+    hero,
+    goblin: { ...goblin, hp: goblinHp },
+    details,
+    attackPower,
+    shieldDamage,
+    heroDmg,
+    brokeShield,
+    defenceAfter,
+    message,
+    heroDefenceAfter: hero.defence,
+  }
+}
+
+export function monsterCounter(hero, weapon, goblin, aliveGoblins = 0) {
+  const faces = ['torchDown', 2, 3, 4, 5, 'shieldBreak']
+  const face = faces[Math.floor(Math.random() * faces.length)]
+  const extraMod = (goblin.extra || 0) + aliveGoblins
+  if (face === 'torchDown') {
+    return { effect: 'torchDown' }
+  }
+  return computeCounterAttack(hero, weapon, goblin, face, extraMod)
+}
+
 export function fightGoblin(
   hero,
   goblin,
@@ -96,29 +132,16 @@ export function fightGoblin(
   bonus = 0,
   aliveGoblins = 0,
 ) {
-  let heroHp = hero.hp
-  let goblinHp = goblin.hp
-  let heroDefenceAfter = hero.defence
+  const attack = heroAttack(hero, goblin, weapon, rolls, baseIdx, extraIdxs, bonus)
 
-  const details = computeAttackBreakdown(hero, weapon, rolls, baseIdx, extraIdxs, bonus)
-  const attackPower = details.total
-  const shieldDamage = Math.min(attackPower, goblin.defence)
-  const brokeShield = attackPower > goblin.defence && goblin.defence > 0
-  const heroDmg = brokeShield ? attackPower - goblin.defence : 0
-  const defenceAfter = brokeShield ? 0 : goblin.defence
-  goblinHp -= heroDmg
-  let message = brokeShield
-    ? `Hero smashes the shield and deals ${heroDmg} damage.`
-    : `The shield absorbs the blow.`
+  let heroHp = hero.hp
+  let heroDefenceAfter = hero.defence
+  let message = attack.message
   let counter = null
-  if (goblinHp > 0) {
-    const faces = ['torchDown', 2, 3, 4, 5, 'shieldBreak']
-    const face = faces[Math.floor(Math.random() * faces.length)]
-    const extraMod = (goblin.extra || 0) + aliveGoblins
-    if (face === 'torchDown') {
-      counter = { effect: 'torchDown' }
-    } else {
-      counter = computeCounterAttack(hero, weapon, goblin, face, extraMod)
+
+  if (attack.goblin.hp > 0) {
+    counter = monsterCounter(hero, weapon, { ...goblin, hp: attack.goblin.hp }, aliveGoblins)
+    if (counter.effect !== 'torchDown') {
       heroHp -= counter.damage
       heroDefenceAfter = counter.heroDefenceAfter
       if (heroHp <= 0) {
@@ -131,17 +154,119 @@ export function fightGoblin(
       message += ' You have fallen.'
     }
   }
+
   return {
     hero: { ...hero, hp: heroHp, defence: heroDefenceAfter },
-    goblin: { ...goblin, hp: goblinHp },
+    goblin: { ...goblin, hp: attack.goblin.hp },
+    details: attack.details,
+    attackPower: attack.attackPower,
+    shieldDamage: attack.shieldDamage,
+    heroDmg: attack.heroDmg,
+    counter,
+    brokeShield: attack.brokeShield,
+    defenceAfter: attack.defenceAfter,
+    heroDefenceAfter,
+    message,
+  }
+}
+
+export function formatFightLogs(result) {
+  const {
+    hero,
+    goblin,
     details,
     attackPower,
     shieldDamage,
     heroDmg,
     counter,
     brokeShield,
-    defenceAfter,
-    heroDefenceAfter,
-    message,
+    rolls,
+    baseIdx,
+    extraIdxs,
+    weaponIdx,
+    skillUsed,
+  } = result
+  const weapon = hero.weapons[weaponIdx]
+  const logs = []
+  logs.push(`Rolls: ${rolls.join(', ')}`)
+  if (baseIdx != null) {
+    const extras = extraIdxs.map(i => rolls[i]).join(', ')
+    logs.push(`Using base ${rolls[baseIdx]}${extras ? ` with extras ${extras}` : ''}`)
   }
+  const goblinDefBefore = goblin.defence
+  const parts = []
+  if (details.hero) {
+    const label = skillUsed && hero.skill && hero.skill.title ? hero.skill.title : 'hero'
+    parts.push(`${details.hero} ${label}`)
+  }
+  parts.push(`${details.weapon} weapon`)
+  if (details.base) parts.push(`${details.base} base`)
+  if (details.extra) parts.push(`${details.extra} extra`)
+  logs.push(
+    `Attack with ${weapon.name}: power ${attackPower} (${parts.join(' + ')}) vs defence ${goblinDefBefore}.`,
+  )
+  if (shieldDamage > 0) {
+    logs.push(brokeShield ? `Shield takes ${shieldDamage} damage and breaks.` : `Shield takes ${shieldDamage} damage.`)
+  } else {
+    logs.push('The shield absorbs the blow.')
+  }
+  if (heroDmg > 0) logs.push(`Goblin loses ${heroDmg} HP.`)
+  if (goblin.hp - heroDmg <= 0) logs.push('Goblin defeated!')
+  if (counter) {
+    if (counter.roll != null || counter.effect) {
+      logs.push(`Goblin counter roll: ${counter.roll != null ? counter.roll : counter.effect}`)
+    }
+    if (counter.effect !== 'torchDown') {
+      const bd = counter.breakdown
+      const parts2 = [`${bd.attack} attack`]
+      if (bd.roll) parts2.push(`${bd.roll} roll`)
+      if (bd.extra) parts2.push(`${bd.extra} mod`)
+      logs.push(`Counterattack power ${bd.total} (${parts2.join(' + ')}) vs defence ${counter.defenceBefore}.`)
+      if (counter.effect === 'shieldBreak') {
+        logs.push(`Shield break! You take ${counter.damage} damage.`)
+      } else if (counter.brokeShield) {
+        logs.push(`Shield broken! You take ${counter.damage} damage.`)
+      } else if (counter.damage > 0) {
+        logs.push(`You take ${counter.damage} damage.`)
+      } else {
+        logs.push('The shield absorbs the blow.')
+      }
+    } else {
+      logs.push('Torch down! No counterattack.')
+    }
+  }
+  return logs
+}
+
+export function formatFightMessage(result) {
+  const { hero, goblin, heroDmg, counter, weaponIdx } = result
+  const weapon = hero.weapons[weaponIdx]
+
+  // If the hero dies, that message takes priority
+  if (hero.hp <= 0) {
+    return 'You have fallen.'
+  }
+
+  // Goblin defeated is the most exciting outcome
+  if (goblin.hp <= 0) {
+    return 'Goblin defeated!'
+  }
+
+  // Summarize the hero's strike briefly
+  let msg = heroDmg > 0
+    ? `You hit with your ${weapon.name} for ${heroDmg} damage.`
+    : `Your ${weapon.name} fails to harm the goblin.`
+
+  // Summarize counterattack, if any
+  if (counter) {
+    if (counter.effect === 'torchDown') {
+      msg += ' The goblin fumbles its counter.'
+    } else if (counter.damage > 0) {
+      msg += ` The goblin strikes back for ${counter.damage} damage.`
+    } else {
+      msg += ' You block the counterattack.'
+    }
+  }
+
+  return msg
 }
