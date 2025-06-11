@@ -1,20 +1,36 @@
 import React, { useState } from 'react'
 import './EncounterModal.scss'
-import { DISARM_RULE } from '../trapRules'
+import { DISARM_RULE, EVASION_RULE } from '../trapRules'
 
 function TrapModal({ hero, trap, onResolve }) {
-  const [rolls, setRolls] = useState([])
-  const [success, setSuccess] = useState(null)
+  const [stage, setStage] = useState('evasion')
+  const [evasionRolls, setEvasionRolls] = useState([])
+  const [evaded, setEvaded] = useState(null)
+  const [disarmRolls, setDisarmRolls] = useState([])
+  const [disarmSuccess, setDisarmSuccess] = useState(null)
 
-  const attempt = () => {
-    const r = Array.from({ length: hero.agilityDice }, () => Math.ceil(Math.random() * 6))
-    setRolls(r)
-    const best = Math.max(...r)
-    setSuccess(best >= trap.difficulty)
+  const roll = () => Array.from({ length: hero.agilityDice }, () => Math.ceil(Math.random() * 6))
+
+  const attemptEvasion = () => {
+    const r = roll()
+    setEvasionRolls(r)
+    setEvaded(Math.max(...r) >= trap.difficulty)
+    setStage('postEvasion')
   }
 
+  const attemptDisarm = () => {
+    const r = roll()
+    setDisarmRolls(r)
+    setDisarmSuccess(Math.max(...r) >= trap.difficulty)
+    setStage('done')
+  }
+
+  const skip = () => onResolve({ evaded, disarm: undefined, evasionRolls, disarmRolls: [] })
+
   const close = () => {
-    if (success !== null) onResolve({ success, rolls })
+    if (disarmSuccess !== null) {
+      onResolve({ evaded, disarm: disarmSuccess, evasionRolls, disarmRolls })
+    }
   }
 
   const trapName = trap.id
@@ -28,24 +44,40 @@ function TrapModal({ hero, trap, onResolve }) {
           <span className="trap-icon">{trap.icon}</span>
           <span className="trap-name">{trapName}</span>
         </div>
-        {rolls.length === 0 && (
+        {stage === 'evasion' && (
           <>
-            <p className="trap-info">{DISARM_RULE}</p>
+            <p className="trap-info">{EVASION_RULE}</p>
             <p className="trap-difficulty">Need {trap.difficulty}+ on the highest die.</p>
             <div className="buttons">
-              <button onClick={attempt}>Disarm</button>
+              <button onClick={attemptEvasion}>Evade</button>
             </div>
           </>
         )}
-        {rolls.length > 0 && (
+        {stage === 'postEvasion' && (
           <div className="trap-result">
             <div className="dice-container">
-              {rolls.map((v, idx) => (
+              {evasionRolls.map((v, idx) => (
                 <div key={idx} className="dice">{v}</div>
               ))}
             </div>
             <div className="info">
-              {success ? 'Successfully disarmed!' : 'Failed to disarm.'}
+              {evaded ? 'Evaded the trap!' : `Took ${trap.damage} damage!`}
+            </div>
+            <div className="buttons">
+              {hero.ap > 0 && <button onClick={attemptDisarm}>Disarm (1 AP)</button>}
+              <button onClick={skip}>Continue</button>
+            </div>
+          </div>
+        )}
+        {stage === 'done' && (
+          <div className="trap-result">
+            <div className="dice-container">
+              {disarmRolls.map((v, idx) => (
+                <div key={idx} className="dice">{v}</div>
+              ))}
+            </div>
+            <div className="info">
+              {disarmSuccess ? 'Successfully disarmed!' : 'Failed to disarm.'}
             </div>
             <div className="buttons">
               <button onClick={close}>OK</button>

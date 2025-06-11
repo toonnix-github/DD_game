@@ -451,38 +451,44 @@ function App() {
 
   const handleTrapResolve = useCallback(result => {
     if (!result) return
-    const { success, rolls } = typeof result === 'object' ? result : { success: result, rolls: [] }
-    let msg = ''
+    const { evaded, disarm, evasionRolls = [], disarmRolls = [] } = result
+    let messageParts = []
     setState(prev => {
       const { trap, board, hero } = prev
       if (!trap) return prev
       const newBoard = board.map(row => row.map(tile => ({ ...tile })))
       const tile = newBoard[trap.position.row][trap.position.col]
-      tile.trapResolved = success
-      let newHero = { ...hero, movement: 0, ap: 0 }
-      let discard = null
+      let newHero = { ...hero, movement: 0 }
       let reward = prev.reward
-      if (success) {
-        const item = adaptTreasureItem(randomTreasure())
-        newHero.weapons = [...hero.weapons, item]
-        newHero.hp = Math.min(hero.hp + tile.trap.reward, hero.maxHp)
-        reward = { item, hp: tile.trap.reward }
-        msg = `Disarmed trap and gained ${tile.trap.reward} hp.`
-      }
-      if (!success) {
+      let discard = null
+      if (!evaded) {
         newHero.hp = hero.hp - tile.trap.damage
-        msg = `Hit by trap for ${tile.trap.damage} damage.`
+        messageParts.push(`Hit by trap for ${tile.trap.damage} damage.`)
+      } else {
+        messageParts.push('Evaded trap.')
+      }
+      if (disarm !== undefined) {
+        newHero.ap = Math.max(0, hero.ap - 1)
+        if (disarm) {
+          tile.trapResolved = true
+          const item = adaptTreasureItem(randomTreasure())
+          newHero.weapons = [...hero.weapons, item]
+          newHero.hp = Math.min(newHero.hp + tile.trap.reward, hero.maxHp)
+          reward = { item, hp: tile.trap.reward }
+          messageParts.push(`Disarmed trap and gained ${tile.trap.reward} hp.`)
+        } else {
+          newHero.hp = newHero.hp - tile.trap.damage
+          messageParts.push(`Failed to disarm and took ${tile.trap.damage} damage.`)
+        }
       }
       return { ...prev, board: newBoard, hero: newHero, trap: null, reward, discard }
     })
-    const rollMsg = rolls && rolls.length
-      ? `Rolled ${rolls.join(', ')} (best ${Math.max(...rolls)})`
-      : ''
-    addLog(
-      rollMsg
-        ? `${rollMsg}. ${msg}`
-        : msg,
-    )
+    const rollParts = []
+    if (evasionRolls.length) rollParts.push(`Evade roll ${evasionRolls.join(', ')} (best ${Math.max(...evasionRolls)})`)
+    if (disarmRolls.length) rollParts.push(`Disarm roll ${disarmRolls.join(', ')} (best ${Math.max(...disarmRolls)})`)
+    const rollMsg = rollParts.join('. ')
+    const msg = messageParts.join(' ')
+    addLog(rollMsg ? `${rollMsg}. ${msg}` : msg)
   }, [addLog])
 
   const handleRewardConfirm = useCallback(() => {

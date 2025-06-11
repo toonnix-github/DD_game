@@ -1,5 +1,8 @@
+export const EVASION_RULE =
+  "Roll your hero's agility dice. If the best result meets or exceeds the trap difficulty you avoid the damage.";
+
 export const DISARM_RULE =
-  "Roll your hero's agility dice and take the highest result. If it meets or exceeds the trap difficulty, the trap is disarmed.";
+  "Spend 1 AP and roll your agility dice. If the best result meets or exceeds the trap difficulty the trap is disarmed and you gain the reward.";
 
 export const TRAP_TYPES = {
   snare: {
