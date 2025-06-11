@@ -31,6 +31,8 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
   const [extraIdxs, setExtraIdxs] = useState([])
   const [weaponIdx, setWeaponIdx] = useState(0)
   const [result, setResult] = useState(null)
+  const [counterPhase, setCounterPhase] = useState(null)
+  const [counterMsg, setCounterMsg] = useState('')
   const [useSkill, setUseSkill] = useState(false)
   const [shake, setShake] = useState(true)
   const [entered, setEntered] = useState(false)
@@ -43,6 +45,38 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
       clearTimeout(t2)
     }
   }, [])
+
+  useEffect(() => {
+    if (stage !== 'counter' || !result || !result.counter) return
+    let t
+    if (counterPhase === 'roll') {
+      t = setTimeout(() => {
+        const label =
+          result.counter.roll != null
+            ? result.counter.roll
+            : result.counter.effect === 'shieldBreak'
+            ? 'shield break'
+            : 'torch down'
+        setCounterPhase('show')
+        setCounterMsg(`Rolled ${label}`)
+      }, 1000)
+    } else if (counterPhase === 'show') {
+      t = setTimeout(() => {
+        if (result.counter.effect === 'shieldBreak') {
+          setCounterMsg(`Shield break! You take ${result.counter.damage} damage.`)
+        } else {
+          setCounterMsg('Torch down!')
+        }
+        setCounterPhase('effect')
+      }, 1000)
+    } else if (counterPhase === 'effect') {
+      t = setTimeout(() => {
+        setCounterPhase(null)
+        setStage('result')
+      }, 1500)
+    }
+    return () => clearTimeout(t)
+  }, [stage, counterPhase, result])
 
   const startFight = () => {
     const weapon = hero.weapons[weaponIdx]
@@ -78,7 +112,13 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
       res.message += ` Unused dice reward: ${parts.join(' and ')}.`
     }
     setResult({ type: 'fight', ...res, rewards, skillUsed: useSkill })
-    setStage('result')
+    if (res.counter) {
+      setCounterPhase('roll')
+      setCounterMsg('Goblin rolls for counterattack...')
+      setStage('counter')
+    } else {
+      setStage('result')
+    }
   }
 
   const confirmFlee = () => {
@@ -114,10 +154,10 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
           <GoblinCard
             goblin={result && result.goblin ? result.goblin : goblin}
             damaged={
-              stage === 'result' &&
+              stage !== 'fight' &&
               result &&
               result.type === 'fight' &&
-              result.heroDmg > 0
+              (result.heroDmg > 0 || (result.counter && result.counter.damage > 0))
             }
             defeated={
               stage === 'result' &&
@@ -249,6 +289,32 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
               <div className="info">Need a 4 or higher on any die to escape.</div>
               <div className="buttons">
                 <button onClick={confirmFlee}>Run!</button>
+              </div>
+            </div>
+          )}
+          {stage === 'counter' && result && (
+            <div className="result-stage">
+              <div className="result-message">{counterMsg}</div>
+              <div className="dice-container">
+                <div
+                  className={`monster-dice${
+                    counterPhase === 'roll' ? ' dice-shake' : ''
+                  }`}
+                >
+                  {counterPhase === 'roll'
+                    ? ''
+                    : result.counter.effect === 'shieldBreak'
+                    ? (
+                        <img src="/shield.png" alt="shield break" />
+                      )
+                    : result.counter.effect === 'torchDown'
+                    ? (
+                        <span className="torch-icon">🔥</span>
+                      )
+                    : (
+                        result.counter.roll
+                      )}
+                </div>
               </div>
             </div>
           )}

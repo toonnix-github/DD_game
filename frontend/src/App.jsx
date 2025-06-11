@@ -350,6 +350,9 @@ function App() {
             return { ...p, board: copy }
           })
         }, 600)
+      } else if (result.counter) {
+        // end encounter after counterattack
+        newEncounter = null
       }
       return { ...prev, board: newBoard, hero: newHero, encounter: newEncounter, reward, discard }
     })

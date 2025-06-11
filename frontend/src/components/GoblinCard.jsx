@@ -1,11 +1,11 @@
-import React from 'react'
-import './GoblinCard.css'
+import React from 'react';
+import './GoblinCard.css';
 
 function GoblinCard({ goblin, damaged, defeated }) {
   return (
-    <div className={`goblin-card${damaged ? ' shake' : ''}`}>
+    <div className={`goblin-card${damaged ? ' attack-slide' : ''}`}>
       <div className="name-bar">{goblin.name}</div>
-      <img className="card-image" src={goblin.image} alt={goblin.name} />
+      <img className={`card-image${defeated ? ' defeated' : ''}`} src={goblin.image} alt={goblin.name} />
       {defeated && <img src="/skull.png" alt="defeated" className="death-effect red" />}
       <div className="hp-hearts">
         {Array.from({ length: goblin.hp }, (_, i) => (
@@ -25,7 +25,7 @@ function GoblinCard({ goblin, damaged, defeated }) {
         <img src="/icon/icon-goblin.png" alt="goblin" />
       </div>
     </div>
-  )
+  );
 }
 
-export default GoblinCard
+export default GoblinCard;

@@ -116,28 +116,23 @@
 }
 
 .monster-icon img {
-  width: 70%;
-  height: 70%;
+  width: 100%;
+  height: 100%;
 }
 
-@keyframes shake {
+
+@keyframes attack-slide {
   0% {
-    transform: translate(0);
-  }
-  25% {
-    transform: translate(-0.2rem);
+    transform: rotate(-2deg) translateX(0);
   }
   50% {
-    transform: translate(0.2rem);
-  }
-  75% {
-    transform: translate(-0.2rem);
+    transform: rotate(-2deg) translateX(1rem);
   }
   100% {
-    transform: translate(0);
+    transform: rotate(-2deg) translateX(0);
   }
 }
 
-.shake {
-  animation: shake 0.3s;
+.attack-slide {
+  animation: attack-slide 0.3s;
 }
