@@ -330,23 +330,29 @@ function App() {
     [state.board],
   )
 
-  const applyDiceRewards = useCallback(rewards => {
-    if (!rewards || (!rewards.ap && !rewards.hp)) return
-    setState(prev => {
-      const hero = prev.hero
-      if (!hero) return prev
-      const newHero = {
-        ...hero,
-        ap: Math.min(hero.ap + rewards.ap, hero.maxAp),
-        hp: Math.min(hero.hp + rewards.hp, hero.maxHp),
-      }
-      return { ...prev, hero: newHero }
-    })
-  }, [])
+  const applyDiceRewards = useCallback(
+    rewards => {
+      if (!rewards || (!rewards.ap && !rewards.hp)) return
+      const rewardParts = []
+      if (rewards.ap) rewardParts.push(`${rewards.ap} ap`)
+      if (rewards.hp) rewardParts.push(`${rewards.hp} hp`)
+      addLog(`Unused dice reward: ${rewardParts.join(' and ')}.`)
+      setState(prev => {
+        const hero = prev.hero
+        if (!hero) return prev
+        const newHero = {
+          ...hero,
+          ap: Math.min(hero.ap + rewards.ap, hero.maxAp),
+          hp: Math.min(hero.hp + rewards.hp, hero.maxHp),
+        }
+        return { ...prev, hero: newHero }
+      })
+    },
+    [addLog],
+  )
 
   const handleFight = useCallback(fightResult => {
     const logs = []
-    const rewardVals = fightResult?.rewards || { ap: 0, hp: 0 }
     setState(prev => {
       const { encounter, board, hero } = prev
       if (!encounter || !fightResult) return prev
@@ -440,12 +446,7 @@ function App() {
           logs.push('The shield absorbs the blow.')
         }
       }
-      if (rewardVals.ap || rewardVals.hp) {
-        const rewardParts = []
-        if (rewardVals.ap) rewardParts.push(`${rewardVals.ap} ap`)
-        if (rewardVals.hp) rewardParts.push(`${rewardVals.hp} hp`)
-        logs.push(`Unused dice reward: ${rewardParts.join(' and ')}.`)
-      }
+      // reward already applied when dice were selected
     }
     logs.forEach(addLog)
   }, [addLog])
