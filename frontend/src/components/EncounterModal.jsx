@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import './EncounterModal.css'
 import ItemCard from './ItemCard'
 import GoblinCard from './GoblinCard'
+import HeroPanel from './HeroPanel'
 import {
   computeAttackBreakdown,
   fightGoblin,
@@ -342,8 +343,7 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
         </div>
 
         <div className={`encounter-side hero-side${entered ? ' enter-right' : ''}`}>
-          <h2>{hero.name}</h2>
-          <img src={hero.image} alt={hero.name} width="100" height="100" />
+          <HeroPanel hero={hero} />
           <div className="hero-items">
             {hero.weapons.map((w, idx) => (
               <ItemCard key={idx} item={w} />
