@@ -75,20 +75,31 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
       }, 1000)
     } else if (counterPhase === 'show') {
       t = setTimeout(() => {
-        if (result.counter.effect === 'shieldBreak') {
-          setCounterMsg(
-            `Shield break! You take ${result.counter.damage} damage.`,
-          )
-        } else if (result.counter.effect === 'torchDown') {
+        if (result.counter.effect === 'torchDown') {
           setCounterMsg('Torch down!')
         } else {
-          setCounterMsg(`Counterattack deals ${result.counter.damage} damage.`)
+          const bd = result.counter.breakdown
+          const parts = [`${bd.attack} attack`]
+          if (bd.roll) parts.push(`${bd.roll} roll`)
+          if (bd.extra) parts.push(`${bd.extra} mod`)
+          const detail = parts.join(' + ')
+          const baseMsg = `Counterattack power ${bd.total} (${detail}) vs defence ${result.counter.defenceBefore}.`
+          if (result.counter.effect === 'shieldBreak') {
+            setCounterMsg(`${baseMsg} Shield break! You take ${result.counter.damage} damage.`)
+          } else if (result.counter.brokeShield) {
+            setCounterMsg(`${baseMsg} Shield broken! You take ${result.counter.damage} damage.`)
+          } else if (result.counter.damage > 0) {
+            setCounterMsg(`${baseMsg} You take ${result.counter.damage} damage.`)
+          } else {
+            setCounterMsg(`${baseMsg} The shield absorbs the blow.`)
+          }
         }
         setCounterPhase('effect')
       }, 1000)
     } else if (counterPhase === 'effect') {
       setHeroHpDmg(result.counter.damage)
-      if (result.counter.effect === 'shieldBreak') setHeroShieldBroken(true)
+      if (result.counter.effect === 'shieldBreak' || result.counter.brokeShield)
+        setHeroShieldBroken(true)
       t = setTimeout(() => {
         setHeroHpDmg(null)
         setHeroShieldBroken(false)

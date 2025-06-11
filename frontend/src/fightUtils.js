@@ -14,6 +14,48 @@ export function computeAttackBreakdown(hero, weapon, rolls, baseIdx, extraIdxs =
   return { total, hero: heroPart, weapon: weaponPart, base, extra }
 }
 
+export function computeMonsterBreakdown(monster, roll = 0, extra = 0) {
+  const attack = monster.attack
+  const total = attack + roll + extra
+  return { total, attack, roll, extra }
+}
+
+export function computeCounterAttack(hero, weapon, monster, face, extraMod = 0) {
+  const roll = typeof face === 'number' ? face : 0
+  const breakdown = computeMonsterBreakdown(monster, roll, extraMod)
+  const heroDefBefore = hero.defence + weapon.defence
+  let heroDefAfter = hero.defence
+  let shieldDamage = 0
+  let damage = 0
+  let brokeShield = false
+
+  if (face === 'shieldBreak') {
+    damage = breakdown.total
+    heroDefAfter = 0
+    brokeShield = true
+  } else if (face !== 'torchDown') {
+    shieldDamage = Math.min(breakdown.total, heroDefBefore)
+    if (breakdown.total > heroDefBefore && heroDefBefore > 0) {
+      brokeShield = true
+      damage = breakdown.total - heroDefBefore
+      heroDefAfter = 0
+    } else if (heroDefBefore === 0) {
+      damage = breakdown.total
+    }
+  }
+
+  return {
+    roll: typeof face === 'number' ? face : null,
+    effect: face === 'shieldBreak' || face === 'torchDown' ? face : null,
+    breakdown,
+    damage,
+    shieldDamage,
+    brokeShield,
+    defenceBefore: heroDefBefore,
+    heroDefenceAfter: heroDefAfter,
+  }
+}
+
 export function computeAttackPower(hero, weapon, rolls, baseIdx, extraIdxs = [], bonus = 0) {
   return computeAttackBreakdown(hero, weapon, rolls, baseIdx, extraIdxs, bonus).total
 }
@@ -79,19 +121,9 @@ export function fightGoblin(
       const faces = ['torchDown', 2, 3, 4, 5, 'shieldBreak']
       const face = faces[Math.floor(Math.random() * faces.length)]
       const extraMod = (goblin.extra || 0) + aliveGoblins
-      counter = {
-        roll: typeof face === 'number' ? face : null,
-        effect: face === 'shieldBreak' || face === 'torchDown' ? face : null,
-        damage: 0,
-      }
-      if (typeof face === 'number') {
-        counter.damage = face + goblin.attack + extraMod
-        heroHp -= counter.damage
-      } else if (face === 'shieldBreak') {
-        counter.damage = goblin.attack + extraMod
-        heroHp -= counter.damage
-        heroDefenceAfter = 0
-      }
+      counter = computeCounterAttack(hero, weapon, goblin, face, extraMod)
+      heroHp -= counter.damage
+      heroDefenceAfter = counter.heroDefenceAfter
     }
     if (heroHp <= 0) {
       message += ' You have fallen.'
