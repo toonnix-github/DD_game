@@ -135,8 +135,8 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
     } else if (attackPhase === 'hpHit') {
       t1 = setTimeout(() => {
         setHpDmg(result.heroDmg)
-        setDisplayGoblin(g => ({ ...g, hp: result.goblin.hp }))
         t2 = setTimeout(() => {
+          setDisplayGoblin(g => ({ ...g, hp: result.goblin.hp }))
           setHpDmg(null)
           setAttackPhase('finish')
         }, 600)

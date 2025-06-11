@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './GoblinCard.css';
 
 function GoblinCard({
@@ -9,14 +9,24 @@ function GoblinCard({
   shieldBroken,
   hpDamage,
 }) {
+  const [maxHp, setMaxHp] = useState(goblin.hp)
+
+  useEffect(() => {
+    setMaxHp(m => Math.max(m, goblin.hp))
+  }, [goblin.hp])
   return (
     <div className={`goblin-card${damaged ? ' attack-slide' : ''}`}>
       <div className="name-bar">{goblin.name}</div>
       <img className={`card-image${defeated ? ' defeated' : ''}`} src={goblin.image} alt={goblin.name} />
       {defeated && <img src="/skull.png" alt="defeated" className="death-effect red" />}
       <div className="hp-hearts">
-        {Array.from({ length: goblin.hp }, (_, i) => (
-          <img key={i} src="/heart.png" alt="hp" />
+        {Array.from({ length: maxHp }, (_, i) => (
+          <img
+            key={i}
+            src="/heart.png"
+            className={i < goblin.hp ? undefined : 'lost'}
+            alt="hp"
+          />
         ))}
         {hpDamage != null && <span className="hp-damage">-{hpDamage}</span>}
       </div>
