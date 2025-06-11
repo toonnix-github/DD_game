@@ -24,8 +24,8 @@
   }
 
   &.revealed {
-    background-color: #555;
-    border-color: #aaa;
+    background-color: #000;
+    border-color: #000;
   }
 
   &.trap-room {
@@ -137,11 +137,9 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 100%;
+    width: 80%;
     text-align: center;
-    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
     pointer-events: none;
     font-family: 'MedievalSharp', serif;
   }
