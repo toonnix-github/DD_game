@@ -13,7 +13,6 @@ import { createShuffledDeck } from './roomDeck'
 import './App.css'
 import { HERO_TYPES } from './heroData'
 import { GOBLIN_TYPES, randomGoblinType } from './goblinData'
-import { fightGoblin, computeUnusedRewards } from './fightUtils'
 import { randomTreasure, adaptTreasureItem } from './treasureDeck'
 
 const BOARD_SIZE = 7
@@ -316,27 +315,12 @@ function App() {
     [state.board],
   )
 
-  const handleFight = useCallback((rolls, baseIdx, weaponIdx, extraIdxs, rewards, skillUsed = false) => {
+  const handleFight = useCallback(fightResult => {
     setState(prev => {
       const { encounter, board, hero } = prev
-      if (!encounter) return prev
-      const weapon = hero.weapons[weaponIdx]
-      const bonus = skillUsed && hero.skill && hero.skill.bonus ? hero.skill.bonus : 0
-      const alive = board.reduce(
-        (acc, row) =>
-          acc + row.reduce((a, t) => a + (t.goblin && t.goblin.hp > 0 ? 1 : 0), 0),
-        0,
-      )
-      const result = fightGoblin(
-        hero,
-        encounter.goblin,
-        weapon,
-        rolls,
-        baseIdx,
-        extraIdxs,
-        bonus,
-        alive,
-      )
+      if (!encounter || !fightResult) return prev
+      const { rewards, skillUsed } = fightResult
+      const result = fightResult
       const newBoard = board.map(row => row.map(tile => ({ ...tile })))
       const tile = newBoard[encounter.position.row][encounter.position.col]
       let newEncounter = {
@@ -349,13 +333,11 @@ function App() {
       tile.goblin = { ...result.goblin, defence: result.defenceAfter }
       const row = encounter.position.row
       const col = encounter.position.col
-      if (!rewards) {
-        rewards = computeUnusedRewards(rolls, baseIdx, extraIdxs)
-      }
+      const r = rewards || { ap: 0, hp: 0 }
       newHero = {
         ...newHero,
-        ap: Math.min(newHero.ap + rewards.ap, newHero.maxAp),
-        hp: Math.min(newHero.hp + rewards.hp, newHero.maxHp),
+        ap: Math.min(newHero.ap + r.ap, newHero.maxAp),
+        hp: Math.min(newHero.hp + r.hp, newHero.maxHp),
       }
       if (skillUsed && hero.skill && hero.skill.cost) {
         newHero.ap = Math.max(0, newHero.ap - hero.skill.cost)
@@ -381,7 +363,14 @@ function App() {
         // end encounter after counterattack
         newEncounter = null
       }
-      return { ...prev, board: newBoard, hero: newHero, encounter: newEncounter, reward, discard }
+      return {
+        ...prev,
+        board: newBoard,
+        hero: newHero,
+        encounter: newEncounter,
+        reward,
+        discard,
+      }
     })
   }, [])
 

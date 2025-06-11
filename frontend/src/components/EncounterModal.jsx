@@ -232,7 +232,7 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
   const closeResult = () => {
     if (!result) return
     if (result.type === 'fight') {
-      onFight(rolls, baseIdx, weaponIdx, extraIdxs, result.rewards, result.skillUsed)
+      onFight({ ...result, weaponIdx, rolls, baseIdx, extraIdxs })
     } else if (result.type === 'flee') {
       onFlee(result.success)
     }
