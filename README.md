@@ -14,15 +14,27 @@ The current version shows a hero portrait drawn in a Hearthstone‑style. Each h
    ```bash
    npm run lint --prefix frontend
    ```
-2. Build the React app:
+2. Run the included fight flow tests:
+   ```bash
+   npm test
+   ```
+3. Build the React app:
    ```bash
    npm run build --prefix frontend
    ```
-3. Start the server:
+4. Start the server:
    ```bash
    npm start
    ```
-4. Open `http://localhost:3000` in your browser.
+
+5. Open `http://localhost:3000` in your browser.
+
+## Testing
+
+Run all unit tests with:
+```bash
+npm test
+```
 
 ## MVP Features
 - Dungeon with a 7x7 grid of tiles.
