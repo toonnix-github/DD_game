@@ -15,6 +15,7 @@ import './App.css'
 import { HERO_TYPES } from './heroData'
 import { GOBLIN_TYPES, randomGoblinType } from './goblinData'
 import { randomTreasure, adaptTreasureItem } from './treasureDeck'
+import { formatFightLogs } from './fightUtils'
 
 const BOARD_SIZE = 7
 const CENTER = Math.floor(BOARD_SIZE / 2)
@@ -415,55 +416,7 @@ function App() {
     })
     // create log details after state update
     if (fightResult) {
-      const { goblin, details, attackPower, shieldDamage, heroDmg, counter, brokeShield, rolls, baseIdx, extraIdxs } = fightResult
-      const weapon = fightResult.hero.weapons[fightResult.weaponIdx]
-      logs.push(`Rolls: ${rolls.join(', ')}`)
-      if (baseIdx != null) {
-        const extras = extraIdxs.map(i => rolls[i]).join(', ')
-        logs.push(`Using base ${rolls[baseIdx]}${extras ? ` with extras ${extras}` : ''}`)
-      }
-      const goblinDefBefore = goblin.defence
-      const parts = []
-      if (details.hero) {
-        const label = fightResult.skillUsed && fightResult.hero.skill && fightResult.hero.skill.title
-          ? fightResult.hero.skill.title
-          : 'hero'
-        parts.push(`${details.hero} ${label}`)
-      }
-      parts.push(`${details.weapon} weapon`)
-      if (details.base) parts.push(`${details.base} base`)
-      if (details.extra) parts.push(`${details.extra} extra`)
-      logs.push(`Attack with ${weapon.name}: power ${attackPower} (${parts.join(' + ')}) vs defence ${goblinDefBefore}.`)
-      if (shieldDamage > 0) {
-        logs.push(brokeShield ? `Shield takes ${shieldDamage} damage and breaks.` : `Shield takes ${shieldDamage} damage.`)
-      } else {
-        logs.push('The shield absorbs the blow.')
-      }
-      if (heroDmg > 0) logs.push(`Goblin loses ${heroDmg} HP.`)
-      if (goblin.hp - heroDmg <= 0) logs.push('Goblin defeated!')
-      if (counter) {
-        if (counter.roll != null || counter.effect) {
-          logs.push(`Goblin counter roll: ${counter.roll != null ? counter.roll : counter.effect}`)
-        }
-        if (counter.effect !== 'torchDown') {
-          const bd = counter.breakdown
-          const parts2 = [`${bd.attack} attack`]
-          if (bd.roll) parts2.push(`${bd.roll} roll`)
-          if (bd.extra) parts2.push(`${bd.extra} mod`)
-          logs.push(`Counterattack power ${bd.total} (${parts2.join(' + ')}) vs defence ${counter.defenceBefore}.`)
-          if (counter.effect === 'shieldBreak') {
-            logs.push(`Shield break! You take ${counter.damage} damage.`)
-          } else if (counter.brokeShield) {
-            logs.push(`Shield broken! You take ${counter.damage} damage.`)
-          } else if (counter.damage > 0) {
-            logs.push(`You take ${counter.damage} damage.`)
-          } else {
-            logs.push('The shield absorbs the blow.')
-          }
-        } else {
-          logs.push('Torch down! No counterattack.')
-        }
-      }
+      formatFightLogs(fightResult).forEach(l => logs.push(l))
       // reward already applied when dice were selected
     }
     logs.forEach(addLog)
