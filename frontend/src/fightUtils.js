@@ -115,11 +115,15 @@ export function fightGoblin(
     const faces = ['torchDown', 2, 3, 4, 5, 'shieldBreak']
     const face = faces[Math.floor(Math.random() * faces.length)]
     const extraMod = (goblin.extra || 0) + aliveGoblins
-    counter = computeCounterAttack(hero, weapon, goblin, face, extraMod)
-    heroHp -= counter.damage
-    heroDefenceAfter = counter.heroDefenceAfter
-    if (heroHp <= 0) {
-      message += ' You have fallen.'
+    if (face === 'torchDown') {
+      counter = { effect: 'torchDown' }
+    } else {
+      counter = computeCounterAttack(hero, weapon, goblin, face, extraMod)
+      heroHp -= counter.damage
+      heroDefenceAfter = counter.heroDefenceAfter
+      if (heroHp <= 0) {
+        message += ' You have fallen.'
+      }
     }
   } else {
     message += ' Goblin defeated!'
