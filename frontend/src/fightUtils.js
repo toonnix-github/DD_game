@@ -239,38 +239,34 @@ export function formatFightLogs(result) {
 }
 
 export function formatFightMessage(result) {
-  const { hero, goblin, heroDmg, brokeShield, counter, weaponIdx } = result
+  const { hero, goblin, heroDmg, counter, weaponIdx } = result
   const weapon = hero.weapons[weaponIdx]
-  let msg = `You strike with your ${weapon.name}! `
 
-  if (heroDmg > 0) {
-    msg += brokeShield
-      ? `The shield shatters and the goblin takes ${heroDmg} damage.`
-      : `You hit for ${heroDmg} damage.`
-  } else {
-    msg += 'The blow bounces off the shield.'
+  // If the hero dies, that message takes priority
+  if (hero.hp <= 0) {
+    return 'You have fallen.'
   }
 
+  // Goblin defeated is the most exciting outcome
   if (goblin.hp <= 0) {
-    msg += ' Goblin defeated!'
+    return 'Goblin defeated!'
   }
 
+  // Summarize the hero's strike briefly
+  let msg = heroDmg > 0
+    ? `You hit with your ${weapon.name} for ${heroDmg} damage.`
+    : `Your ${weapon.name} fails to harm the goblin.`
+
+  // Summarize counterattack, if any
   if (counter) {
     if (counter.effect === 'torchDown') {
-      msg += ' The goblin fumbles its attack.'
+      msg += ' The goblin fumbles its counter.'
+    } else if (counter.damage > 0) {
+      msg += ` The goblin strikes back for ${counter.damage} damage.`
     } else {
-      msg += ' The goblin strikes back!'
-      if (counter.effect === 'shieldBreak') {
-        msg += ` Your shield is smashed and you take ${counter.damage} damage.`
-      } else if (counter.brokeShield) {
-        msg += ` Your shield breaks and you take ${counter.damage} damage.`
-      } else if (counter.damage > 0) {
-        msg += ` You take ${counter.damage} damage.`
-      } else {
-        msg += ' Your shield blocks the counter.'
-      }
+      msg += ' You block the counterattack.'
     }
   }
 
-  return msg.trim()
+  return msg
 }

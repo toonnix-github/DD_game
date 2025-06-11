@@ -229,14 +229,7 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee, onReward, 
       baseIdx,
       extraIdxs,
     }
-    const parts = []
-    if (rewards.ap) parts.push(`${rewards.ap} ap`)
-    if (rewards.hp) parts.push(`${rewards.hp} hp`)
-    let msg = formatFightMessage(resultObj)
-    if (parts.length) {
-      msg += ` Unused dice reward: ${parts.join(' and ')}.`
-    }
-    resultObj.message = msg
+    resultObj.message = formatFightMessage(resultObj)
     setResult(resultObj)
     setDisplayHero(heroWithRewards)
     setDisplayGoblin(goblin)
