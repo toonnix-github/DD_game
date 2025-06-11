@@ -25,7 +25,7 @@ function rewardInfo(value) {
   }
 }
 
-function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
+function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee, onReward }) {
   const [stage, setStage] = useState('menu')
   const [rolls, setRolls] = useState([])
   const [baseIdx, setBaseIdx] = useState(null)
@@ -196,9 +196,17 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
   const confirmFight = () => {
     const weapon = hero.weapons[weaponIdx]
     const rewards = computeUnusedRewards(rolls, baseIdx, extraIdxs)
+    if (onReward) {
+      onReward(rewards)
+    }
+    const heroWithRewards = {
+      ...hero,
+      ap: Math.min(hero.ap + rewards.ap, hero.maxAp),
+      hp: Math.min(hero.hp + rewards.hp, hero.maxHp),
+    }
     const bonus = useSkill && hero.skill && hero.skill.bonus ? hero.skill.bonus : 0
     const res = fightGoblin(
-      hero,
+      heroWithRewards,
       goblin,
       weapon,
       rolls,
@@ -214,7 +222,7 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
       res.message += ` Unused dice reward: ${parts.join(' and ')}.`
     }
     setResult({ type: 'fight', ...res, rewards, skillUsed: useSkill })
-    setDisplayHero(hero)
+    setDisplayHero(heroWithRewards)
     setDisplayGoblin(goblin)
     setAttackPhase('swing')
     setAttackMsg(`You swing your ${weapon.name}...`)

@@ -330,6 +330,20 @@ function App() {
     [state.board],
   )
 
+  const applyDiceRewards = useCallback(rewards => {
+    if (!rewards || (!rewards.ap && !rewards.hp)) return
+    setState(prev => {
+      const hero = prev.hero
+      if (!hero) return prev
+      const newHero = {
+        ...hero,
+        ap: Math.min(hero.ap + rewards.ap, hero.maxAp),
+        hp: Math.min(hero.hp + rewards.hp, hero.maxHp),
+      }
+      return { ...prev, hero: newHero }
+    })
+  }, [])
+
   const handleFight = useCallback(fightResult => {
     const logs = []
     const rewardVals = fightResult?.rewards || { ap: 0, hp: 0 }
@@ -350,11 +364,6 @@ function App() {
       tile.goblin = { ...result.goblin, defence: result.defenceAfter }
       const row = encounter.position.row
       const col = encounter.position.col
-      newHero = {
-        ...newHero,
-        ap: Math.min(newHero.ap + rewardVals.ap, newHero.maxAp),
-        hp: Math.min(newHero.hp + rewardVals.hp, newHero.maxHp),
-      }
       if (skillUsed && hero.skill && hero.skill.cost) {
         newHero.ap = Math.max(0, newHero.ap - hero.skill.cost)
       }
@@ -590,6 +599,7 @@ function App() {
           goblin={state.encounter.goblin}
           hero={state.hero}
           goblinCount={goblinCount}
+          onReward={applyDiceRewards}
           onFight={handleFight}
           onFlee={handleFlee}
         />
