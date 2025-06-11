@@ -51,9 +51,10 @@
   }
 
   &.revealed {
+
     .center,
     .door {
-      background-image: url('/soil.png');
+      background-image: url('/dungeon-pattern.png');
       background-size: cover;
     }
   }
@@ -147,6 +148,13 @@
 }
 
 @keyframes fade-out {
-  from { opacity: 1; transform: scale(0.5); }
-  to { opacity: 0; transform: scale(1.2); }
+  from {
+    opacity: 1;
+    transform: scale(0.5);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(1.2);
+  }
 }
