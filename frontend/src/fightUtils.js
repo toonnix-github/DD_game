@@ -102,64 +102,42 @@ export function fightGoblin(
 
   const details = computeAttackBreakdown(hero, weapon, rolls, baseIdx, extraIdxs, bonus)
   const attackPower = details.total
-  const heroDefence = hero.defence + weapon.defence
   const shieldDamage = Math.min(attackPower, goblin.defence)
   const brokeShield = attackPower > goblin.defence && goblin.defence > 0
   const heroDmg = brokeShield ? attackPower - goblin.defence : 0
   const defenceAfter = brokeShield ? 0 : goblin.defence
-  const goblinDmg = Math.max(1, goblin.attack - heroDefence)
-
   goblinHp -= heroDmg
   let message = brokeShield
     ? `Hero smashes the shield and deals ${heroDmg} damage.`
     : `The shield absorbs the blow.`
+  let counter = null
   if (goblinHp > 0) {
-    heroHp -= goblinDmg
-    message += ` Goblin strikes back for ${goblinDmg}.`
-    let counter = null
-    if (heroHp > 0) {
-      const faces = ['torchDown', 2, 3, 4, 5, 'shieldBreak']
-      const face = faces[Math.floor(Math.random() * faces.length)]
-      const extraMod = (goblin.extra || 0) + aliveGoblins
-      counter = computeCounterAttack(hero, weapon, goblin, face, extraMod)
-      heroHp -= counter.damage
-      heroDefenceAfter = counter.heroDefenceAfter
-    }
+    const faces = ['torchDown', 2, 3, 4, 5, 'shieldBreak']
+    const face = faces[Math.floor(Math.random() * faces.length)]
+    const extraMod = (goblin.extra || 0) + aliveGoblins
+    counter = computeCounterAttack(hero, weapon, goblin, face, extraMod)
+    heroHp -= counter.damage
+    heroDefenceAfter = counter.heroDefenceAfter
     if (heroHp <= 0) {
       message += ' You have fallen.'
-    }
-    return {
-      hero: { ...hero, hp: heroHp, defence: heroDefenceAfter },
-      goblin: { ...goblin, hp: goblinHp },
-      details,
-      attackPower,
-      shieldDamage,
-      heroDmg,
-      goblinDmg,
-      counter,
-      brokeShield,
-      defenceAfter,
-      heroDefenceAfter,
-      message,
     }
   } else {
     message += ' Goblin defeated!'
     if (heroHp <= 0) {
       message += ' You have fallen.'
     }
-    return {
-      hero: { ...hero, hp: heroHp, defence: heroDefenceAfter },
-      goblin: { ...goblin, hp: goblinHp },
-      details,
-      attackPower,
-      shieldDamage,
-      heroDmg,
-      goblinDmg: 0,
-      counter: null,
-      brokeShield,
-      defenceAfter,
-      heroDefenceAfter,
-      message,
-    }
+  }
+  return {
+    hero: { ...hero, hp: heroHp, defence: heroDefenceAfter },
+    goblin: { ...goblin, hp: goblinHp },
+    details,
+    attackPower,
+    shieldDamage,
+    heroDmg,
+    counter,
+    brokeShield,
+    defenceAfter,
+    heroDefenceAfter,
+    message,
   }
 }

@@ -390,7 +390,7 @@ function App() {
     })
     // create log details after state update
     if (fightResult) {
-      const { goblin, details, attackPower, shieldDamage, heroDmg, goblinDmg, counter, brokeShield, rolls, baseIdx, extraIdxs } = fightResult
+      const { goblin, details, attackPower, shieldDamage, heroDmg, counter, brokeShield, rolls, baseIdx, extraIdxs } = fightResult
       const weapon = fightResult.hero.weapons[fightResult.weaponIdx]
       logs.push(`Rolls: ${rolls.join(', ')}`)
       if (baseIdx != null) {
@@ -411,7 +411,6 @@ function App() {
       }
       if (heroDmg > 0) logs.push(`Goblin loses ${heroDmg} HP.`)
       if (goblin.hp - heroDmg <= 0) logs.push('Goblin defeated!')
-      if (goblinDmg > 0) logs.push(`Goblin strikes back for ${goblinDmg} damage.`)
       if (counter) {
         if (counter.roll != null || counter.effect) {
           logs.push(`Goblin counter roll: ${counter.roll != null ? counter.roll : counter.effect}`)

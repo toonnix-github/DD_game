@@ -138,15 +138,11 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
           setAttackMsg('The shield shatters!')
           t2 = setTimeout(() => {
             setShieldBroken(false)
-            if (result.heroDmg > 0) {
-              setAttackPhase('hpHit')
-            } else {
-              setAttackPhase('heroHit')
-            }
+            setAttackPhase(result.heroDmg > 0 ? 'hpHit' : 'finish')
           }, 600)
         } else {
           setAttackMsg('The blow fails to break the shield.')
-          setAttackPhase('heroHit')
+          setAttackPhase('finish')
         }
       }, 1000)
     } else if (attackPhase === 'hpHit') {
@@ -155,15 +151,6 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
         t2 = setTimeout(() => {
           setDisplayGoblin(g => ({ ...g, hp: result.goblin.hp }))
           setHpDmg(null)
-          setAttackPhase('heroHit')
-        }, 600)
-      }, 1000)
-    } else if (attackPhase === 'heroHit') {
-      t1 = setTimeout(() => {
-        setHeroHpDmg(result.goblinDmg)
-        t2 = setTimeout(() => {
-          setDisplayHero(h => ({ ...h, hp: h.hp - result.goblinDmg }))
-          setHeroHpDmg(null)
           setAttackPhase('finish')
         }, 600)
       }, 1000)
