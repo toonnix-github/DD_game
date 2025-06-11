@@ -16,7 +16,7 @@ import { HERO_TYPES } from './heroData'
 import { GOBLIN_TYPES, randomGoblinType } from './goblinData'
 import { randomTreasure, adaptTreasureItem } from './treasureDeck'
 import { formatFightLogs } from './fightUtils'
-import { getRangedTargets } from './boardUtils'
+import { getRangedTargets, opposite } from './boardUtils'
 
 const BOARD_SIZE = 7
 const CENTER = Math.floor(BOARD_SIZE / 2)
@@ -30,22 +30,6 @@ function directionFromDelta(dr, dc) {
   if (dc === 1) return 'right'
   return null
 }
-
-function opposite(dir) {
-  switch (dir) {
-    case 'up':
-      return 'down'
-    case 'down':
-      return 'up'
-    case 'left':
-      return 'right'
-    case 'right':
-      return 'left'
-    default:
-      return null
-  }
-}
-
 
 function createEmptyBoard() {
   return Array.from({ length: BOARD_SIZE }, (_, r) =>
@@ -301,6 +285,7 @@ function App() {
     (r, c) => {
       const { hero, board, encounter } = state
       if (!hero || encounter) return
+      if (board[hero.row][hero.col].goblin) return
       const tile = board[r][c]
       if (!tile.goblin || tile.goblin.hp <= 0) return
 
@@ -355,6 +340,7 @@ function App() {
   const rangedTargets = useMemo(() => {
     const { hero, board, encounter } = state
     if (!hero || encounter) return []
+    if (board[hero.row][hero.col].goblin) return []
     const targets = []
     hero.weapons.forEach(w => {
       if (w.attackType === 'range' && w.dice === 'agility' && w.range > 0) {
