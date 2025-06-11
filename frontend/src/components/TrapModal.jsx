@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import './EncounterModal.scss'
 import { DISARM_RULE, EVASION_RULE } from '../trapRules'
 import { computeAttackBreakdown, computeUnusedRewards } from '../fightUtils'
+import HeroPanel from './HeroPanel'
 
 function TrapModal({ hero, trap, onResolve }) {
   const [stage, setStage] = useState('evasionReady')
@@ -100,10 +101,11 @@ function TrapModal({ hero, trap, onResolve }) {
   return (
     <div className="encounter-overlay">
       <div className="encounter-window trap-window">
-        <div className="trap-header">
-          <span className="trap-icon">{trap.icon}</span>
-          <span className="trap-name">{trapName}</span>
-        </div>
+        <div className="encounter-middle">
+          <div className="trap-header">
+            <span className="trap-icon">{trap.icon}</span>
+            <span className="trap-name">{trapName}</span>
+          </div>
         {stage === 'evasionReady' && (
           <>
             <p className="trap-info">{EVASION_RULE}</p>
@@ -341,6 +343,10 @@ function TrapModal({ hero, trap, onResolve }) {
             </div>
           </div>
         )}
+        </div>
+        <div className="encounter-side hero-side">
+          <HeroPanel hero={hero} />
+        </div>
       </div>
     </div>
   )

@@ -68,8 +68,6 @@
 .encounter-window.trap-window {
   background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
     url('/room/trap-room.png') center/cover no-repeat;
-  flex-direction: column;
-  justify-content: center;
   text-align: center;
   text-shadow: 0 0 4px #000;
 }
