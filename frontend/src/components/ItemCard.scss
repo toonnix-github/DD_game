@@ -1,0 +1,90 @@
+@use '../styles/card' as card;
+@use 'sass:list';
+
+.item-card {
+@include card.card(-3deg, 20vmin, list.slash(1, 1));
+  background-color: #555;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.75rem;
+
+  .item-name {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    color: #ffffff;
+    text-align: left;
+    padding: 0.1rem 0;
+    font-size: 0.6rem;
+    padding-left: 1rem;
+    padding-top: .2rem;
+    z-index: 2;
+  }
+
+  .item-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .item-stats {
+    position: absolute;
+    bottom: 1.2rem;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    color: #000000;
+    padding: 0.1rem 0;
+    font-size: 0.8rem;
+  }
+
+  .attack-icons,
+  .defence-icons {
+    display: flex;
+    gap: 2px;
+  }
+
+  .attack-value {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+
+    .plus-icon {
+      width: 0.5rem;
+      height: 0.5rem;
+    }
+  }
+
+  .stat-icon {
+    width: 0.8rem;
+    height: 0.8rem;
+  }
+
+  .weapon-type {
+    position: absolute;
+    bottom: -0.25rem;
+    right: -0.25rem;
+    width: 25%;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    background: #fff;
+    border: 0.25rem solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+
+    img {
+      width: 70%;
+      height: 70%;
+    }
+  }
+}

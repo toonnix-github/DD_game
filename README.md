@@ -67,6 +67,15 @@ Heroes may also possess special skills that consume action points. The first
 implemented example is the Viking's **Berserker Rage**. When toggled before a
 fight it spends 2 AP and grants +2 attack power for that encounter.
 
+### Styling with SCSS
+
+Common card layouts now share a single SCSS mixin defined in
+`frontend/src/styles/_card.scss`. Components such as `HeroPanel`, `GoblinCard`
+and `ItemCard` include this mixin to keep their styles consistent. Vite compiles
+these `.scss` files automatically during development and builds, so regular CSS
+imports were replaced with SCSS equivalents. SCSS nesting keeps component styles
+concise by grouping related selectors under the same parent.
+
 ### Artwork Credits
 
 The colored knight and elf portraits shown in the game are custom SVG assets

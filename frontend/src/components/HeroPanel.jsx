@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import './HeroPanel.css';
+import './HeroPanel.scss';
 
 function renderDice(count, alt) {
   return Array.from({ length: count }, (_, i) => (

@@ -1,0 +1,22 @@
+.hero {
+  background-color: crimson;
+  color: white;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+
+  &.shake {
+    animation: shake 0.3s;
+  }
+}
+
+@keyframes shake {
+  0% { transform: translate(0); }
+  25% { transform: translate(-3px); }
+  50% { transform: translate(3px); }
+  75% { transform: translate(-3px); }
+  100% { transform: translate(0); }
+}

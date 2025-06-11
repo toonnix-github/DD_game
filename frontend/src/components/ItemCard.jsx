@@ -1,5 +1,5 @@
 import React from 'react';
-import './ItemCard.css';
+import './ItemCard.scss';
 
 function ItemCard({ item }) {
   const typeIcons = {

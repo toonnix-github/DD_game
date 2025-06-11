@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import './EncounterModal.css'
+import './EncounterModal.scss'
 import { DISARM_RULE } from '../trapRules'
 
 function TrapModal({ hero, trap, onResolve }) {
