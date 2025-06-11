@@ -388,7 +388,7 @@ function App() {
       const newBoard = board.map(row => row.map(tile => ({ ...tile })))
       const tile = newBoard[trap.position.row][trap.position.col]
       tile.trapResolved = success
-      let newHero = { ...hero }
+      let newHero = { ...hero, movement: 0, ap: 0 }
       let discard = null
       let reward = prev.reward
       if (success) {
