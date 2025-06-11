@@ -101,10 +101,11 @@ function TrapModal({ hero, trap, onResolve }) {
   return (
     <div className="encounter-overlay">
       <div className="encounter-window trap-window">
-        <div className="trap-header">
-          <span className="trap-icon">{trap.icon}</span>
-          <span className="trap-name">{trapName}</span>
-        </div>
+        <div className="encounter-middle">
+          <div className="trap-header">
+            <span className="trap-icon">{trap.icon}</span>
+            <span className="trap-name">{trapName}</span>
+          </div>
         {stage === 'evasionReady' && (
           <>
             <p className="trap-info">{EVASION_RULE}</p>
@@ -342,7 +343,10 @@ function TrapModal({ hero, trap, onResolve }) {
             </div>
           </div>
         )}
-        <HeroPanel hero={hero} />
+        </div>
+        <div className="encounter-side hero-side">
+          <HeroPanel hero={hero} />
+        </div>
       </div>
     </div>
   )
