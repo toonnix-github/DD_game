@@ -57,6 +57,10 @@
     gap: 0.125rem;
     z-index: 2;
 
+    &.shake {
+      animation: shake 0.5s;
+    }
+
     img {
       width: 1.2rem;
       height: 1.2rem;

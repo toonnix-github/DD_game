@@ -15,11 +15,11 @@ function GoblinCard({
     setMaxHp(m => Math.max(m, goblin.hp))
   }, [goblin.hp])
   return (
-    <div className={`goblin-card${damaged ? ' attack-slide' : ''}`}>
+    <div className="goblin-card">
       <div className="name-bar">{goblin.name}</div>
       <img className={`card-image${defeated ? ' defeated' : ''}`} src={goblin.image} alt={goblin.name} />
       {defeated && <img src="/skull.png" alt="defeated" className="death-effect red" />}
-      <div className="hp-hearts">
+      <div className={`hp-hearts${damaged ? ' shake' : ''}`}>
         {Array.from({ length: maxHp }, (_, i) => (
           <img
             key={i}
