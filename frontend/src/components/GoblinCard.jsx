@@ -1,7 +1,14 @@
 import React from 'react';
 import './GoblinCard.css';
 
-function GoblinCard({ goblin, damaged, defeated }) {
+function GoblinCard({
+  goblin,
+  damaged,
+  defeated,
+  shieldDamage,
+  shieldBroken,
+  hpDamage,
+}) {
   return (
     <div className={`goblin-card${damaged ? ' attack-slide' : ''}`}>
       <div className="name-bar">{goblin.name}</div>
@@ -11,16 +18,37 @@ function GoblinCard({ goblin, damaged, defeated }) {
         {Array.from({ length: goblin.hp }, (_, i) => (
           <img key={i} src="/heart.png" alt="hp" />
         ))}
+        {hpDamage != null && <span className="hp-damage">-{hpDamage}</span>}
       </div>
       <div className="stats-bar">
         <span className="stat">
           <img src="/fist.png" alt="attack" />{goblin.attack}
         </span>
       </div>
-      <div className="defence-badge">
-        <img src="/shield.png" alt="defence" />
-        <span>{goblin.defence}</span>
-      </div>
+      {(goblin.defence > 0 || shieldDamage != null || shieldBroken) && (
+        <div
+          className={`defence-badge${shieldDamage ? ' shake' : ''}${
+            goblin.defence <= 0 ? ' broken' : ''
+          }`}
+        >
+          {goblin.defence > 0 && (
+            <>
+              <img src="/shield.png" alt="defence" />
+              <span>{goblin.defence}</span>
+            </>
+          )}
+          {shieldDamage != null && (
+            <span className="shield-damage">-{shieldDamage}</span>
+          )}
+          {shieldBroken && (
+            <img
+              src="/icon/starburst.png"
+              alt="shield broken"
+              className="shield-break"
+            />
+          )}
+        </div>
+      )}
       <div className="monster-icon">
         <img src="/icon/icon-goblin.png" alt="goblin" />
       </div>

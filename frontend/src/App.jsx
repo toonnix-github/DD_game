@@ -339,11 +339,14 @@ function App() {
       )
       const newBoard = board.map(row => row.map(tile => ({ ...tile })))
       const tile = newBoard[encounter.position.row][encounter.position.col]
-      let newEncounter = { ...encounter, goblin: result.goblin }
+      let newEncounter = {
+        ...encounter,
+        goblin: { ...result.goblin, defence: result.defenceAfter },
+      }
       let newHero = result.hero
       let discard = prev.discard
       let reward = prev.reward
-      tile.goblin = result.goblin
+      tile.goblin = { ...result.goblin, defence: result.defenceAfter }
       const row = encounter.position.row
       const col = encounter.position.col
       if (!rewards) {

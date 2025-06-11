@@ -56,19 +56,21 @@ export function fightGoblin(
 ) {
   let heroHp = hero.hp
   let goblinHp = goblin.hp
+  let heroDefenceAfter = hero.defence
 
   const details = computeAttackBreakdown(hero, weapon, rolls, baseIdx, extraIdxs, bonus)
   const attackPower = details.total
   const heroDefence = hero.defence + weapon.defence
-  // If the hero's attack power does not overcome the goblin's defence
-  // they shouldn't inflict any damage. Previously a minimum of 1 damage
-  // was always applied which could kill low HP goblins even when the
-  // attack was too weak. This now properly allows zero damage.
-  const heroDmg = Math.max(0, attackPower - goblin.defence)
+  const shieldDamage = Math.min(attackPower, goblin.defence)
+  const brokeShield = attackPower > goblin.defence && goblin.defence > 0
+  const heroDmg = brokeShield ? attackPower - goblin.defence : 0
+  const defenceAfter = brokeShield ? 0 : goblin.defence
   const goblinDmg = Math.max(1, goblin.attack - heroDefence)
 
   goblinHp -= heroDmg
-  let message = `Hero deals ${heroDmg} damage.`
+  let message = brokeShield
+    ? `Hero smashes the shield and deals ${heroDmg} damage.`
+    : `The shield absorbs the blow.`
   if (goblinHp > 0) {
     heroHp -= goblinDmg
     message += ` Goblin strikes back for ${goblinDmg}.`
@@ -88,19 +90,24 @@ export function fightGoblin(
       } else if (face === 'shieldBreak') {
         counter.damage = goblin.attack + extraMod
         heroHp -= counter.damage
+        heroDefenceAfter = 0
       }
     }
     if (heroHp <= 0) {
       message += ' You have fallen.'
     }
     return {
-      hero: { ...hero, hp: heroHp },
+      hero: { ...hero, hp: heroHp, defence: heroDefenceAfter },
       goblin: { ...goblin, hp: goblinHp },
       details,
       attackPower,
+      shieldDamage,
       heroDmg,
       goblinDmg,
       counter,
+      brokeShield,
+      defenceAfter,
+      heroDefenceAfter,
       message,
     }
   } else {
@@ -109,13 +116,17 @@ export function fightGoblin(
       message += ' You have fallen.'
     }
     return {
-      hero: { ...hero, hp: heroHp },
+      hero: { ...hero, hp: heroHp, defence: heroDefenceAfter },
       goblin: { ...goblin, hp: goblinHp },
       details,
       attackPower,
+      shieldDamage,
       heroDmg,
       goblinDmg: 0,
       counter: null,
+      brokeShield,
+      defenceAfter,
+      heroDefenceAfter,
       message,
     }
   }

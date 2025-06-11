@@ -79,6 +79,7 @@
   height: 3.25rem;
   z-index: 3;
   transform: rotate(5deg);
+  overflow: visible;
 }
 
 .goblin-card .defence-badge img {
@@ -135,4 +136,97 @@
 
 .attack-slide {
   animation: attack-slide 0.3s;
+}
+
+@keyframes shake {
+  0% {
+    transform: translate(0);
+  }
+  25% {
+    transform: translate(-3px);
+  }
+  50% {
+    transform: translate(3px);
+  }
+  75% {
+    transform: translate(-3px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+.shake {
+  animation: shake 0.3s;
+}
+
+.shield-damage {
+  position: absolute;
+  left: 50%;
+  top: -0.5rem;
+  transform: translate(-50%, 0);
+  color: #ff4444;
+  font-weight: bold;
+  font-size: 1.2rem;
+  animation: float-up 1s forwards;
+  pointer-events: none;
+  text-shadow: 0 0 2px #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: url('/icon/starburst.png') center/contain no-repeat;
+  padding: 0.2rem 0.4rem;
+  min-width: 2rem;
+  min-height: 2rem;
+}
+
+.hp-damage {
+  position: absolute;
+  left: 50%;
+  top: -0.5rem;
+  transform: translate(-50%, 0);
+  color: #ff4444;
+  font-weight: bold;
+  font-size: 1.2rem;
+  animation: float-up 1s forwards;
+  pointer-events: none;
+  text-shadow: 0 0 2px #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: url('/icon/starburst.png') center/contain no-repeat;
+  padding: 0.2rem 0.4rem;
+  min-width: 2rem;
+  min-height: 2rem;
+}
+
+.shield-break {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 2rem;
+  height: 2rem;
+  transform: translate(-50%, -50%);
+  animation: fade-out 0.6s forwards;
+  pointer-events: none;
+}
+
+.defence-badge.broken img,
+.defence-badge.broken span {
+  display: none;
+}
+
+.defence-badge.broken {
+  animation: fade-out 0.6s forwards;
+}
+
+@keyframes float-up {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -1.3rem);
+  }
 }
