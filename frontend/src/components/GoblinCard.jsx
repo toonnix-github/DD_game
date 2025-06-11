@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './GoblinCard.css';
+import './GoblinCard.scss';
 
 function GoblinCard({
   goblin,

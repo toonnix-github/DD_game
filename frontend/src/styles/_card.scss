@@ -1,0 +1,16 @@
+%card {
+  position: relative;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.6);
+  backface-visibility: hidden;
+  border: 0.25rem solid #000;
+  box-sizing: border-box;
+}
+
+@mixin card($rotation: 0deg, $width: 30vmin, $ratio: 2 / 3) {
+  @extend %card;
+  width: $width;
+  aspect-ratio: $ratio;
+  transform: rotate($rotation);
+}

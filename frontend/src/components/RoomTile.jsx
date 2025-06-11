@@ -1,5 +1,5 @@
 import React from 'react'
-import './RoomTile.css'
+import './RoomTile.scss'
 import { DISARM_RULE } from '../trapRules'
 
 const DIRS = ['up', 'down', 'left', 'right']

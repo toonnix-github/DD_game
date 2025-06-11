@@ -1,6 +1,6 @@
 import React from 'react'
 import { HERO_TYPES } from '../heroData'
-import './HeroSelect.css'
+import './HeroSelect.scss'
 
 function HeroSelect({ onSelect }) {
   return (

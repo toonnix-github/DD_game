@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import ItemCard from './ItemCard'
-import './EncounterModal.css'
+import './EncounterModal.scss'
 
 function RewardModal({ reward, onConfirm }) {
   const [revealed, setRevealed] = useState(false)

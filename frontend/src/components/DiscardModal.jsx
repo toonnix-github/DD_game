@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import ItemCard from './ItemCard'
-import './EncounterModal.css'
+import './EncounterModal.scss'
 
 function DiscardModal({ items, onConfirm }) {
   const [discard, setDiscard] = useState(0)

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import './EncounterModal.css'
+import './EncounterModal.scss'
 import ItemCard from './ItemCard'
 import GoblinCard from './GoblinCard'
 import HeroPanel from './HeroPanel'
