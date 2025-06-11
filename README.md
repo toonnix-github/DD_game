@@ -41,8 +41,8 @@ The current version shows a hero portrait drawn in a Hearthstone‑style. Each h
 - Monsters may counterattack. Damage equals the counter roll plus their attack
   and modifiers from special goblins and the number of goblins still alive.
 - Attacks now animate the target's shield shaking with the damage value popping
-  out. Big hits can even shatter the shield in a burst of light, permanently
-  removing its defence.
+  out on a starburst background. Big hits can even shatter the shield in a
+  burst of light, permanently removing its defence.
 
 The hero panel now displays these attributes along with a portrait image for the selected hero. Lost HP is shown using the same heart icon tinted black via CSS so you can quickly gauge your health. Dice stats are represented by repeating dice icons rather than numbers.
 

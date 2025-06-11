@@ -17,28 +17,30 @@ function GoblinCard({ goblin, damaged, defeated, shieldDamage, shieldBroken }) {
           <img src="/fist.png" alt="attack" />{goblin.attack}
         </span>
       </div>
-      <div
-        className={`defence-badge${shieldDamage ? ' shake' : ''}${
-          goblin.defence <= 0 ? ' broken' : ''
-        }`}
-      >
-        {goblin.defence > 0 && (
-          <>
-            <img src="/shield.png" alt="defence" />
-            <span>{goblin.defence}</span>
-          </>
-        )}
-        {shieldDamage != null && (
-          <span className="shield-damage">-{shieldDamage}</span>
-        )}
-        {shieldBroken && (
-          <img
-            src="/icon/starburst.png"
-            alt="shield broken"
-            className="shield-break"
-          />
-        )}
-      </div>
+      {(goblin.defence > 0 || shieldDamage != null || shieldBroken) && (
+        <div
+          className={`defence-badge${shieldDamage ? ' shake' : ''}${
+            goblin.defence <= 0 ? ' broken' : ''
+          }`}
+        >
+          {goblin.defence > 0 && (
+            <>
+              <img src="/shield.png" alt="defence" />
+              <span>{goblin.defence}</span>
+            </>
+          )}
+          {shieldDamage != null && (
+            <span className="shield-damage">-{shieldDamage}</span>
+          )}
+          {shieldBroken && (
+            <img
+              src="/icon/starburst.png"
+              alt="shield broken"
+              className="shield-break"
+            />
+          )}
+        </div>
+      )}
       <div className="monster-icon">
         <img src="/icon/icon-goblin.png" alt="goblin" />
       </div>
