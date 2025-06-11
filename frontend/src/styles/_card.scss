@@ -1,3 +1,5 @@
+@use 'sass:list';
+
 %card {
   position: relative;
   border-radius: 0.5rem;
@@ -8,7 +10,7 @@
   box-sizing: border-box;
 }
 
-@mixin card($rotation: 0deg, $width: 30vmin, $ratio: 2 / 3) {
+@mixin card($rotation: 0deg, $width: 30vmin, $ratio: list.slash(2, 3)) {
   @extend %card;
   width: $width;
   aspect-ratio: $ratio;

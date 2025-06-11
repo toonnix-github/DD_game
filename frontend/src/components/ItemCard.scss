@@ -1,7 +1,8 @@
 @use '../styles/card' as card;
+@use 'sass:list';
 
 .item-card {
-  @include card.card(-3deg, 20vmin, 1 / 1);
+@include card.card(-3deg, 20vmin, list.slash(1, 1));
   background-color: #555;
   display: flex;
   flex-direction: column;
