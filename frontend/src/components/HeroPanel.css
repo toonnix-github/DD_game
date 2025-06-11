@@ -63,7 +63,6 @@
   grid-template-columns: repeat(2, 1rem);
   gap: 0.125rem;
   justify-items: center;
-  position: relative;
 }
 
 .hp-hearts img {
