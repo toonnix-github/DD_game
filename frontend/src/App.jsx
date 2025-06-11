@@ -209,6 +209,7 @@ function App() {
   const resetGame = useCallback(() => {
     localStorage.removeItem('dungeon-state')
     setState(loadState())
+    setEventLog([])
   }, [])
 
   const moveHero = useCallback(
