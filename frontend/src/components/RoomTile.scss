@@ -26,11 +26,14 @@
   &.revealed {
     background-color: #555;
     border-color: #aaa;
+    background-image: url('/dungeon-pattern.png');
+    background-size: cover;
   }
 
   &.trap-room {
     background-color: #663333;
     border-color: #ff6666;
+    background-image: url('/dungeon-pattern.png');
 
     .center,
     .door {
