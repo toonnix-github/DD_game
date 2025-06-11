@@ -38,6 +38,8 @@ The current version shows a hero portrait drawn in a Hearthstone‑style. Each h
   - Defence power
   - Weapons determine attack power
   - Fleeing now requires rolling agility dice, adding excitement to encounters.
+  - Monsters may counterattack. Damage equals the counter roll plus their attack
+    and modifiers from special goblins and the number of goblins still alive.
 
 The hero panel now displays these attributes along with a portrait image for the selected hero. Lost HP is shown using the same heart icon tinted black via CSS so you can quickly gauge your health. Dice stats are represented by repeating dice icons rather than numbers.
 

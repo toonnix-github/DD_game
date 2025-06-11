@@ -44,7 +44,16 @@ export function computeUnusedRewards(rolls, baseIdx, extraIdxs = []) {
   return { ap, hp }
 }
 
-export function fightGoblin(hero, goblin, weapon, rolls, baseIdx, extraIdxs = [], bonus = 0) {
+export function fightGoblin(
+  hero,
+  goblin,
+  weapon,
+  rolls,
+  baseIdx,
+  extraIdxs = [],
+  bonus = 0,
+  aliveGoblins = 0,
+) {
   let heroHp = hero.hp
   let goblinHp = goblin.hp
 
@@ -67,14 +76,18 @@ export function fightGoblin(hero, goblin, weapon, rolls, baseIdx, extraIdxs = []
     if (heroHp > 0) {
       const faces = ['torchDown', 2, 3, 4, 5, 'shieldBreak']
       const face = faces[Math.floor(Math.random() * faces.length)]
+      const extraMod = (goblin.extra || 0) + aliveGoblins
       counter = {
         roll: typeof face === 'number' ? face : null,
         effect: face === 'shieldBreak' || face === 'torchDown' ? face : null,
         damage: 0,
       }
-      if (face === 'shieldBreak') {
-        counter.damage = goblin.attack
-        heroHp -= goblin.attack
+      if (typeof face === 'number') {
+        counter.damage = face + goblin.attack + extraMod
+        heroHp -= counter.damage
+      } else if (face === 'shieldBreak') {
+        counter.damage = goblin.attack + extraMod
+        heroHp -= counter.damage
       }
     }
     if (heroHp <= 0) {
