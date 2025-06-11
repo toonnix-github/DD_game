@@ -7,7 +7,7 @@ import {
   computeAttackBreakdown,
   fightGoblin,
   computeUnusedRewards,
-  formatFightLogs,
+  formatFightMessage,
 } from '../fightUtils'
 
 function rewardInfo(value) {
@@ -232,7 +232,7 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee, onReward, 
     const parts = []
     if (rewards.ap) parts.push(`${rewards.ap} ap`)
     if (rewards.hp) parts.push(`${rewards.hp} hp`)
-    let msg = formatFightLogs(resultObj).join(' ')
+    let msg = formatFightMessage(resultObj)
     if (parts.length) {
       msg += ` Unused dice reward: ${parts.join(' and ')}.`
     }

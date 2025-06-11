@@ -237,3 +237,40 @@ export function formatFightLogs(result) {
   }
   return logs
 }
+
+export function formatFightMessage(result) {
+  const { hero, goblin, heroDmg, brokeShield, counter, weaponIdx } = result
+  const weapon = hero.weapons[weaponIdx]
+  let msg = `You strike with your ${weapon.name}! `
+
+  if (heroDmg > 0) {
+    msg += brokeShield
+      ? `The shield shatters and the goblin takes ${heroDmg} damage.`
+      : `You hit for ${heroDmg} damage.`
+  } else {
+    msg += 'The blow bounces off the shield.'
+  }
+
+  if (goblin.hp <= 0) {
+    msg += ' Goblin defeated!'
+  }
+
+  if (counter) {
+    if (counter.effect === 'torchDown') {
+      msg += ' The goblin fumbles its attack.'
+    } else {
+      msg += ' The goblin strikes back!'
+      if (counter.effect === 'shieldBreak') {
+        msg += ` Your shield is smashed and you take ${counter.damage} damage.`
+      } else if (counter.brokeShield) {
+        msg += ` Your shield breaks and you take ${counter.damage} damage.`
+      } else if (counter.damage > 0) {
+        msg += ` You take ${counter.damage} damage.`
+      } else {
+        msg += ' Your shield blocks the counter.'
+      }
+    }
+  }
+
+  return msg.trim()
+}
