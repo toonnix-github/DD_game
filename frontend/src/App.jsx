@@ -306,13 +306,37 @@ function App() {
     return moves
   }, [state])
 
+  const goblinCount = useMemo(
+    () =>
+      state.board.reduce(
+        (acc, row) =>
+          acc + row.reduce((a, t) => a + (t.goblin && t.goblin.hp > 0 ? 1 : 0), 0),
+        0,
+      ),
+    [state.board],
+  )
+
   const handleFight = useCallback((rolls, baseIdx, weaponIdx, extraIdxs, rewards, skillUsed = false) => {
     setState(prev => {
       const { encounter, board, hero } = prev
       if (!encounter) return prev
       const weapon = hero.weapons[weaponIdx]
       const bonus = skillUsed && hero.skill && hero.skill.bonus ? hero.skill.bonus : 0
-      const result = fightGoblin(hero, encounter.goblin, weapon, rolls, baseIdx, extraIdxs, bonus)
+      const alive = board.reduce(
+        (acc, row) =>
+          acc + row.reduce((a, t) => a + (t.goblin && t.goblin.hp > 0 ? 1 : 0), 0),
+        0,
+      )
+      const result = fightGoblin(
+        hero,
+        encounter.goblin,
+        weapon,
+        rolls,
+        baseIdx,
+        extraIdxs,
+        bonus,
+        alive,
+      )
       const newBoard = board.map(row => row.map(tile => ({ ...tile })))
       const tile = newBoard[encounter.position.row][encounter.position.col]
       let newEncounter = { ...encounter, goblin: result.goblin }
@@ -485,6 +509,7 @@ function App() {
         <EncounterModal
           goblin={state.encounter.goblin}
           hero={state.hero}
+          goblinCount={goblinCount}
           onFight={handleFight}
           onFlee={handleFlee}
         />

@@ -24,7 +24,7 @@ function rewardInfo(value) {
   }
 }
 
-function EncounterModal({ goblin, hero, onFight, onFlee }) {
+function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
   const [stage, setStage] = useState('menu')
   const [rolls, setRolls] = useState([])
   const [baseIdx, setBaseIdx] = useState(null)
@@ -63,9 +63,13 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
     } else if (counterPhase === 'show') {
       t = setTimeout(() => {
         if (result.counter.effect === 'shieldBreak') {
-          setCounterMsg(`Shield break! You take ${result.counter.damage} damage.`)
-        } else {
+          setCounterMsg(
+            `Shield break! You take ${result.counter.damage} damage.`,
+          )
+        } else if (result.counter.effect === 'torchDown') {
           setCounterMsg('Torch down!')
+        } else {
+          setCounterMsg(`Counterattack deals ${result.counter.damage} damage.`)
         }
         setCounterPhase('effect')
       }, 1000)
@@ -104,7 +108,16 @@ function EncounterModal({ goblin, hero, onFight, onFlee }) {
     const weapon = hero.weapons[weaponIdx]
     const rewards = computeUnusedRewards(rolls, baseIdx, extraIdxs)
     const bonus = useSkill && hero.skill && hero.skill.bonus ? hero.skill.bonus : 0
-    const res = fightGoblin(hero, goblin, weapon, rolls, baseIdx, extraIdxs, bonus)
+    const res = fightGoblin(
+      hero,
+      goblin,
+      weapon,
+      rolls,
+      baseIdx,
+      extraIdxs,
+      bonus,
+      goblinCount,
+    )
     const parts = []
     if (rewards.ap) parts.push(`${rewards.ap} ap`)
     if (rewards.hp) parts.push(`${rewards.hp} hp`)
