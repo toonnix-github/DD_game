@@ -282,7 +282,6 @@ function App() {
       }
 
       if (newBoard[r][c].trap && !newBoard[r][c].trapResolved && !newEncounter) {
-        newHero.movement = 0
         newTrap = { position: { row: r, col: c }, trap: newBoard[r][c].trap }
       }
 
@@ -456,6 +455,7 @@ function App() {
       disarm,
       evasionRolls = [],
       disarmRolls = [],
+      evasionRewards = { ap: 0, hp: 0 },
       rewards = { ap: 0, hp: 0 },
     } = result
     let messageParts = []
@@ -464,17 +464,26 @@ function App() {
       if (!trap) return prev
       const newBoard = board.map(row => row.map(tile => ({ ...tile })))
       const tile = newBoard[trap.position.row][trap.position.col]
-      let newHero = { ...hero, movement: 0 }
+      let newHero = { ...hero }
       let reward = prev.reward
       let discard = null
       if (!evaded) {
         newHero.hp = hero.hp - tile.trap.damage
         messageParts.push(`Hit by trap for ${tile.trap.damage} damage.`)
       } else {
-        messageParts.push('Evaded trap.')
+        newHero.ap = Math.min(hero.ap + evasionRewards.ap, hero.maxAp)
+        newHero.hp = Math.min(newHero.hp + evasionRewards.hp, hero.maxHp)
+        const rParts = []
+        if (evasionRewards.ap) rParts.push(`${evasionRewards.ap} ap`)
+        if (evasionRewards.hp) rParts.push(`${evasionRewards.hp} hp`)
+        messageParts.push(
+          rParts.length
+            ? `Evaded trap and gained ${rParts.join(' and ')}.`
+            : 'Evaded trap.',
+        )
       }
       if (disarm !== undefined) {
-        newHero.ap = Math.max(0, Math.min(hero.maxAp, hero.ap - 1 + (disarm ? rewards.ap : 0)))
+        newHero.ap = Math.max(0, Math.min(hero.maxAp, newHero.ap - 1 + (disarm ? rewards.ap : 0)))
         if (disarm) {
           tile.trapResolved = true
           const item = adaptTreasureItem(randomTreasure())

@@ -12,6 +12,7 @@ function TrapModal({ hero, trap, onResolve }) {
   const [extraIdxs, setExtraIdxs] = useState([])
   const [disarmSuccess, setDisarmSuccess] = useState(null)
   const [rewards, setRewards] = useState(null)
+  const [evasionRewards, setEvasionRewards] = useState(null)
 
   const roll = () =>
     Array.from({ length: hero.agilityDice }, () => Math.ceil(Math.random() * 6))
@@ -21,8 +22,9 @@ function TrapModal({ hero, trap, onResolve }) {
     setTimeout(() => {
       const r = roll()
       setEvasionRolls(r)
-      setEvaded(Math.max(...r) >= trap.difficulty)
-      setStage('postEvasion')
+      setBaseIdx(null)
+      setExtraIdxs([])
+      setStage('evasionSelect')
     }, 600)
   }
 
@@ -35,6 +37,22 @@ function TrapModal({ hero, trap, onResolve }) {
       setExtraIdxs([])
       setStage('disarmSelect')
     }, 600)
+  }
+
+  const confirmEvasion = () => {
+    const details = computeAttackBreakdown(
+      {},
+      { attack: 0 },
+      evasionRolls,
+      baseIdx,
+      extraIdxs,
+    )
+    const success = details.total >= trap.difficulty
+    setEvaded(success)
+    setEvasionRewards(
+      success ? computeUnusedRewards(evasionRolls, baseIdx, extraIdxs) : { ap: 0, hp: 0 },
+    )
+    setStage('postEvasion')
   }
 
   const confirmDisarm = () => {
@@ -52,12 +70,19 @@ function TrapModal({ hero, trap, onResolve }) {
   }
 
   const skip = () =>
-    onResolve({ evaded, disarm: undefined, evasionRolls, disarmRolls: [] })
+    onResolve({
+      evaded,
+      evasionRewards,
+      disarm: undefined,
+      evasionRolls,
+      disarmRolls: [],
+    })
 
   const close = () => {
     if (disarmSuccess !== null) {
       onResolve({
         evaded,
+        evasionRewards,
         disarm: disarmSuccess,
         evasionRolls,
         disarmRolls,
@@ -102,6 +127,79 @@ function TrapModal({ hero, trap, onResolve }) {
             </div>
           </div>
         )}
+        {stage === 'evasionSelect' && (
+          <div className="trap-result">
+            <div className="dice-container">
+              {evasionRolls.map((v, idx) => {
+                const isBase = idx === baseIdx
+                const isExtra = extraIdxs.includes(idx)
+                const classes = ['dice']
+                if (isBase) classes.push('base')
+                if (v >= 3) {
+                  classes.push('selectable')
+                } else {
+                  classes.push(baseIdx === null ? 'disabled' : 'selectable')
+                  if (isExtra) classes.push('extra')
+                }
+                const handleClick = () => {
+                  if (v >= 3) {
+                    setBaseIdx(idx)
+                    setExtraIdxs([])
+                  } else if (baseIdx !== null) {
+                    setExtraIdxs(prev =>
+                      prev.includes(idx) ? prev.filter(i => i !== idx) : [...prev, idx],
+                    )
+                  }
+                }
+                return (
+                  <div key={idx} className={classes.join(' ')} onClick={handleClick}>
+                    <div className="dice-value">
+                      {v < 3 && <img src="/add-icon.png" alt="+" className="plus-icon" />}
+                      {v}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+            <div className="info">
+              {baseIdx === null
+                ? evasionRolls.some(v => v >= 3)
+                  ? 'Choose a base die (>=3).'
+                  : 'No die is high enough for a base roll.'
+                : (() => {
+                    const details = computeAttackBreakdown(
+                      {},
+                      { attack: 0 },
+                      evasionRolls,
+                      baseIdx,
+                      extraIdxs,
+                    )
+                    const r = computeUnusedRewards(evasionRolls, baseIdx, extraIdxs)
+                    const parts = []
+                    if (details.base) parts.push(`${details.base} base`)
+                    if (details.extra) parts.push(`${details.extra} extra`)
+                    const rewardParts = []
+                    if (r.ap) rewardParts.push(`${r.ap} ap`)
+                    if (r.hp) rewardParts.push(`${r.hp} hp`)
+                    return (
+                      <>
+                        {`Need ${trap.difficulty}, power ${details.total} (${parts.join(' + ')})`}
+                        {rewardParts.length ? (
+                          <>
+                            <br />Unused dice reward: {rewardParts.join(' and ')}
+                          </>
+                        ) : null}
+                      </>
+                    )
+                  })()}
+            </div>
+            <div className="buttons">
+              <button onClick={confirmEvasion} disabled={evasionRolls.some(v => v >= 3) && baseIdx === null}>
+                Confirm
+              </button>
+            </div>
+          </div>
+        )}
         {stage === 'postEvasion' && (
           <div className="trap-result">
             <div className="dice-container">
@@ -111,6 +209,13 @@ function TrapModal({ hero, trap, onResolve }) {
             </div>
             <div className="info">
               {evaded ? 'Evaded the trap!' : `Took ${trap.damage} damage!`}
+              {evaded && evasionRewards && (evasionRewards.ap || evasionRewards.hp) ? (
+                <>
+                  <br />Reward: {evasionRewards.ap ? `${evasionRewards.ap} ap` : ''}
+                  {evasionRewards.ap && evasionRewards.hp ? ' and ' : ''}
+                  {evasionRewards.hp ? `${evasionRewards.hp} hp` : ''}
+                </>
+              ) : null}
             </div>
             <div className="buttons">
               {hero.ap > 0 && <button onClick={() => setStage('disarmReady')}>Disarm (1 AP)</button>}

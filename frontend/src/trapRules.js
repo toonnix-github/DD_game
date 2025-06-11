@@ -1,5 +1,5 @@
 export const EVASION_RULE =
-  "Roll your hero's agility dice. If the best result meets or exceeds the trap difficulty you avoid the damage.";
+  "Roll your agility dice then pick a die of 3+ as the base and any 1-2 dice as add-ons. If the total meets the trap difficulty you evade.";
 
 export const DISARM_RULE =
   "Spend 1 AP and roll your agility dice. Choose a die of 3+ as the base and any 1-2 dice as add-ons. If the total meets or exceeds the trap difficulty the trap is disarmed and you gain the reward.";
