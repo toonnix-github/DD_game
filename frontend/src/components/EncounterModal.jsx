@@ -34,6 +34,10 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
   const [result, setResult] = useState(null)
   const [counterPhase, setCounterPhase] = useState(null)
   const [counterMsg, setCounterMsg] = useState('')
+  const [attackPhase, setAttackPhase] = useState(null)
+  const [attackMsg, setAttackMsg] = useState('')
+  const [shieldDmg, setShieldDmg] = useState(null)
+  const [shieldBroken, setShieldBroken] = useState(false)
   const [useSkill, setUseSkill] = useState(false)
   const [shake, setShake] = useState(true)
   const [entered, setEntered] = useState(false)
@@ -83,6 +87,41 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
     return () => clearTimeout(t)
   }, [stage, counterPhase, result])
 
+  useEffect(() => {
+    if (stage !== 'attack' || !result) return
+    let t
+    if (attackPhase === 'swing') {
+      t = setTimeout(() => {
+        setAttackPhase('impact')
+        setAttackMsg('The goblin\'s shield shakes!')
+        setShieldDmg(result.heroDmg)
+      }, 1000)
+    } else if (attackPhase === 'impact') {
+      t = setTimeout(() => {
+        if (result.heroDmg > goblin.defence) {
+          setShieldBroken(true)
+          setAttackMsg('The shield shatters!')
+        } else {
+          setAttackMsg(`You deal ${result.heroDmg} damage.`)
+        }
+        setAttackPhase('finish')
+      }, 1000)
+    } else if (attackPhase === 'finish') {
+      t = setTimeout(() => {
+        setShieldDmg(null)
+        setShieldBroken(false)
+        if (result.counter) {
+          setCounterPhase('roll')
+          setCounterMsg('Goblin rolls for counterattack...')
+          setStage('counter')
+        } else {
+          setStage('result')
+        }
+      }, 1000)
+    }
+    return () => clearTimeout(t)
+  }, [stage, attackPhase, result, goblin])
+
   const startFight = () => {
     const weapon = hero.weapons[weaponIdx]
     const diceKey = `${weapon.dice}Dice`
@@ -126,13 +165,9 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
       res.message += ` Unused dice reward: ${parts.join(' and ')}.`
     }
     setResult({ type: 'fight', ...res, rewards, skillUsed: useSkill })
-    if (res.counter) {
-      setCounterPhase('roll')
-      setCounterMsg('Goblin rolls for counterattack...')
-      setStage('counter')
-    } else {
-      setStage('result')
-    }
+    setAttackPhase('swing')
+    setAttackMsg(`You swing your ${weapon.name}...`)
+    setStage('attack')
   }
 
   const confirmFlee = () => {
@@ -157,6 +192,10 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
     setBaseIdx(null)
     setExtraIdxs([])
     setResult(null)
+    setAttackPhase(null)
+    setAttackMsg('')
+    setShieldDmg(null)
+    setShieldBroken(false)
     setUseSkill(false)
     setStage('menu')
   }
@@ -168,10 +207,10 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
           <GoblinCard
             goblin={result && result.goblin ? result.goblin : goblin}
             damaged={
-              stage !== 'fight' &&
+              stage === 'attack' && attackPhase !== 'swing' &&
               result &&
               result.type === 'fight' &&
-              (result.heroDmg > 0 || (result.counter && result.counter.damage > 0))
+              result.heroDmg > 0
             }
             defeated={
               stage === 'result' &&
@@ -179,6 +218,8 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
               result.type === 'fight' &&
               result.goblin.hp <= 0
             }
+            shieldDamage={stage === 'attack' ? shieldDmg : null}
+            shieldBroken={stage === 'attack' && shieldBroken}
           />
         </div>
 
@@ -304,6 +345,11 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee }) {
               <div className="buttons">
                 <button onClick={confirmFlee}>Run!</button>
               </div>
+            </div>
+          )}
+          {stage === 'attack' && result && (
+            <div className="result-stage">
+              <div className="result-message">{attackMsg}</div>
             </div>
           )}
           {stage === 'counter' && result && (

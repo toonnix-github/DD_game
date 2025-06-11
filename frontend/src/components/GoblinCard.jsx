@@ -1,7 +1,7 @@
 import React from 'react';
 import './GoblinCard.css';
 
-function GoblinCard({ goblin, damaged, defeated }) {
+function GoblinCard({ goblin, damaged, defeated, shieldDamage, shieldBroken }) {
   return (
     <div className={`goblin-card${damaged ? ' attack-slide' : ''}`}>
       <div className="name-bar">{goblin.name}</div>
@@ -17,9 +17,15 @@ function GoblinCard({ goblin, damaged, defeated }) {
           <img src="/fist.png" alt="attack" />{goblin.attack}
         </span>
       </div>
-      <div className="defence-badge">
+      <div className={`defence-badge${shieldDamage ? ' shake' : ''}`}>
         <img src="/shield.png" alt="defence" />
         <span>{goblin.defence}</span>
+        {shieldDamage != null && (
+          <span className="shield-damage">-{shieldDamage}</span>
+        )}
+        {shieldBroken && (
+          <img src="/icon/starburst.png" alt="shield broken" className="shield-break" />
+        )}
       </div>
       <div className="monster-icon">
         <img src="/icon/icon-goblin.png" alt="goblin" />
