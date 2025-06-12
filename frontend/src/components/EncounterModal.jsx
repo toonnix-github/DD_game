@@ -1,226 +1,226 @@
-import React, { useEffect, useState } from 'react'
-import './EncounterModal.scss'
-import ItemCard from './ItemCard'
-import GoblinCard from './GoblinCard'
-import HeroPanel from './HeroPanel'
+import React, { useEffect, useState } from 'react';
+import './EncounterModal.scss';
+import ItemCard from './ItemCard';
+import GoblinCard from './GoblinCard';
+import HeroPanel from './HeroPanel';
 import {
   computeAttackBreakdown,
   fightGoblin,
   computeUnusedRewards,
   formatFightMessage,
-} from '../fightUtils'
+} from '../fightUtils';
 
 function rewardInfo(value) {
   switch (value) {
     case 1:
-      return { icon: '/icon/starburst.png', text: '+2' }
+      return { icon: '/icon/starburst.png', text: '+2' };
     case 2:
-      return { icon: '/icon/starburst.png', text: '+3' }
+      return { icon: '/icon/starburst.png', text: '+3' };
     case 3:
     case 4:
-      return { icon: '/icon/starburst.png', text: '+1' }
+      return { icon: '/icon/starburst.png', text: '+1' };
     case 6:
-      return { icon: '/heart.png', text: '+1' }
+      return { icon: '/heart.png', text: '+1' };
     default:
-      return null
+      return null;
   }
 }
 
 function EncounterModal({ goblin, hero, goblinCount, distance = 0, onFight, onFlee, onReward, onSkill }) {
-  const [stage, setStage] = useState('menu')
-  const [rolls, setRolls] = useState([])
-  const [baseIdx, setBaseIdx] = useState(null)
-  const [extraIdxs, setExtraIdxs] = useState([])
+  const [stage, setStage] = useState('menu');
+  const [rolls, setRolls] = useState([]);
+  const [baseIdx, setBaseIdx] = useState(null);
+  const [extraIdxs, setExtraIdxs] = useState([]);
   const firstUsableIdx = hero.weapons.findIndex(w => {
-    if (distance === 0) return w.attackType !== 'range'
-    return w.attackType === 'range' && w.range >= distance
-  })
-  const [weaponIdx, setWeaponIdx] = useState(firstUsableIdx >= 0 ? firstUsableIdx : 0)
-  const [result, setResult] = useState(null)
-  const [counterPhase, setCounterPhase] = useState(null)
-  const [counterMsg, setCounterMsg] = useState('')
-  const [attackPhase, setAttackPhase] = useState(null)
-  const [attackMsg, setAttackMsg] = useState('')
-  const [shieldDmg, setShieldDmg] = useState(null)
-  const [shieldBroken, setShieldBroken] = useState(false)
-  const [hpDmg, setHpDmg] = useState(null)
-  const [heroHpDmg, setHeroHpDmg] = useState(null)
-  const [heroShieldBroken, setHeroShieldBroken] = useState(false)
-  const [useSkill, setUseSkill] = useState(false)
-  const [shake, setShake] = useState(true)
-  const [entered, setEntered] = useState(false)
-  const [displayGoblin, setDisplayGoblin] = useState(goblin)
-  const [displayHero, setDisplayHero] = useState(hero)
+    if (distance === 0) return w.attackType !== 'range';
+    return w.attackType === 'range' && w.range >= distance;
+  });
+  const [weaponIdx, setWeaponIdx] = useState(firstUsableIdx >= 0 ? firstUsableIdx : 0);
+  const [result, setResult] = useState(null);
+  const [counterPhase, setCounterPhase] = useState(null);
+  const [counterMsg, setCounterMsg] = useState('');
+  const [attackPhase, setAttackPhase] = useState(null);
+  const [attackMsg, setAttackMsg] = useState('');
+  const [shieldDmg, setShieldDmg] = useState(null);
+  const [shieldBroken, setShieldBroken] = useState(false);
+  const [hpDmg, setHpDmg] = useState(null);
+  const [heroHpDmg, setHeroHpDmg] = useState(null);
+  const [heroShieldBroken, setHeroShieldBroken] = useState(false);
+  const [useSkill, setUseSkill] = useState(false);
+  const [shake, setShake] = useState(true);
+  const [entered, setEntered] = useState(false);
+  const [displayGoblin, setDisplayGoblin] = useState(goblin);
+  const [displayHero, setDisplayHero] = useState(hero);
 
   useEffect(() => {
-    setDisplayGoblin(goblin)
-  }, [goblin])
+    setDisplayGoblin(goblin);
+  }, [goblin]);
 
   useEffect(() => {
-    setDisplayHero(hero)
-  }, [hero])
+    setDisplayHero(hero);
+  }, [hero]);
 
   useEffect(() => {
     const idx = hero.weapons.findIndex(w => {
-      if (distance === 0) return w.attackType !== 'range'
-      return w.attackType === 'range' && w.range >= distance
-    })
-    setWeaponIdx(idx >= 0 ? idx : 0)
-  }, [hero, distance])
+      if (distance === 0) return w.attackType !== 'range';
+      return w.attackType === 'range' && w.range >= distance;
+    });
+    setWeaponIdx(idx >= 0 ? idx : 0);
+  }, [hero, distance]);
 
   useEffect(() => {
-    const t1 = setTimeout(() => setShake(false), 400)
-    const t2 = setTimeout(() => setEntered(true), 20)
+    const t1 = setTimeout(() => setShake(false), 400);
+    const t2 = setTimeout(() => setEntered(true), 20);
     return () => {
-      clearTimeout(t1)
-      clearTimeout(t2)
-    }
-  }, [])
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, []);
 
   useEffect(() => {
-    if (stage !== 'counter' || !result || !result.counter) return
-    let t
+    if (stage !== 'counter' || !result || !result.counter) return;
+    let t;
     if (counterPhase === 'roll') {
       t = setTimeout(() => {
         const label =
           result.counter.roll != null
             ? result.counter.roll
             : result.counter.effect === 'shieldBreak'
-            ? 'shield break'
-            : 'torch down'
-        setCounterPhase('show')
-        setCounterMsg(`Rolled ${label}`)
-      }, 1000)
+              ? 'shield break'
+              : 'torch down';
+        setCounterPhase('show');
+        setCounterMsg(`Rolled ${label}`);
+      }, 1000);
     } else if (counterPhase === 'show') {
       t = setTimeout(() => {
         if (result.counter.effect === 'torchDown') {
-          setCounterMsg('Torch down!')
+          setCounterMsg('Torch down!');
         } else {
-          const bd = result.counter.breakdown
-          const parts = [`${bd.attack} attack`]
-          if (bd.roll) parts.push(`${bd.roll} roll`)
-          if (bd.extra) parts.push(`${bd.extra} mod`)
-          const detail = parts.join(' + ')
-          const baseMsg = `Counterattack power ${bd.total} (${detail}) vs defence ${result.counter.defenceBefore}.`
+          const bd = result.counter.breakdown;
+          const parts = [`${bd.attack} attack`];
+          if (bd.roll) parts.push(`${bd.roll} roll`);
+          if (bd.extra) parts.push(`${bd.extra} mod`);
+          const detail = parts.join(' + ');
+          const baseMsg = `Counterattack power ${bd.total} (${detail}) vs defence ${result.counter.defenceBefore}.`;
           if (result.counter.effect === 'shieldBreak') {
-            setCounterMsg(`${baseMsg} Shield break! You take ${result.counter.damage} damage.`)
+            setCounterMsg(`${baseMsg} Shield break! You take ${result.counter.damage} damage.`);
           } else if (result.counter.brokeShield) {
-            setCounterMsg(`${baseMsg} Shield broken! You take ${result.counter.damage} damage.`)
+            setCounterMsg(`${baseMsg} Shield broken! You take ${result.counter.damage} damage.`);
           } else if (result.counter.damage > 0) {
-            setCounterMsg(`${baseMsg} You take ${result.counter.damage} damage.`)
+            setCounterMsg(`${baseMsg} You take ${result.counter.damage} damage.`);
           } else {
-            setCounterMsg(`${baseMsg} The shield absorbs the blow.`)
+            setCounterMsg(`${baseMsg} The shield absorbs the blow.`);
           }
         }
-        setCounterPhase('effect')
-      }, 1000)
+        setCounterPhase('effect');
+      }, 1000);
     } else if (counterPhase === 'effect') {
-      setHeroHpDmg(result.counter.damage)
+      setHeroHpDmg(result.counter.damage);
       if (result.counter.effect === 'shieldBreak' || result.counter.brokeShield)
-        setHeroShieldBroken(true)
+        setHeroShieldBroken(true);
       t = setTimeout(() => {
-        setDisplayHero(result.hero)
-        setHeroHpDmg(null)
-        setHeroShieldBroken(false)
-        setCounterPhase(null)
-        setStage('result')
-      }, 1500)
+        setDisplayHero(result.hero);
+        setHeroHpDmg(null);
+        setHeroShieldBroken(false);
+        setCounterPhase(null);
+        setStage('result');
+      }, 1500);
     }
-    return () => clearTimeout(t)
-  }, [stage, counterPhase, result])
+    return () => clearTimeout(t);
+  }, [stage, counterPhase, result]);
 
   useEffect(() => {
-    if (stage !== 'attack' || !result) return
-    let t1
-    let t2
+    if (stage !== 'attack' || !result) return;
+    let t1;
+    let t2;
     if (attackPhase === 'swing') {
       t1 = setTimeout(() => {
-        setAttackPhase('shieldHit')
-        setAttackMsg("The goblin's shield shakes!")
-        setShieldDmg(result.shieldDamage)
-      }, 1000)
+        setAttackPhase('shieldHit');
+        setAttackMsg("The goblin's shield shakes!");
+        setShieldDmg(result.shieldDamage);
+      }, 1000);
     } else if (attackPhase === 'shieldHit') {
       t1 = setTimeout(() => {
-        setShieldDmg(null)
+        setShieldDmg(null);
         setDisplayGoblin(g => ({
           ...g,
           defence: Math.max(0, g.defence - result.shieldDamage),
-        }))
+        }));
         if (result.brokeShield) {
-          setShieldBroken(true)
-          setAttackMsg('The shield shatters!')
+          setShieldBroken(true);
+          setAttackMsg('The shield shatters!');
           t2 = setTimeout(() => {
-            setShieldBroken(false)
-            setAttackPhase(result.heroDmg > 0 ? 'hpHit' : 'finish')
-          }, 600)
+            setShieldBroken(false);
+            setAttackPhase(result.heroDmg > 0 ? 'hpHit' : 'finish');
+          }, 600);
         } else {
-          setAttackMsg('The blow fails to break the shield.')
-          setAttackPhase('finish')
+          setAttackMsg('The blow fails to break the shield.');
+          setAttackPhase('finish');
         }
-      }, 1000)
+      }, 1000);
     } else if (attackPhase === 'hpHit') {
       t1 = setTimeout(() => {
-        setHpDmg(result.heroDmg)
+        setHpDmg(result.heroDmg);
         t2 = setTimeout(() => {
-          setDisplayGoblin(g => ({ ...g, hp: result.goblin.hp }))
-          setHpDmg(null)
-          setAttackPhase('finish')
-        }, 600)
-      }, 1000)
+          setDisplayGoblin(g => ({ ...g, hp: result.goblin.hp }));
+          setHpDmg(null);
+          setAttackPhase('finish');
+        }, 600);
+      }, 1000);
     } else if (attackPhase === 'finish') {
       t1 = setTimeout(() => {
         if (result.counter) {
-          setCounterPhase('roll')
-          setCounterMsg('Goblin rolls for counterattack...')
-          setStage('counter')
+          setCounterPhase('roll');
+          setCounterMsg('Goblin rolls for counterattack...');
+          setStage('counter');
         } else {
-          setStage('result')
+          setStage('result');
         }
-      }, 1000)
+      }, 1000);
     }
     return () => {
-      clearTimeout(t1)
-      clearTimeout(t2)
-    }
-  }, [stage, attackPhase, result])
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [stage, attackPhase, result]);
 
   const startFight = () => {
-    const weapon = hero.weapons[weaponIdx]
-    const diceKey = `${weapon.dice}Dice`
-    const count = hero[diceKey]
-    const r = Array.from({ length: count }, () => Math.ceil(Math.random() * 6))
+    const weapon = hero.weapons[weaponIdx];
+    const diceKey = `${weapon.dice}Dice`;
+    const count = hero[diceKey];
+    const r = Array.from({ length: count }, () => Math.ceil(Math.random() * 6));
     if (useSkill && hero.skill && hero.skill.cost && onSkill) {
-      onSkill(hero.skill.cost, hero.skill.title)
+      onSkill(hero.skill.cost, hero.skill.title);
     }
-    setRolls(r)
-    setBaseIdx(null)
-    setExtraIdxs([])
-    setStage('fight')
-  }
+    setRolls(r);
+    setBaseIdx(null);
+    setExtraIdxs([]);
+    setStage('fight');
+  };
 
   const startFlee = () => {
     const r = Array.from(
       { length: hero.agilityDice },
       () => Math.ceil(Math.random() * 6),
-    )
-    setRolls(r)
-    setBaseIdx(null)
-    setExtraIdxs([])
-    setStage('flee')
-  }
+    );
+    setRolls(r);
+    setBaseIdx(null);
+    setExtraIdxs([]);
+    setStage('flee');
+  };
 
   const confirmFight = () => {
-    const weapon = hero.weapons[weaponIdx]
-    const rewards = computeUnusedRewards(rolls, baseIdx, extraIdxs)
+    const weapon = hero.weapons[weaponIdx];
+    const rewards = computeUnusedRewards(rolls, baseIdx, extraIdxs);
     if (onReward) {
-      onReward(rewards)
+      onReward(rewards);
     }
     const heroWithRewards = {
       ...hero,
       ap: Math.min(hero.ap + rewards.ap, hero.maxAp),
       hp: Math.min(hero.hp + rewards.hp, hero.maxHp),
-    }
-    const bonus = useSkill && hero.skill && hero.skill.bonus ? hero.skill.bonus : 0
+    };
+    const bonus = useSkill && hero.skill && hero.skill.bonus ? hero.skill.bonus : 0;
     const res = fightGoblin(
       heroWithRewards,
       goblin,
@@ -230,7 +230,7 @@ function EncounterModal({ goblin, hero, goblinCount, distance = 0, onFight, onFl
       extraIdxs,
       bonus,
       goblinCount,
-    )
+    );
     const resultObj = {
       type: 'fight',
       ...res,
@@ -240,47 +240,47 @@ function EncounterModal({ goblin, hero, goblinCount, distance = 0, onFight, onFl
       rolls,
       baseIdx,
       extraIdxs,
-    }
-    resultObj.message = formatFightMessage(resultObj)
-    setResult(resultObj)
-    setDisplayHero(heroWithRewards)
-    setDisplayGoblin(goblin)
-    setAttackPhase('swing')
-    setAttackMsg(`You swing your ${weapon.name}...`)
-    setStage('attack')
-  }
+    };
+    resultObj.message = formatFightMessage(resultObj);
+    setResult(resultObj);
+    setDisplayHero(heroWithRewards);
+    setDisplayGoblin(goblin);
+    setAttackPhase('swing');
+    setAttackMsg(`You swing your ${weapon.name}...`);
+    setStage('attack');
+  };
 
   const confirmFlee = () => {
-    const success = rolls.some(v => v >= 4)
-    const heroDef = hero.defence + hero.weapons[weaponIdx].defence
-    const damage = Math.max(1, goblin.attack - heroDef)
+    const success = rolls.some(v => v >= 4);
+    const heroDef = hero.defence + hero.weapons[weaponIdx].defence;
+    const damage = Math.max(1, goblin.attack - heroDef);
     const message = success
       ? 'You successfully fled.'
-      : `Failed to flee and took ${damage} damage.`
-    setResult({ type: 'flee', success, message })
-    setStage('result')
-  }
+      : `Failed to flee and took ${damage} damage.`;
+    setResult({ type: 'flee', success, message });
+    setStage('result');
+  };
 
   const closeResult = () => {
-    if (!result) return
+    if (!result) return;
     if (result.type === 'fight') {
-      onFight({ ...result, weaponIdx, rolls, baseIdx, extraIdxs })
+      onFight({ ...result, weaponIdx, rolls, baseIdx, extraIdxs });
     } else if (result.type === 'flee') {
-      onFlee(result.success)
+      onFlee(result.success);
     }
-    setRolls([])
-    setBaseIdx(null)
-    setExtraIdxs([])
-    setResult(null)
-    setAttackPhase(null)
-    setAttackMsg('')
-    setShieldDmg(null)
-    setShieldBroken(false)
-    setDisplayGoblin(goblin)
-    setDisplayHero(hero)
-    setUseSkill(false)
-    setStage('menu')
-  }
+    setRolls([]);
+    setBaseIdx(null);
+    setExtraIdxs([]);
+    setResult(null);
+    setAttackPhase(null);
+    setAttackMsg('');
+    setShieldDmg(null);
+    setShieldBroken(false);
+    setDisplayGoblin(goblin);
+    setDisplayHero(hero);
+    setUseSkill(false);
+    setStage('menu');
+  };
 
   return (
     <div className={`encounter-overlay${shake ? ' screen-shake' : ''}`}>
@@ -291,8 +291,8 @@ function EncounterModal({ goblin, hero, goblinCount, distance = 0, onFight, onFl
               stage === 'attack'
                 ? displayGoblin
                 : result && result.goblin
-                ? { ...result.goblin, defence: result.defenceAfter }
-                : goblin
+                  ? { ...result.goblin, defence: result.defenceAfter }
+                  : goblin
             }
             damaged={
               stage === 'attack' &&
@@ -362,29 +362,29 @@ function EncounterModal({ goblin, hero, goblinCount, distance = 0, onFight, onFl
             <div className="fight-stage">
               <div className="dice-container">
                 {rolls.map((v, idx) => {
-                  const isBase = idx === baseIdx
-                  const isExtra = extraIdxs.includes(idx)
-                  const classes = ['dice']
-                  if (isBase) classes.push('base')
+                  const isBase = idx === baseIdx;
+                  const isExtra = extraIdxs.includes(idx);
+                  const classes = ['dice'];
+                  if (isBase) classes.push('base');
                   if (v >= 3) {
-                    classes.push('selectable')
+                    classes.push('selectable');
                   } else {
-                    classes.push(baseIdx === null ? 'disabled' : 'selectable')
-                    if (isExtra) classes.push('extra')
+                    classes.push(baseIdx === null ? 'disabled' : 'selectable');
+                    if (isExtra) classes.push('extra');
                   }
                   const handleClick = () => {
                     if (v >= 3) {
-                      setBaseIdx(idx)
-                      setExtraIdxs([])
+                      setBaseIdx(idx);
+                      setExtraIdxs([]);
                     } else if (baseIdx !== null) {
                       setExtraIdxs(prev =>
                         prev.includes(idx)
                           ? prev.filter(i => i !== idx)
                           : [...prev, idx],
-                      )
+                      );
                     }
-                  }
-                  const reward = rewardInfo(v)
+                  };
+                  const reward = rewardInfo(v);
                   return (
                     <div key={idx} className={classes.join(' ')} onClick={handleClick}>
                       <div className="dice-value">
@@ -398,7 +398,7 @@ function EncounterModal({ goblin, hero, goblinCount, distance = 0, onFight, onFl
                         </div>
                       )}
                     </div>
-                  )
+                  );
                 })}
               </div>
               <div className="info">
@@ -407,36 +407,36 @@ function EncounterModal({ goblin, hero, goblinCount, distance = 0, onFight, onFl
                     ? 'Choose a base die (>=3).'
                     : 'No die is high enough for a base roll.'
                   : (() => {
-                      const details = computeAttackBreakdown(
-                        hero,
-                        hero.weapons[weaponIdx],
-                        rolls,
-                        baseIdx,
-                        extraIdxs,
-                        useSkill && hero.skill && hero.skill.bonus ? hero.skill.bonus : 0
-                      )
-                      const rewards = computeUnusedRewards(rolls, baseIdx, extraIdxs)
-                      const rewardParts = []
-                      if (rewards.ap) rewardParts.push(`${rewards.ap} ap`)
-                      if (rewards.hp) rewardParts.push(`${rewards.hp} hp`)
-                      const parts = [`${details.weapon} weapon`]
-                      if (details.hero > 0) parts.unshift(`${details.hero} hero`)
-                      if (details.base) parts.push(`${details.base} base`)
-                      if (details.extra) parts.push(`${details.extra} extra`)
-                      return (
-                        <>
-                          {`defence ${goblin.defence}`}
-                          <br />vs<br />
-                          {`Power ${details.total} (${parts.join(' + ')})`}
-                          {rewardParts.length ? (
-                            <>
-                              <br />
-                              {`Unused dice reward: ${rewardParts.join(' and ')}`}
-                            </>
-                          ) : null}
-                        </>
-                      )
-                    })()}
+                    const details = computeAttackBreakdown(
+                      hero,
+                      hero.weapons[weaponIdx],
+                      rolls,
+                      baseIdx,
+                      extraIdxs,
+                      useSkill && hero.skill && hero.skill.bonus ? hero.skill.bonus : 0
+                    );
+                    const rewards = computeUnusedRewards(rolls, baseIdx, extraIdxs);
+                    const rewardParts = [];
+                    if (rewards.ap) rewardParts.push(`${rewards.ap} ap`);
+                    if (rewards.hp) rewardParts.push(`${rewards.hp} hp`);
+                    const parts = [`${details.weapon} weapon`];
+                    if (details.hero > 0) parts.unshift(`${details.hero} hero`);
+                    if (details.base) parts.push(`${details.base} base`);
+                    if (details.extra) parts.push(`${details.extra} extra`);
+                    return (
+                      <>
+                        {`defence ${goblin.defence}`}
+                        <br />vs<br />
+                        {`Power ${details.total} (${parts.join(' + ')})`}
+                        {rewardParts.length ? (
+                          <>
+                            <br />
+                            {`Unused dice reward: ${rewardParts.join(' and ')}`}
+                          </>
+                        ) : null}
+                      </>
+                    );
+                  })()}
               </div>
               <div className="buttons">
                 <button
@@ -473,23 +473,22 @@ function EncounterModal({ goblin, hero, goblinCount, distance = 0, onFight, onFl
               <div className="result-message">{counterMsg}</div>
               <div className="dice-container">
                 <div
-                  className={`monster-dice${
-                    counterPhase === 'roll' ? ' dice-shake' : ''
-                  }`}
+                  className={`monster-dice${counterPhase === 'roll' ? ' dice-shake' : ''
+                    }`}
                 >
                   {counterPhase === 'roll'
                     ? ''
                     : result.counter.effect === 'shieldBreak'
-                    ? (
+                      ? (
                         <img src="/shield.png" alt="shield break" />
                       )
-                    : result.counter.effect === 'torchDown'
-                    ? (
-                        <span className="torch-icon">🔥</span>
-                      )
-                    : (
-                        result.counter.roll
-                      )}
+                      : result.counter.effect === 'torchDown'
+                        ? (
+                          <span className="torch-icon">🔥</span>
+                        )
+                        : (
+                          result.counter.roll
+                        )}
                 </div>
               </div>
             </div>
@@ -510,15 +509,10 @@ function EncounterModal({ goblin, hero, goblinCount, distance = 0, onFight, onFl
             hpDamage={heroHpDmg}
             shieldBroken={heroShieldBroken}
           />
-          <div className="hero-items">
-            {hero.weapons.map((w, idx) => (
-              <ItemCard key={idx} item={w} />
-            ))}
-          </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default EncounterModal
