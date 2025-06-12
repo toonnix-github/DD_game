@@ -1,7 +1,12 @@
 export const HERO_TYPES = {
   knight: {
     name: 'Knight',
-    skill: 'Defensive stance',
+    skill: {
+      title: 'Defensive Stance',
+      description:
+        'Spend 1 AP to raise your shield, gaining +1 defence until your next turn.',
+      cost: 1,
+    },
     movement: 3,
     hp: 12,
     maxHp: 12,
@@ -34,7 +39,12 @@ export const HERO_TYPES = {
   },
   elf: {
     name: 'Elf',
-    skill: 'Forest stealth',
+    skill: {
+      title: 'Forest Stealth',
+      description:
+        'Spend 1 AP to blend with the woods, ignoring line of sight for movement this turn.',
+      cost: 1,
+    },
     movement: 4,
     hp: 8,
     maxHp: 8,
@@ -98,7 +108,12 @@ export const HERO_TYPES = {
   },
   sorceress: {
     name: 'Ethairna',
-    skill: 'Seeking Bolt',
+    skill: {
+      title: 'Seeking Bolt',
+      description:
+        'Spend 1 AP then roll magic (5+). On success, deal 1 damage to an enemy within 4 spaces.',
+      cost: 1,
+    },
     movement: 4,
     hp: 6,
     maxHp: 6,
@@ -123,7 +138,12 @@ export const HERO_TYPES = {
   },
   wizard: {
     name: 'Gerrund the Blue',
-    skill: 'Magic Arrow',
+    skill: {
+      title: 'Magic Arrow',
+      description:
+        'Spend 2 AP and roll magic (6+). A hit deals 2 damage to a target up to 2 spaces away.',
+      cost: 2,
+    },
     movement: 3,
     hp: 5,
     maxHp: 5,
@@ -148,7 +168,12 @@ export const HERO_TYPES = {
   },
   barbarian: {
     name: 'Grok U\u2019ll',
-    skill: 'Battle Rage',
+    skill: {
+      title: 'Battle Rage',
+      description:
+        'Spend 1 AP before attacking to gain +2 on that attack roll.',
+      cost: 1,
+    },
     movement: 3,
     hp: 8,
     maxHp: 8,
@@ -173,7 +198,12 @@ export const HERO_TYPES = {
   },
   rogue: {
     name: 'Moonblade',
-    skill: 'Shadow Walk',
+    skill: {
+      title: 'Shadow Walk',
+      description:
+        'Spend 2 AP and roll agility (6+). If successful, move up to your speed ignoring enemies and deal 1 damage where you stop.',
+      cost: 2,
+    },
     movement: 5,
     hp: 6,
     maxHp: 6,
@@ -198,7 +228,12 @@ export const HERO_TYPES = {
   },
   paladin: {
     name: 'Sir Lanon',
-    skill: 'Divine Might',
+    skill: {
+      title: 'Divine Might',
+      description:
+        'Spend 1 AP and roll magic (4+). A success adds +2 to your next melee attack.',
+      cost: 1,
+    },
     movement: 3,
     hp: 8,
     maxHp: 8,
@@ -223,7 +258,12 @@ export const HERO_TYPES = {
   },
   fighter: {
     name: 'Thordin Firebraid',
-    skill: 'Stone Stance',
+    skill: {
+      title: 'Stone Stance',
+      description:
+        'Spend 1 AP during a melee attack to gain +2 defence until your next turn.',
+      cost: 1,
+    },
     movement: 3,
     hp: 7,
     maxHp: 7,
@@ -248,7 +288,12 @@ export const HERO_TYPES = {
   },
   cleric: {
     name: 'Uliessa',
-    skill: 'Heal',
+    skill: {
+      title: 'Heal',
+      description:
+        'Spend 1 AP while casting a spell to restore 4 HP to a hero up to 3 rooms away.',
+      cost: 1,
+    },
     movement: 4,
     hp: 6,
     maxHp: 6,
@@ -273,7 +318,12 @@ export const HERO_TYPES = {
   },
   ranger: {
     name: 'Wyn Keleas',
-    skill: 'Stealth',
+    skill: {
+      title: 'Stealth',
+      description:
+        'Spend 1 AP to move through enemies without stopping this turn.',
+      cost: 1,
+    },
     movement: 4,
     hp: 7,
     maxHp: 7,

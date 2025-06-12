@@ -74,9 +74,10 @@ weapons and dice rolls.
 
 ### Hero Skills
 
-Heroes may also possess special skills that consume action points. The first
-implemented example is the Viking's **Berserker Rage**. When toggled before a
-fight it spends 2 AP and grants +2 attack power for that encounter.
+Each hero now has a unique skill defined in `frontend/src/heroData.js`. A skill
+lists a title, a short description of how it works and the AP cost required to
+use it. For example the Viking's **Berserker Rage** spends 2 AP to grant +2
+attack power for one fight.
 
 ### Styling with SCSS
 
