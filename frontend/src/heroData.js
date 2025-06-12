@@ -1,6 +1,6 @@
 export const HERO_TYPES = {
   knight: {
-    name: 'Knight',
+    name: 'Lady Arwyn',
     skill: {
       title: 'Defensive Stance',
       description:
@@ -38,7 +38,7 @@ export const HERO_TYPES = {
     ],
   },
   elf: {
-    name: 'Elf',
+    name: 'Selene',
     skill: {
       title: 'Forest Stealth',
       description:
@@ -77,7 +77,7 @@ export const HERO_TYPES = {
     ],
   },
   viking: {
-    name: 'Viking',
+    name: 'Freya',
     skill: {
       title: 'Berserker Rage',
       description: 'Spend 2 AP to gain +2 attack power in combat.',
@@ -137,7 +137,7 @@ export const HERO_TYPES = {
     ],
   },
   wizard: {
-    name: 'Gerrund the Blue',
+    name: 'Serilda the Blue',
     skill: {
       title: 'Magic Arrow',
       description:
@@ -167,7 +167,7 @@ export const HERO_TYPES = {
     ],
   },
   barbarian: {
-    name: 'Grok U\u2019ll',
+    name: 'Groka U\u2019ll',
     skill: {
       title: 'Battle Rage',
       description:
@@ -197,7 +197,7 @@ export const HERO_TYPES = {
     ],
   },
   rogue: {
-    name: 'Moonblade',
+    name: 'Lunara',
     skill: {
       title: 'Shadow Walk',
       description:
@@ -227,7 +227,7 @@ export const HERO_TYPES = {
     ],
   },
   paladin: {
-    name: 'Sir Lanon',
+    name: 'Lady Liora',
     skill: {
       title: 'Divine Might',
       description:
@@ -257,7 +257,7 @@ export const HERO_TYPES = {
     ],
   },
   fighter: {
-    name: 'Thordin Firebraid',
+    name: 'Thora Firebraid',
     skill: {
       title: 'Stone Stance',
       description:
@@ -317,7 +317,7 @@ export const HERO_TYPES = {
     ],
   },
   ranger: {
-    name: 'Wyn Keleas',
+    name: 'Wynneth Keleas',
     skill: {
       title: 'Stealth',
       description:

@@ -76,7 +76,7 @@ weapons and dice rolls.
 
 Each hero now has a unique skill defined in `frontend/src/heroData.js`. A skill
 lists a title, a short description of how it works and the AP cost required to
-use it. For example the Viking's **Berserker Rage** spends 2 AP to grant +2
+use it. For example Freya's **Berserker Rage** spends 2 AP to grant +2
 attack power for one fight.
 
 ### Styling with SCSS
