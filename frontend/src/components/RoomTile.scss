@@ -148,6 +148,7 @@
 
   &.possible:hover .action-buttons {
     display: flex;
+    flex-direction: column;
   }
 
   .death-effect {

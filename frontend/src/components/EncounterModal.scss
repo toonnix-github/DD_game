@@ -255,7 +255,7 @@
     box-shadow: 0 0 0 2px yellow;
   }
 
-  input:disabled + .item-card {
+  input:disabled+.item-card {
     filter: brightness(0.3);
     opacity: 0.5;
     cursor: default;
@@ -327,8 +327,6 @@
 
 .reward-card {
   perspective: 600px;
-  width: 80px;
-  height: 80px;
   margin: 0 auto 0.5rem;
   cursor: pointer;
 

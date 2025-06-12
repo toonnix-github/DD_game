@@ -26,7 +26,6 @@ function GoblinCard({
     <div className={`goblin-card${defeated ? ' shake' : ''}`}>
       <div className="name-bar">{goblin.name}</div>
       <img className={`card-image${defeated ? ' defeated' : ''}`} src={goblin.image} alt={goblin.name} />
-      {defeated && <img src="/skull.png" alt="defeated" className="death-effect red" />}
       <div className={`hp-hearts${damaged ? ' shake' : ''}`}>
         {Array.from({ length: maxHp }, (_, i) => (
           <img
@@ -80,6 +79,7 @@ function GoblinCard({
           Counterattack bonus equals {goblin.extra || 0} plus the number of other goblins alive.
         </div>
       )}
+      {defeated && <img src="/skull.png" alt="defeated" className="death-effect red" />}
     </div>
   );
 }
