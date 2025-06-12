@@ -123,10 +123,6 @@
     bottom: 2px;
     left: 2px;
     font-size: 0.7rem;
-
-    &.attackable:hover .attack-balloon {
-      display: block;
-    }
   }
 
   .goblin-icon {
@@ -134,20 +130,24 @@
     z-index: 1;
   }
 
-  .attack-balloon {
+
+  .action-buttons {
     display: none;
     position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translate(-50%, -2px);
-    background: white;
-    color: black;
-    border: 1px solid black;
-    border-radius: 3px;
-    padding: 0 2px;
-    white-space: nowrap;
-    font-size: 0.55rem;
-    pointer-events: none;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+
+    button {
+      font-size: 0.6rem;
+      padding: 0 4px;
+    }
+  }
+
+  &.possible:hover .action-buttons {
+    display: flex;
   }
 
   .death-effect {

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, useRef } from 'react'
 import RoomTile from './components/RoomTile'
+import ConfirmModal from './components/ConfirmModal'
 import Hero from './components/Hero'
 import HeroPanel from './components/HeroPanel'
 import ItemCard from './components/ItemCard'
@@ -125,6 +126,7 @@ function App() {
   const [state, setState] = useState(loadState)
   const [heroDamaged, setHeroDamaged] = useState(false)
   const [eventLog, setEventLog] = useState([])
+  const [actionPrompt, setActionPrompt] = useState(null)
   const prevHpRef = useRef(state.hero ? state.hero.hp : null)
 
   const addLog = useCallback(msg => {
@@ -316,6 +318,26 @@ function App() {
     },
     [state, addLog],
   )
+
+  const promptMove = useCallback((r, c) => {
+    setActionPrompt({ type: 'move', row: r, col: c })
+  }, [])
+
+  const promptAttack = useCallback((r, c) => {
+    setActionPrompt({ type: 'attack', row: r, col: c })
+  }, [])
+
+  const confirmAction = useCallback(() => {
+    if (!actionPrompt) return
+    if (actionPrompt.type === 'move') {
+      moveHero(actionPrompt.row, actionPrompt.col)
+    } else if (actionPrompt.type === 'attack') {
+      shootGoblin(actionPrompt.row, actionPrompt.col)
+    }
+    setActionPrompt(null)
+  }, [actionPrompt, moveHero, shootGoblin])
+
+  const cancelAction = useCallback(() => setActionPrompt(null), [])
 
   const possibleMoves = useMemo(() => {
     const { hero, board, encounter } = state
@@ -597,9 +619,11 @@ function App() {
                   key={`${rIdx}-${cIdx}`}
                   tile={tile}
                   highlight={move || attack}
-                  attackable={attack}
+                  move={move}
+                  attack={attack}
                   disabled={disabled}
-                  onClick={() => (move ? moveHero(rIdx, cIdx) : attack ? shootGoblin(rIdx, cIdx) : null)}
+                  onMove={() => promptMove(rIdx, cIdx)}
+                  onAttack={() => promptAttack(rIdx, cIdx)}
                 />
               )
             })
@@ -650,6 +674,13 @@ function App() {
       )}
       {state.discard && (
         <DiscardModal items={state.discard.items} onConfirm={handleDiscardConfirm} />
+      )}
+      {actionPrompt && (
+        <ConfirmModal
+          message={`Are you sure you want to ${actionPrompt.type} here?`}
+          onConfirm={confirmAction}
+          onCancel={cancelAction}
+        />
       )}
     </div>
   </>
