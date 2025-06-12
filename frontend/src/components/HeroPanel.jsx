@@ -3,7 +3,7 @@ import './HeroPanel.scss';
 
 function renderDice(count, alt) {
   return Array.from({ length: count }, (_, i) => (
-    <img key={i} src="/dice-red.png" alt={alt} />
+    <img key={i} src="/dice.png" alt={alt} />
   ));
 }
 
