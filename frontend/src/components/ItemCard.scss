@@ -63,6 +63,17 @@
     }
   }
 
+  .attack-range {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+
+    .range-icon {
+      width: 0.5rem;
+      height: 0.5rem;
+    }
+  }
+
   .stat-icon {
     width: 0.8rem;
     height: 0.8rem;

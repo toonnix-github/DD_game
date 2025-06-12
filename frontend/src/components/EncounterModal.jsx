@@ -26,12 +26,16 @@ function rewardInfo(value) {
   }
 }
 
-function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee, onReward, onSkill }) {
+function EncounterModal({ goblin, hero, goblinCount, distance = 0, onFight, onFlee, onReward, onSkill }) {
   const [stage, setStage] = useState('menu')
   const [rolls, setRolls] = useState([])
   const [baseIdx, setBaseIdx] = useState(null)
   const [extraIdxs, setExtraIdxs] = useState([])
-  const [weaponIdx, setWeaponIdx] = useState(0)
+  const firstUsableIdx = hero.weapons.findIndex(w => {
+    if (distance === 0) return w.attackType !== 'range'
+    return w.attackType === 'range' && w.range >= distance
+  })
+  const [weaponIdx, setWeaponIdx] = useState(firstUsableIdx >= 0 ? firstUsableIdx : 0)
   const [result, setResult] = useState(null)
   const [counterPhase, setCounterPhase] = useState(null)
   const [counterMsg, setCounterMsg] = useState('')
@@ -55,6 +59,14 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee, onReward, 
   useEffect(() => {
     setDisplayHero(hero)
   }, [hero])
+
+  useEffect(() => {
+    const idx = hero.weapons.findIndex(w => {
+      if (distance === 0) return w.attackType !== 'range'
+      return w.attackType === 'range' && w.range >= distance
+    })
+    setWeaponIdx(idx >= 0 ? idx : 0)
+  }, [hero, distance])
 
   useEffect(() => {
     const t1 = setTimeout(() => setShake(false), 400)
@@ -314,6 +326,7 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee, onReward, 
                       type="radio"
                       checked={weaponIdx === idx}
                       onChange={() => setWeaponIdx(idx)}
+                      disabled={distance === 0 ? w.attackType === 'range' : !(w.attackType === 'range' && w.range >= distance)}
                     />
                     <ItemCard item={w} />
                   </label>
@@ -331,7 +344,16 @@ function EncounterModal({ goblin, hero, goblinCount, onFight, onFlee, onReward, 
                 </label>
               )}
               <div className="buttons">
-                <button onClick={startFight}>Fight</button>
+                <button
+                  onClick={startFight}
+                  disabled={
+                    distance === 0
+                      ? hero.weapons[weaponIdx].attackType === 'range'
+                      : !(hero.weapons[weaponIdx].attackType === 'range' && hero.weapons[weaponIdx].range >= distance)
+                  }
+                >
+                  Fight
+                </button>
                 <button onClick={startFlee}>Flee</button>
               </div>
             </>

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, useRef } from 'react'
 import RoomTile from './components/RoomTile'
+import ConfirmModal from './components/ConfirmModal'
 import Hero from './components/Hero'
 import HeroPanel from './components/HeroPanel'
 import ItemCard from './components/ItemCard'
@@ -16,6 +17,7 @@ import { HERO_TYPES } from './heroData'
 import { GOBLIN_TYPES, randomGoblinType } from './goblinData'
 import { randomTreasure, adaptTreasureItem } from './treasureDeck'
 import { formatFightLogs } from './fightUtils'
+import { getRangedTargets, opposite, distanceToTarget } from './boardUtils'
 
 const BOARD_SIZE = 7
 const CENTER = Math.floor(BOARD_SIZE / 2)
@@ -29,22 +31,6 @@ function directionFromDelta(dr, dc) {
   if (dc === 1) return 'right'
   return null
 }
-
-function opposite(dir) {
-  switch (dir) {
-    case 'up':
-      return 'down'
-    case 'down':
-      return 'up'
-    case 'left':
-      return 'right'
-    case 'right':
-      return 'left'
-    default:
-      return null
-  }
-}
-
 
 function createEmptyBoard() {
   return Array.from({ length: BOARD_SIZE }, (_, r) =>
@@ -140,6 +126,7 @@ function App() {
   const [state, setState] = useState(loadState)
   const [heroDamaged, setHeroDamaged] = useState(false)
   const [eventLog, setEventLog] = useState([])
+  const [actionPrompt, setActionPrompt] = useState(null)
   const prevHpRef = useRef(state.hero ? state.hero.hp : null)
 
   const addLog = useCallback(msg => {
@@ -278,6 +265,7 @@ function App() {
           goblin: { ...newBoard[r][c].goblin },
           position: { row: r, col: c },
           prev: { row: hero.row, col: hero.col },
+          distance: 0,
         }
       }
 
@@ -295,6 +283,55 @@ function App() {
     },
     [state, addLog]
   )
+
+  const shootGoblin = useCallback(
+    (r, c) => {
+      const { hero, board, encounter } = state
+      if (!hero || encounter) return
+      const tile = board[r][c]
+      if (!tile.goblin || tile.goblin.hp <= 0) return
+
+      const inRange = hero.weapons.some(
+        w =>
+          w.attackType === 'range' &&
+          w.dice === 'agility' &&
+          w.range > 0 &&
+          getRangedTargets(board, hero, w.range).some(
+            t => t.row === r && t.col === c,
+          ),
+      )
+      if (!inRange) return
+
+      const dist = distanceToTarget(board, hero, r, c)
+      if (dist === Infinity) return
+
+      setState(prev => ({
+        ...prev,
+        encounter: {
+          goblin: { ...tile.goblin },
+          position: { row: r, col: c },
+          prev: { row: hero.row, col: hero.col },
+          distance: dist,
+        },
+      }))
+      addLog(`${hero.name} attacks ${tile.goblin.name} from afar`)
+    },
+    [state, addLog],
+  )
+
+  const promptAttack = useCallback((r, c) => {
+    setActionPrompt({ type: 'attack', row: r, col: c })
+  }, [])
+
+  const confirmAction = useCallback(() => {
+    if (!actionPrompt) return
+    if (actionPrompt.type === 'attack') {
+      shootGoblin(actionPrompt.row, actionPrompt.col)
+    }
+    setActionPrompt(null)
+  }, [actionPrompt, shootGoblin])
+
+  const cancelAction = useCallback(() => setActionPrompt(null), [])
 
   const possibleMoves = useMemo(() => {
     const { hero, board, encounter } = state
@@ -318,6 +355,22 @@ function App() {
       if (!t.revealed || t.paths.left) moves.push({ row: hero.row, col: hero.col + 1 })
     }
     return moves
+  }, [state])
+
+  const rangedTargets = useMemo(() => {
+    const { hero, board, encounter } = state
+    if (!hero || encounter) return []
+    const targets = []
+    hero.weapons.forEach(w => {
+      if (w.attackType === 'range' && w.dice === 'agility' && w.range > 0) {
+        getRangedTargets(board, hero, w.range).forEach(t => {
+          if (!targets.some(pt => pt.row === t.row && pt.col === t.col)) {
+            targets.push(t)
+          }
+        })
+      }
+    })
+    return targets
   }, [state])
 
   const goblinCount = useMemo(
@@ -552,15 +605,19 @@ function App() {
         <div className="board">
           {state.board.map((row, rIdx) =>
             row.map((tile, cIdx) => {
-              const highlight = possibleMoves.some(p => p.row === rIdx && p.col === cIdx)
-              const disabled = !highlight && (state.hero.row !== rIdx || state.hero.col !== cIdx)
+              const move = possibleMoves.some(p => p.row === rIdx && p.col === cIdx)
+              const attack = rangedTargets.some(p => p.row === rIdx && p.col === cIdx)
+              const disabled = !move && !attack && (state.hero.row !== rIdx || state.hero.col !== cIdx)
               return (
                 <RoomTile
                   key={`${rIdx}-${cIdx}`}
                   tile={tile}
-                  highlight={highlight}
+                  highlight={move || attack}
+                  move={move}
+                  attack={attack}
                   disabled={disabled}
-                  onClick={() => moveHero(rIdx, cIdx)}
+                  onMove={() => moveHero(rIdx, cIdx)}
+                  onAttack={() => promptAttack(rIdx, cIdx)}
                 />
               )
             })
@@ -596,6 +653,7 @@ function App() {
           goblin={state.encounter.goblin}
           hero={state.hero}
           goblinCount={goblinCount}
+          distance={state.encounter.distance}
           onReward={applyDiceRewards}
           onSkill={applySkillCost}
           onFight={handleFight}
@@ -610,6 +668,13 @@ function App() {
       )}
       {state.discard && (
         <DiscardModal items={state.discard.items} onConfirm={handleDiscardConfirm} />
+      )}
+      {actionPrompt && (
+        <ConfirmModal
+          message={`Are you sure you want to ${actionPrompt.type} here?`}
+          onConfirm={confirmAction}
+          onCancel={cancelAction}
+        />
       )}
     </div>
   </>

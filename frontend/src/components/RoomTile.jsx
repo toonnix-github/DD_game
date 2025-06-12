@@ -4,12 +4,11 @@ import { DISARM_RULE, EVASION_RULE } from '../trapRules';
 
 const DIRS = ['up', 'down', 'left', 'right'];
 
-function RoomTile({ tile, onClick, highlight, disabled }) {
+function RoomTile({ tile, move, attack, highlight, disabled, onMove, onAttack }) {
   return (
     <div
       className={`tile ${tile.revealed ? 'revealed' : ''} ${highlight ? 'possible' : ''} ${!tile.revealed && disabled ? 'disabled' : ''
         } ${tile.revealed && tile.trap && !tile.trapResolved ? 'trap-room' : ''}`}
-      onClick={onClick}
       title={
         tile.revealed
           ? tile.roomId +
@@ -31,7 +30,15 @@ function RoomTile({ tile, onClick, highlight, disabled }) {
         </div>
       )}
       {tile.revealed && tile.goblin && (
-        <span className="goblin-icon">{tile.goblin.icon}</span>
+        <div className="goblin-container">
+          <span className="goblin-icon">{tile.goblin.icon}</span>
+        </div>
+      )}
+      {(move || attack) && (
+        <div className="action-buttons">
+          {move && <button onClick={onMove}>Move</button>}
+          {attack && <button onClick={onAttack}>Attack</button>}
+        </div>
       )}
       {tile.revealed && tile.effect === 'death' && (
         <img src="/star.svg" alt="defeated" className="death-effect" />
