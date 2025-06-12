@@ -115,7 +115,9 @@ export function heroAttack(hero, goblin, weapon, rolls, baseIdx, extraIdxs = [],
 export function monsterCounter(hero, weapon, goblin, aliveGoblins = 0) {
   const faces = ['torchDown', 2, 3, 4, 5, 'shieldBreak']
   const face = faces[Math.floor(Math.random() * faces.length)]
-  const extraMod = (goblin.extra || 0) + aliveGoblins
+  const baseMod = goblin.extra || 0
+  const bonus = ['knife', 'king'].includes(goblin.type) ? aliveGoblins : 0
+  const extraMod = baseMod + bonus
   if (face === 'torchDown') {
     return { effect: 'torchDown' }
   }

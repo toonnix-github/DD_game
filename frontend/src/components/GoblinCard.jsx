@@ -14,6 +14,11 @@ function GoblinCard({
   useEffect(() => {
     setMaxHp(m => Math.max(m, goblin.hp));
   }, [goblin.hp]);
+  const typeIcons = {
+    melee: '/fist.png',
+    range: '/arrows.png',
+    magic: '/lightning.png',
+  }
   return (
     <div className={`goblin-card${defeated ? ' shake' : ''}`}>
       <div className="name-bar">{goblin.name}</div>
@@ -32,7 +37,8 @@ function GoblinCard({
       </div>
       <div className="stats-bar">
         <span className="stat">
-          <img src="/fist.png" alt="attack" />{goblin.attack}
+          <img src={typeIcons[goblin.attackType]} alt={goblin.attackType} />+{goblin.attack}
+          {goblin.range ? ` (${goblin.range} tiles)` : ''}
         </span>
       </div>
       {(goblin.defence > 0 || shieldDamage != null || shieldBroken) && (
@@ -61,6 +67,11 @@ function GoblinCard({
       <div className="monster-icon">
         <img src="/icon/icon-goblin.png" alt="goblin" />
       </div>
+      {['knife', 'king'].includes(goblin.type) && (
+        <div className="description">
+          Counterattack bonus equals {goblin.extra || 0} plus the number of other goblins alive.
+        </div>
+      )}
     </div>
   );
 }
