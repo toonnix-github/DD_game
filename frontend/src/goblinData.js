@@ -4,6 +4,9 @@ export const GOBLIN_TYPES = {
     hp: 1,
     attack: 1,
     attackType: 'melee',
+    attacks: [
+      { type: 'melee', attack: 1 },
+    ],
     extra: 1,
     defence: 5,
     icon: 'K',
@@ -15,6 +18,10 @@ export const GOBLIN_TYPES = {
     attack: 2,
     attackType: 'range',
     range: 3,
+    attacks: [
+      { type: 'melee', attack: 1 },
+      { type: 'range', attack: 2, range: 3 },
+    ],
     defence: 7,
     icon: 'A',
     image: '/goblin/shooty-goblin.webp',
@@ -25,6 +32,10 @@ export const GOBLIN_TYPES = {
     attack: 6,
     attackType: 'magic',
     range: 5,
+    attacks: [
+      { type: 'melee', attack: 1 },
+      { type: 'magic', attack: 6, range: 5 },
+    ],
     defence: 4,
     icon: 'M',
     image: '/goblin/shaman-goblin.webp',
@@ -34,6 +45,9 @@ export const GOBLIN_TYPES = {
     hp: 1,
     attack: 5,
     attackType: 'melee',
+    attacks: [
+      { type: 'melee', attack: 5 },
+    ],
     extra: 2,
     defence: 10,
     icon: 'G',

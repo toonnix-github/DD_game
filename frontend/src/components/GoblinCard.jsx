@@ -19,6 +19,9 @@ function GoblinCard({
     range: '/arrows.png',
     magic: '/lightning.png',
   }
+  const attacks = goblin.attacks || [
+    { type: goblin.attackType, attack: goblin.attack, range: goblin.range },
+  ]
   return (
     <div className={`goblin-card${defeated ? ' shake' : ''}`}>
       <div className="name-bar">{goblin.name}</div>
@@ -36,10 +39,15 @@ function GoblinCard({
         {hpDamage != null && <span className="hp-damage">-{hpDamage}</span>}
       </div>
       <div className="stats-bar">
-        <span className="stat">
-          <img src={typeIcons[goblin.attackType]} alt={goblin.attackType} />+{goblin.attack}
-          {goblin.range ? ` (${goblin.range} tiles)` : ''}
-        </span>
+        {attacks.map((a, idx) => (
+          <React.Fragment key={idx}>
+            {idx > 0 && <span className="sep">-</span>}
+            <span className="stat">
+              <img src={typeIcons[a.type]} alt={a.type} />+{a.attack}
+              {a.range ? ` (${a.range} tiles)` : ''}
+            </span>
+          </React.Fragment>
+        ))}
       </div>
       {(goblin.defence > 0 || shieldDamage != null || shieldBroken) && (
         <div
