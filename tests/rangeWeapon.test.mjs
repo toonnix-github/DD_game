@@ -1,5 +1,6 @@
 import assert from 'assert';
 import { getRangedTargets, distanceToTarget } from '../frontend/src/boardUtils.js';
+import { TreasureDeck, adaptTreasureItem } from '../frontend/src/treasureDeck.js';
 
 function makeTile(row, col, paths, goblin=null) {
   return { row, col, revealed: true, paths, goblin };
@@ -60,12 +61,21 @@ function testDistanceBlocked() {
   assert.strictEqual(dist, Infinity);
 }
 
+function testAdaptTreasureItemRangeDice() {
+  const card = TreasureDeck.find(t => t.id === 'stormcaller');
+  const item = adaptTreasureItem(card);
+  assert.strictEqual(item.attackType, 'range');
+  assert.strictEqual(item.range, 6);
+  assert.strictEqual(item.dice, 'agility');
+}
+
 function run() {
   testRangedTarget();
   testBlockedPath();
   testOutOfRange();
   testDistance();
   testDistanceBlocked();
+  testAdaptTreasureItemRangeDice();
   console.log('All range weapon tests passed');
 }
 

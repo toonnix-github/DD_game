@@ -51,13 +51,14 @@ export function randomTreasure() {
 }
 
 export function adaptTreasureItem(item) {
+  const attackType = item.attack?.type || 'melee'
   return {
     name: item.name,
     attack: item.attack?.value || 0,
     defence: item.defend || 0,
-    dice: 'strength',
+    dice: attackType === 'range' ? 'agility' : 'strength',
     image: `/weapon/${item.id}.webp`,
-    attackType: item.attack?.type || 'melee',
+    attackType,
     range: item.attack?.range || 0,
   }
 }
