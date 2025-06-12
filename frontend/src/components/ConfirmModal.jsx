@@ -1,10 +1,10 @@
 import React from 'react'
-import './EncounterModal.scss'
+import './ConfirmModal.scss'
 
 function ConfirmModal({ message, onConfirm, onCancel }) {
   return (
-    <div className="encounter-overlay">
-      <div className="encounter-window">
+    <div className="confirm-overlay">
+      <div className="confirm-box">
         <p>{message}</p>
         <div className="buttons">
           <button onClick={onConfirm}>Yes</button>

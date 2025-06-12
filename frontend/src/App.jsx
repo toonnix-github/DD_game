@@ -319,23 +319,17 @@ function App() {
     [state, addLog],
   )
 
-  const promptMove = useCallback((r, c) => {
-    setActionPrompt({ type: 'move', row: r, col: c })
-  }, [])
-
   const promptAttack = useCallback((r, c) => {
     setActionPrompt({ type: 'attack', row: r, col: c })
   }, [])
 
   const confirmAction = useCallback(() => {
     if (!actionPrompt) return
-    if (actionPrompt.type === 'move') {
-      moveHero(actionPrompt.row, actionPrompt.col)
-    } else if (actionPrompt.type === 'attack') {
+    if (actionPrompt.type === 'attack') {
       shootGoblin(actionPrompt.row, actionPrompt.col)
     }
     setActionPrompt(null)
-  }, [actionPrompt, moveHero, shootGoblin])
+  }, [actionPrompt, shootGoblin])
 
   const cancelAction = useCallback(() => setActionPrompt(null), [])
 
@@ -622,7 +616,7 @@ function App() {
                   move={move}
                   attack={attack}
                   disabled={disabled}
-                  onMove={() => promptMove(rIdx, cIdx)}
+                  onMove={() => moveHero(rIdx, cIdx)}
                   onAttack={() => promptAttack(rIdx, cIdx)}
                 />
               )
