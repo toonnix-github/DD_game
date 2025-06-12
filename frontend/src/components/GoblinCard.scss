@@ -52,6 +52,17 @@
       height: 0.7rem;
       margin-right: 0.05rem;
     }
+
+    .attack-range {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.05rem;
+
+      .range-icon {
+        width: 0.7rem;
+        height: 0.7rem;
+      }
+    }
   }
 
   .hp-hearts {
