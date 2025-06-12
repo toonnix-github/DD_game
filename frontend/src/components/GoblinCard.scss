@@ -38,9 +38,14 @@
     z-index: 2;
     height: 1rem;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 0.2rem;
     padding-top: 0.2rem;
+    color: #000;
+
+    .sep {
+      margin: 0 0.1rem;
+    }
 
     .stat img {
       width: 0.8rem;
@@ -160,6 +165,19 @@
     transform: translate(-50%, -50%);
     animation: fade-out 0.6s forwards;
     pointer-events: none;
+  }
+
+  .description {
+    position: absolute;
+    bottom: 2.4rem;
+    left: 0;
+    right: 0;
+    height: 3rem;
+    background: rgba(255, 255, 255, 0.7);
+    color: #000;
+    padding: 0.25rem;
+    font-size: 0.7rem;
+    text-align: left;
   }
 }
 
