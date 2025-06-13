@@ -17,7 +17,7 @@ export const HERO_TYPES = {
     agilityDice: 1,
     magicDice: 1,
     icon: 'K',
-    image: '/knight.png',
+    image: '/hero/crusader.png',
     weapons: [
       {
         name: 'Sword',
@@ -94,7 +94,7 @@ export const HERO_TYPES = {
     agilityDice: 1,
     magicDice: 1,
     icon: 'V',
-    image: '/hero-viking.webp',
+    image: '/hero/freya.png',
     weapons: [
       {
         name: 'Axe',
@@ -124,7 +124,7 @@ export const HERO_TYPES = {
     agilityDice: 2,
     magicDice: 3,
     icon: 'S',
-    image: '/elf.png',
+    image: '/hero/red-wizard.png',
     weapons: [
       {
         name: 'Dagger',
@@ -154,7 +154,7 @@ export const HERO_TYPES = {
     agilityDice: 2,
     magicDice: 3,
     icon: 'W',
-    image: '/knight.png',
+    image: '/hero/blue-wizard.png',
     weapons: [
       {
         name: 'Dagger',
@@ -167,7 +167,7 @@ export const HERO_TYPES = {
     ],
   },
   barbarian: {
-    name: 'Groka U\u2019ll',
+    name: 'Groka Ull',
     skill: {
       title: 'Battle Rage',
       description:
@@ -184,7 +184,7 @@ export const HERO_TYPES = {
     agilityDice: 2,
     magicDice: 1,
     icon: 'B',
-    image: '/viking.png',
+    image: '/hero/barbarian.png',
     weapons: [
       {
         name: 'Axe',
@@ -214,7 +214,7 @@ export const HERO_TYPES = {
     agilityDice: 3,
     magicDice: 1,
     icon: 'R',
-    image: '/ninja.png',
+    image: '/hero/ninja.png',
     weapons: [
       {
         name: 'Dagger',
@@ -244,7 +244,7 @@ export const HERO_TYPES = {
     agilityDice: 1,
     magicDice: 2,
     icon: 'P',
-    image: '/knight.png',
+    image: '/hero/magic-knight.png',
     weapons: [
       {
         name: 'Hammer',
@@ -252,36 +252,6 @@ export const HERO_TYPES = {
         defence: 0,
         dice: 'strength',
         image: '/weapon/mjolnir.webp',
-        attackType: 'melee',
-      },
-    ],
-  },
-  fighter: {
-    name: 'Thora Firebraid',
-    skill: {
-      title: 'Stone Stance',
-      description:
-        'Spend 2 AP during a melee attack to gain +2 defence until your next turn.',
-      cost: 2,
-    },
-    movement: 3,
-    hp: 8,
-    maxHp: 8,
-    maxAp: 4,
-    ap: 4,
-    defence: 4,
-    strengthDice: 3,
-    agilityDice: 2,
-    magicDice: 1,
-    icon: 'F',
-    image: '/viking-portrait.png',
-    weapons: [
-      {
-        name: 'Hammer',
-        attack: 1,
-        defence: 0,
-        dice: 'strength',
-        image: '/weapon/earthshaker.webp',
         attackType: 'melee',
       },
     ],
@@ -304,7 +274,7 @@ export const HERO_TYPES = {
     agilityDice: 1,
     magicDice: 3,
     icon: 'C',
-    image: '/viking.png',
+    image: '/hero/priestess.png',
     weapons: [
       {
         name: 'Hammer',
@@ -334,7 +304,7 @@ export const HERO_TYPES = {
     agilityDice: 3,
     magicDice: 1,
     icon: 'A',
-    image: '/elf.png',
+    image: '/hero/dark-elf.png',
     weapons: [
       {
         name: 'Dagger',
