@@ -1,6 +1,7 @@
 export const HERO_TYPES = {
   knight: {
     name: 'Lady Arwyn',
+    title: 'Stalwart Knight',
     skill: {
       title: 'Defensive Stance',
       description:
@@ -17,6 +18,16 @@ export const HERO_TYPES = {
     agilityDice: 1,
     magicDice: 1,
     icon: 'K',
+    title: 'Silent Huntress',
+    title: 'Fierce Shieldmaiden',
+    title: 'Arcane Mistress',
+    title: 'Red Flame Wizard',
+    title: 'Savage Berserker',
+    title: 'Nightblade',
+    title: 'Radiant Crusader',
+    title: 'Battle Veteran',
+    title: 'Divine Healer',
+    title: 'Swift Tracker',
     image: '/hero/crusader.png',
     weapons: [
       {

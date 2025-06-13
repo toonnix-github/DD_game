@@ -13,10 +13,24 @@
     color: #fff;
     text-align: left;
     font-weight: bold;
-    font-size: .8rem;
+    font-size: 0.8rem;
     z-index: 2;
+    padding: 0 0.25rem;
     height: 1.2rem;
-    line-height: 1.2rem;
+    line-height: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .hero-title {
+    font-weight: normal;
+    font-size: 0.65rem;
+    line-height: 0.6rem;
+  }
+
+  .hero-name {
+    line-height: 0.6rem;
   }
 
   .card-image {
