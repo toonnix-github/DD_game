@@ -5,9 +5,14 @@ export const HERO_TYPES = {
     skill: {
       title: 'Defensive Stance',
       description:
-        'Spend 2 AP to raise your shield, gaining +1 defence until your next turn.',
+        '2 AP: raise shield for +1 defence until next turn.',
       cost: 2,
     },
+    skill2: {
+      title: 'Hold the Line',
+      description: 'Passive: adjacent allies gain +1 defence.',
+    },
+    quote: 'For honor and the realm!',
     movement: 3,
     hp: 11,
     maxHp: 11,
@@ -44,9 +49,14 @@ export const HERO_TYPES = {
     skill: {
       title: 'Forest Stealth',
       description:
-        'Spend 2 AP to blend with the woods, ignoring line of sight for movement this turn.',
+        '2 AP: blend with woods, ignore line of sight.',
       cost: 2,
     },
+    skill2: {
+      title: 'Keen Senses',
+      description: 'Passive: reveal traps in adjacent rooms.',
+    },
+    quote: 'Silent as the moonlight.',
     movement: 4,
     hp: 7,
     maxHp: 7,
@@ -83,10 +93,15 @@ export const HERO_TYPES = {
     title: 'Fierce Shieldmaiden',
     skill: {
       title: 'Berserker Rage',
-      description: 'Spend 2 AP to gain +2 attack power in combat.',
+      description: '2 AP: gain +2 attack power this combat.',
       cost: 2,
       bonus: 2,
     },
+    skill2: {
+      title: 'Iron Resolve',
+      description: 'Passive: immune to fear effects.',
+    },
+    quote: 'Shield first, questions later!',
     movement: 3,
     hp: 9,
     maxHp: 9,
@@ -115,9 +130,14 @@ export const HERO_TYPES = {
     skill: {
       title: 'Seeking Bolt',
       description:
-        'Spend 2 AP then roll magic (5+). On success, deal 1 damage to an enemy within 4 spaces.',
+        '2 AP: magic (5+) to deal 1 damage up to 4 spaces.',
       cost: 2,
     },
+    skill2: {
+      title: 'Mana Shield',
+      description: 'Passive: first damage each turn reduced by 1.',
+    },
+    quote: 'Power flows through me.',
     movement: 4,
     hp: 6,
     maxHp: 6,
@@ -146,9 +166,14 @@ export const HERO_TYPES = {
     skill: {
       title: 'Magic Arrow',
       description:
-        'Spend 2 AP and roll magic (6+). A hit deals 2 damage to a target up to 2 spaces away.',
+        '2 AP: magic (6+) to deal 2 damage within 2 spaces.',
       cost: 2,
     },
+    skill2: {
+      title: 'Arcane Insight',
+      description: 'Passive: draw an extra spell when resting.',
+    },
+    quote: 'By the flames of knowledge!',
     movement: 3,
     hp: 5,
     maxHp: 5,
@@ -177,9 +202,14 @@ export const HERO_TYPES = {
     skill: {
       title: 'Battle Rage',
       description:
-        'Spend 2 AP before attacking to gain +2 on that attack roll.',
+        '2 AP: +2 on your next attack roll.',
       cost: 2,
     },
+    skill2: {
+      title: 'Thick Hide',
+      description: 'Passive: reduce physical damage by 1.',
+    },
+    quote: 'CRUSH THEM ALL!',
     movement: 3,
     hp: 9,
     maxHp: 9,
@@ -208,9 +238,14 @@ export const HERO_TYPES = {
     skill: {
       title: 'Shadow Walk',
       description:
-        'Spend 2 AP and roll agility (6+). If successful, move up to your speed ignoring enemies and deal 1 damage where you stop.',
+        '2 AP: agility (6+) to dash through foes and strike.',
       cost: 2,
     },
+    skill2: {
+      title: 'Evasion',
+      description: 'Passive: first attack against you each turn has -1 to hit.',
+    },
+    quote: "You won't see me coming.",
     movement: 5,
     hp: 6,
     maxHp: 6,
@@ -239,9 +274,14 @@ export const HERO_TYPES = {
     skill: {
       title: 'Divine Might',
       description:
-        'Spend 2 AP and roll magic (4+). A success adds +2 to your next melee attack.',
+        '2 AP: magic (4+) for +2 to next melee attack.',
       cost: 2,
     },
+    skill2: {
+      title: 'Aura of Courage',
+      description: 'Passive: allies within 1 space gain +1 attack.',
+    },
+    quote: 'Light guide my hand.',
     movement: 3,
     hp: 9,
     maxHp: 9,
@@ -270,9 +310,14 @@ export const HERO_TYPES = {
     skill: {
       title: 'Heal',
       description:
-        'Spend 2 AP while casting a spell to restore 4 HP to a hero up to 3 rooms away.',
+        '2 AP: restore 4 HP to a hero up to 3 rooms away.',
       cost: 2,
     },
+    skill2: {
+      title: 'Blessing',
+      description: 'Passive: restore 1 extra HP whenever you heal.',
+    },
+    quote: 'May my faith heal all wounds.',
     movement: 4,
     hp: 7,
     maxHp: 7,
@@ -301,9 +346,14 @@ export const HERO_TYPES = {
     skill: {
       title: 'Stealth',
       description:
-        'Spend 2 AP to move through enemies without stopping this turn.',
+        '2 AP: move through enemies without stopping this turn.',
       cost: 2,
     },
+    skill2: {
+      title: 'Tracker',
+      description: 'Passive: +1 range when using bows.',
+    },
+    quote: 'Every path leaves a trace.',
     movement: 4,
     hp: 7,
     maxHp: 7,

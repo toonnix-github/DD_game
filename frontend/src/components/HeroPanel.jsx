@@ -7,6 +7,26 @@ function renderDice(count, alt) {
   ));
 }
 
+function renderSkillDesc(desc) {
+  const apPattern = /^(\d+)\s*AP:?\s*(.*)/i;
+  const match = desc.match(apPattern);
+  if (match) {
+    const count = parseInt(match[1], 10);
+    const rest = match[2];
+    return (
+      <>
+        <span className="ap-icons">
+          {Array.from({ length: count }, (_, i) => (
+            <img key={i} src="/flash.png" alt="ap" className="inline-ap" />
+          ))}
+        </span>
+        {rest}
+      </>
+    );
+  }
+  return desc;
+}
+
 function HeroPanel({ hero, damaged, hpDamage = null, shieldBroken = false }) {
   const [movePulse, setMovePulse] = useState(false);
   const prevMoveRef = useRef(hero?.movement ?? 0);
@@ -89,16 +109,27 @@ function HeroPanel({ hero, damaged, hpDamage = null, shieldBroken = false }) {
         ))}
       </div>
       <div className="description">
-        {typeof hero.skill === 'object' ? (
-          <>
+        {typeof hero.skill === 'object' && (
+          <div className="skill-line">
             <span className="skill-title">{hero.skill.title}</span>
             {hero.skill.description && (
-              <span className="skill-desc">{hero.skill.description}</span>
+              <span className="skill-desc">
+                {renderSkillDesc(hero.skill.description)}
+              </span>
             )}
-          </>
-        ) : (
-          hero.skill
+          </div>
         )}
+        {hero.skill2 && (
+          <div className="skill-line">
+            <span className="skill-title">{hero.skill2.title}</span>
+            {hero.skill2.description && (
+              <span className="skill-desc">
+                {renderSkillDesc(hero.skill2.description)}
+              </span>
+            )}
+          </div>
+        )}
+        {hero.quote && <p className="quote">~~~ {hero.quote} ~~~</p>}
       </div>
     </div>
   );
