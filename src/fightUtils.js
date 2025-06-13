@@ -17,7 +17,8 @@ export function computeAttackBreakdown(hero, weapon, rolls, baseIdx, extraIdxs =
 export function computeMonsterBreakdown(monster, roll = 0, extra = 0) {
   const attack = monster.attack
   const total = attack + roll + extra
-  return { total, attack, roll, extra }
+  const type = monster.attackType || 'melee'
+  return { total, attack, roll, extra, type }
 }
 
 export function computeCounterAttack(hero, weapon, monster, face, extraMod = 0) {
@@ -112,7 +113,21 @@ export function heroAttack(hero, goblin, weapon, rolls, baseIdx, extraIdxs = [],
   }
 }
 
-export function monsterCounter(hero, weapon, goblin, aliveGoblins = 0) {
+export function chooseMonsterAttack(monster, distance = 0) {
+  const attacks = monster.attacks || [
+    { type: monster.attackType || 'melee', attack: monster.attack, range: monster.range }
+  ]
+  const usable = attacks.filter(a => {
+    if (a.type === 'melee') return distance === 0
+    return a.range != null && a.range >= distance
+  })
+  if (usable.length === 0) return null
+  return usable.reduce((best, a) => (a.attack > best.attack ? a : best), usable[0])
+}
+
+export function monsterCounter(hero, weapon, goblin, distance = 0, aliveGoblins = 0) {
+  const attack = chooseMonsterAttack(goblin, distance)
+  if (!attack) return null
   const faces = ['torchDown', 2, 3, 4, 5, 'shieldBreak']
   const face = faces[Math.floor(Math.random() * faces.length)]
   const baseMod = goblin.extra || 0
@@ -121,7 +136,13 @@ export function monsterCounter(hero, weapon, goblin, aliveGoblins = 0) {
   if (face === 'torchDown') {
     return { effect: 'torchDown' }
   }
-  return computeCounterAttack(hero, weapon, goblin, face, extraMod)
+  return computeCounterAttack(
+    hero,
+    weapon,
+    { ...goblin, attack: attack.attack, attackType: attack.type },
+    face,
+    extraMod,
+  )
 }
 
 export function fightGoblin(
@@ -133,6 +154,7 @@ export function fightGoblin(
   extraIdxs = [],
   bonus = 0,
   aliveGoblins = 0,
+  distance = 0,
 ) {
   const attack = heroAttack(hero, goblin, weapon, rolls, baseIdx, extraIdxs, bonus)
 
@@ -142,7 +164,13 @@ export function fightGoblin(
   let counter = null
 
   if (attack.goblin.hp > 0) {
-    counter = monsterCounter(hero, weapon, { ...goblin, hp: attack.goblin.hp }, aliveGoblins)
+    counter = monsterCounter(
+      hero,
+      weapon,
+      { ...goblin, hp: attack.goblin.hp },
+      distance,
+      aliveGoblins,
+    )
     if (counter.effect !== 'torchDown') {
       heroHp -= counter.damage
       heroDefenceAfter = counter.heroDefenceAfter

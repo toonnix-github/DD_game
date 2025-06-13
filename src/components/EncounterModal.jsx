@@ -230,6 +230,7 @@ function EncounterModal({ goblin, hero, goblinCount, distance = 0, onFight, onFl
       extraIdxs,
       bonus,
       goblinCount,
+      distance,
     );
     const resultObj = {
       type: 'fight',
