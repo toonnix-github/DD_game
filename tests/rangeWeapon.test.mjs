@@ -1,6 +1,6 @@
 import assert from 'assert';
-import { getRangedTargets, distanceToTarget } from '../frontend/src/boardUtils.js';
-import { TreasureDeck, adaptTreasureItem } from '../frontend/src/treasureDeck.js';
+import { getRangedTargets, distanceToTarget } from '../src/boardUtils.js';
+import { TreasureDeck, adaptTreasureItem } from '../src/treasureDeck.js';
 
 function makeTile(row, col, paths, goblin=null) {
   return { row, col, revealed: true, paths, goblin };

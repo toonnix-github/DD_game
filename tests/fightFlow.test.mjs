@@ -4,7 +4,7 @@ import {
   heroAttack,
   computeCounterAttack,
   fightGoblin
-} from '../frontend/src/fightUtils.js';
+} from '../src/fightUtils.js';
 
 function testComputeAttackBreakdown() {
   const weapon = { attack: 2 };

@@ -6,13 +6,13 @@ The current version shows a hero portrait drawn in a Hearthstone‑style. Each h
 
 ## Getting Started
 
-1. Install dependencies (this also installs frontend packages):
+1. Install dependencies:
    ```bash
    npm install
    ```
    You can verify the setup by running the linter:
    ```bash
-   npm run lint --prefix frontend
+   npm run lint
    ```
 2. Run the included fight flow tests:
    ```bash
@@ -20,14 +20,14 @@ The current version shows a hero portrait drawn in a Hearthstone‑style. Each h
    ```
 3. Build the React app:
    ```bash
-   npm run build --prefix frontend
+   npm run build
    ```
-4. Start the server:
+4. Start the development server:
    ```bash
-   npm start
+   npm run dev
    ```
 
-5. Open `http://localhost:3000` in your browser.
+5. Open `http://localhost:5173` in your browser.
 
 ## Testing
 
@@ -67,14 +67,14 @@ Stepping into a trapped room first requires an **evasion** roll. Roll your *agil
 ### Customizing Hero Stats
 
 Starting values for each hero type can be modified in
-`frontend/src/heroData.js`. Edit the stats (including `maxHp` and weapon attack
-values) there to tweak the characters without touching the game logic. Heroes no
-longer have built-in attack or agility bonuses; their power comes solely from
-weapons and dice rolls.
+`src/heroData.js`. Edit the stats (including `maxHp` and weapon attack values)
+there to tweak the characters without touching the game logic. Heroes no longer
+have built-in attack or agility bonuses; their power comes solely from weapons
+and dice rolls.
 
 ### Hero Skills
 
-Each hero now has a unique skill defined in `frontend/src/heroData.js`. A skill
+Each hero now has a unique skill defined in `src/heroData.js`. A skill
 lists a title, a short description of how it works and the AP cost required to
 use it. For example Freya's **Berserker Rage** spends 2 AP to grant +2
 attack power for one fight.
@@ -82,8 +82,8 @@ attack power for one fight.
 ### Styling with SCSS
 
 Common card layouts now share a single SCSS mixin defined in
-`frontend/src/styles/_card.scss`. Components such as `HeroPanel`, `GoblinCard`
-and `ItemCard` include this mixin to keep their styles consistent. Vite compiles
+`src/styles/_card.scss`. Components such as `HeroPanel`, `GoblinCard` and
+`ItemCard` include this mixin to keep their styles consistent. Vite compiles
 these `.scss` files automatically during development and builds, so regular CSS
 imports were replaced with SCSS equivalents. SCSS nesting keeps component styles
 concise by grouping related selectors under the same parent.
