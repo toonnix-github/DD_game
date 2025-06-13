@@ -274,7 +274,7 @@ export const HERO_TYPES = {
     agilityDice: 1,
     magicDice: 3,
     icon: 'C',
-    image: '/hero/priestess.png',
+    image: '/hero/priestess-animate.gif',
     weapons: [
       {
         name: 'Hammer',
