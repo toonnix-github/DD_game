@@ -10,7 +10,7 @@ import TrapModal from './components/TrapModal'
 import { TRAP_TYPES } from './trapRules'
 import DiscardModal from './components/DiscardModal'
 import RewardModal from './components/RewardModal'
-import EventLog from './components/EventLog'
+import DeveloperModal from './components/DeveloperModal'
 import { createShuffledDeck } from './roomDeck'
 import './App.css'
 import { HERO_TYPES } from './heroData'
@@ -141,6 +141,7 @@ function App() {
   const [state, setState] = useState(loadState)
   const [heroDamaged, setHeroDamaged] = useState(false)
   const [eventLog, setEventLog] = useState([])
+  const [showDevModal, setShowDevModal] = useState(false)
   const [actionPrompt, setActionPrompt] = useState(null)
   const prevHpRef = useRef(state.hero ? state.hero.hp : null)
 
@@ -699,8 +700,6 @@ function App() {
           </div>
         )}
         <button onClick={endTurn} className="end-turn">End Turn</button>
-        <button onClick={resetGame} className="reset-game">Reset Game</button>
-        <EventLog log={eventLog} />
       </div>
       {state.encounter && (
         <EncounterModal
@@ -734,6 +733,14 @@ function App() {
           message={`Are you sure you want to ${actionPrompt.message}?`}
           onConfirm={confirmAction}
           onCancel={cancelAction}
+        />
+      )}
+      <button className="dev-toggle" onClick={() => setShowDevModal(true)}>Dev</button>
+      {showDevModal && (
+        <DeveloperModal
+          log={eventLog}
+          onReset={resetGame}
+          onClose={() => setShowDevModal(false)}
         />
       )}
     </div>

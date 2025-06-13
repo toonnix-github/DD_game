@@ -1,0 +1,38 @@
+.dev-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 15;
+}
+
+.dev-modal {
+  background: #222;
+  color: #fff;
+  padding: 0.5rem;
+  border-radius: 4px;
+  width: 90%;
+  max-width: 320px;
+  max-height: 80vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.close-dev {
+  align-self: flex-end;
+  font-size: 0.8rem;
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+}
+
+.reset-game.dev {
+  width: auto;
+  align-self: center;
+  font-size: 0.8rem;
+}
