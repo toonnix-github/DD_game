@@ -37,7 +37,7 @@ function HeroPanel({ hero, damaged, hpDamage = null, shieldBroken = false }) {
     <div className={`hero-panel${damaged ? ' shake' : ''}`}>
       <div className="name-bar">
         <span className="hero-name">{hero.name}</span>
-        {hero.title && <span className="hero-title">{hero.title}</span>}
+        {hero.title && <span className="hero-title"> - {hero.title}</span>}
       </div>
       <img className="card-image" src={hero.image} alt={hero.name} />
       <div className={`movement-display${movePulse ? ' change' : ''}`}>

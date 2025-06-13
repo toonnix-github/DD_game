@@ -18,16 +18,6 @@ export const HERO_TYPES = {
     agilityDice: 1,
     magicDice: 1,
     icon: 'K',
-    title: 'Silent Huntress',
-    title: 'Fierce Shieldmaiden',
-    title: 'Arcane Mistress',
-    title: 'Red Flame Wizard',
-    title: 'Savage Berserker',
-    title: 'Nightblade',
-    title: 'Radiant Crusader',
-    title: 'Battle Veteran',
-    title: 'Divine Healer',
-    title: 'Swift Tracker',
     image: '/hero/crusader.png',
     weapons: [
       {
@@ -50,6 +40,7 @@ export const HERO_TYPES = {
   },
   elf: {
     name: 'Selene',
+    title: 'Silent Huntress',
     skill: {
       title: 'Forest Stealth',
       description:
@@ -89,6 +80,7 @@ export const HERO_TYPES = {
   },
   viking: {
     name: 'Freya',
+    title: 'Fierce Shieldmaiden',
     skill: {
       title: 'Berserker Rage',
       description: 'Spend 2 AP to gain +2 attack power in combat.',
@@ -119,6 +111,7 @@ export const HERO_TYPES = {
   },
   sorceress: {
     name: 'Ethairna',
+    title: 'Arcane Mistress',
     skill: {
       title: 'Seeking Bolt',
       description:
@@ -149,6 +142,7 @@ export const HERO_TYPES = {
   },
   wizard: {
     name: 'Serilda the Blue',
+    title: 'Blue Flame Wizard',
     skill: {
       title: 'Magic Arrow',
       description:
@@ -179,6 +173,7 @@ export const HERO_TYPES = {
   },
   barbarian: {
     name: 'Groka Ull',
+    title: 'Savage Berserker',
     skill: {
       title: 'Battle Rage',
       description:
@@ -209,6 +204,7 @@ export const HERO_TYPES = {
   },
   rogue: {
     name: 'Lunara',
+    title: 'Nightblade',
     skill: {
       title: 'Shadow Walk',
       description:
@@ -239,6 +235,7 @@ export const HERO_TYPES = {
   },
   paladin: {
     name: 'Lady Liora',
+    title: 'Battle Veteran',
     skill: {
       title: 'Divine Might',
       description:
@@ -269,6 +266,7 @@ export const HERO_TYPES = {
   },
   cleric: {
     name: 'Uliessa',
+    title: 'Divine Healer',
     skill: {
       title: 'Heal',
       description:
@@ -299,6 +297,7 @@ export const HERO_TYPES = {
   },
   ranger: {
     name: 'Wynneth Keleas',
+    title: 'Swift Tracker',
     skill: {
       title: 'Stealth',
       description:
