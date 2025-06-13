@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "node tests/fightFlow.test.mjs && node tests/rangeWeapon.test.mjs"
+    "test": "node tests/fightFlow.test.mjs && node tests/rangeWeapon.test.mjs && node tests/magicWeapon.test.mjs"
   },
   "dependencies": {
     "react": "^19.1.0",

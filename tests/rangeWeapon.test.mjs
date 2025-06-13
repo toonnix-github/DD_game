@@ -61,6 +61,23 @@ function testDistanceBlocked() {
   assert.strictEqual(dist, Infinity);
 }
 
+function testZigZagNoTarget() {
+  const board = Array.from({ length: 3 }, (_, r) =>
+    Array.from({ length: 3 }, (_, c) => makeTile(r, c, { up: false, down: false, left: false, right: false }))
+  );
+  board[0][0].paths.down = true;
+  board[1][0].paths.up = true; board[1][0].paths.right = true;
+  board[1][1].paths.left = true; board[1][1].paths.up = true;
+  board[0][1].paths.down = true; board[0][1].paths.right = true;
+  board[0][2].paths.left = true;
+  board[0][2].goblin = { hp: 1 };
+  const hero = { row: 0, col: 0 };
+  const targets = getRangedTargets(board, hero, 4);
+  assert.strictEqual(targets.length, 0);
+  const dist = distanceToTarget(board, hero, 0, 2);
+  assert.strictEqual(dist, Infinity);
+}
+
 function testAdaptTreasureItemRangeDice() {
   const card = TreasureDeck.find(t => t.id === 'stormcaller');
   const item = adaptTreasureItem(card);
@@ -75,6 +92,7 @@ function run() {
   testOutOfRange();
   testDistance();
   testDistanceBlocked();
+  testZigZagNoTarget();
   testAdaptTreasureItemRangeDice();
   console.log('All range weapon tests passed');
 }

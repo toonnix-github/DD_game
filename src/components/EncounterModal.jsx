@@ -26,15 +26,32 @@ function rewardInfo(value) {
   }
 }
 
-function EncounterModal({ goblin, hero, goblinCount, distance = 0, onFight, onFlee, onReward, onSkill }) {
+function EncounterModal({
+  goblin,
+  hero,
+  goblinCount,
+  distanceRange = 0,
+  distanceMagic = 0,
+  onFight,
+  onFlee,
+  onReward,
+  onSkill,
+}) {
   const [stage, setStage] = useState('menu');
   const [rolls, setRolls] = useState([]);
   const [baseIdx, setBaseIdx] = useState(null);
   const [extraIdxs, setExtraIdxs] = useState([]);
-  const firstUsableIdx = hero.weapons.findIndex(w => {
-    if (distance === 0) return w.attackType !== 'range';
-    return w.attackType === 'range' && w.range >= distance;
-  });
+
+  function canUseWeapon(w) {
+    if (w.attackType === 'melee') return distanceRange === 0;
+    if (w.attackType === 'range')
+      return distanceRange > 0 && distanceRange <= w.range && distanceRange !== Infinity;
+    if (w.attackType === 'magic')
+      return distanceMagic > 0 && distanceMagic <= w.range && distanceMagic !== Infinity;
+    return false;
+  }
+
+  const firstUsableIdx = hero.weapons.findIndex(canUseWeapon);
   const [weaponIdx, setWeaponIdx] = useState(firstUsableIdx >= 0 ? firstUsableIdx : 0);
   const [result, setResult] = useState(null);
   const [counterPhase, setCounterPhase] = useState(null);
@@ -61,12 +78,9 @@ function EncounterModal({ goblin, hero, goblinCount, distance = 0, onFight, onFl
   }, [hero]);
 
   useEffect(() => {
-    const idx = hero.weapons.findIndex(w => {
-      if (distance === 0) return w.attackType !== 'range';
-      return w.attackType === 'range' && w.range >= distance;
-    });
+    const idx = hero.weapons.findIndex(canUseWeapon);
     setWeaponIdx(idx >= 0 ? idx : 0);
-  }, [hero, distance]);
+  }, [hero, distanceRange, distanceMagic]);
 
   useEffect(() => {
     const t1 = setTimeout(() => setShake(false), 400);
@@ -221,6 +235,12 @@ function EncounterModal({ goblin, hero, goblinCount, distance = 0, onFight, onFl
       hp: Math.min(hero.hp + rewards.hp, hero.maxHp),
     };
     const bonus = useSkill && hero.skill && hero.skill.bonus ? hero.skill.bonus : 0;
+    const dist =
+      weapon.attackType === 'range'
+        ? distanceRange
+        : weapon.attackType === 'magic'
+          ? distanceMagic
+          : 0;
     const res = fightGoblin(
       heroWithRewards,
       goblin,
@@ -230,7 +250,7 @@ function EncounterModal({ goblin, hero, goblinCount, distance = 0, onFight, onFl
       extraIdxs,
       bonus,
       goblinCount,
-      distance,
+      dist,
     );
     const resultObj = {
       type: 'fight',
@@ -327,7 +347,7 @@ function EncounterModal({ goblin, hero, goblinCount, distance = 0, onFight, onFl
                       type="radio"
                       checked={weaponIdx === idx}
                       onChange={() => setWeaponIdx(idx)}
-                      disabled={distance === 0 ? w.attackType === 'range' : !(w.attackType === 'range' && w.range >= distance)}
+                      disabled={!canUseWeapon(w)}
                     />
                     <ItemCard item={w} />
                   </label>
@@ -347,11 +367,7 @@ function EncounterModal({ goblin, hero, goblinCount, distance = 0, onFight, onFl
               <div className="buttons">
                 <button
                   onClick={startFight}
-                  disabled={
-                    distance === 0
-                      ? hero.weapons[weaponIdx].attackType === 'range'
-                      : !(hero.weapons[weaponIdx].attackType === 'range' && hero.weapons[weaponIdx].range >= distance)
-                  }
+                  disabled={!canUseWeapon(hero.weapons[weaponIdx])}
                 >
                   Fight
                 </button>

@@ -17,7 +17,13 @@ import { HERO_TYPES } from './heroData'
 import { GOBLIN_TYPES, randomGoblinType } from './goblinData'
 import { randomTreasure, adaptTreasureItem } from './treasureDeck'
 import { formatFightLogs } from './fightUtils'
-import { getRangedTargets, opposite, distanceToTarget } from './boardUtils'
+import {
+  getRangedTargets,
+  getMagicTargets,
+  opposite,
+  distanceToTarget,
+  distanceMagic,
+} from './boardUtils'
 
 const BOARD_SIZE = 7
 const CENTER = Math.floor(BOARD_SIZE / 2)
@@ -299,18 +305,25 @@ function App() {
       const tile = board[r][c]
       if (!tile.goblin || tile.goblin.hp <= 0) return
 
-      const inRange = hero.weapons.some(
-        w =>
-          w.attackType === 'range' &&
-          w.dice === 'agility' &&
-          w.range > 0 &&
-          getRangedTargets(board, hero, w.range).some(
+      const inRange = hero.weapons.some(w => {
+        if (w.range <= 0) return false
+        if (w.attackType === 'range' && w.dice === 'agility') {
+          return getRangedTargets(board, hero, w.range).some(
             t => t.row === r && t.col === c,
-          ),
-      )
+          )
+        }
+        if (w.attackType === 'magic' && w.dice === 'magic') {
+          return getMagicTargets(board, hero, w.range).some(
+            t => t.row === r && t.col === c,
+          )
+        }
+        return false
+      })
       if (!inRange) return
 
-      const dist = distanceToTarget(board, hero, r, c)
+      const rangeDist = distanceToTarget(board, hero, r, c)
+      const magicDist = distanceMagic(board, hero, r, c)
+      const dist = Math.min(rangeDist, magicDist)
       if (dist === Infinity) return
 
       setState(prev => ({
@@ -319,6 +332,8 @@ function App() {
           goblin: { ...tile.goblin },
           position: { row: r, col: c },
           prev: { row: hero.row, col: hero.col },
+          distanceRange: rangeDist,
+          distanceMagic: magicDist,
           distance: dist,
         },
       }))
@@ -370,12 +385,20 @@ function App() {
     if (!hero || encounter) return []
     const targets = []
     hero.weapons.forEach(w => {
-      if (w.attackType === 'range' && w.dice === 'agility' && w.range > 0) {
-        getRangedTargets(board, hero, w.range).forEach(t => {
-          if (!targets.some(pt => pt.row === t.row && pt.col === t.col)) {
-            targets.push(t)
-          }
-        })
+      if (w.range > 0) {
+        if (w.attackType === 'range' && w.dice === 'agility') {
+          getRangedTargets(board, hero, w.range).forEach(t => {
+            if (!targets.some(pt => pt.row === t.row && pt.col === t.col)) {
+              targets.push(t)
+            }
+          })
+        } else if (w.attackType === 'magic' && w.dice === 'magic') {
+          getMagicTargets(board, hero, w.range).forEach(t => {
+            if (!targets.some(pt => pt.row === t.row && pt.col === t.col)) {
+              targets.push(t)
+            }
+          })
+        }
       }
     })
     return targets
@@ -664,7 +687,8 @@ function App() {
           goblin={state.encounter.goblin}
           hero={state.hero}
           goblinCount={goblinCount}
-          distance={state.encounter.distance}
+          distanceRange={state.encounter.distanceRange}
+          distanceMagic={state.encounter.distanceMagic}
           onReward={applyDiceRewards}
           onSkill={applySkillCost}
           onFight={handleFight}
