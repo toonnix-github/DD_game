@@ -90,9 +90,17 @@
     text-align: left;
     font-size: 0.6rem;
 
+    .skill-line {
+      margin-bottom: 0.25rem;
+    }
+
+    .skill-desc {
+      margin-left: 0.25rem;
+    }
+
     .quote {
       font-style: italic;
-      margin-bottom: 0.3rem;
+      margin-top: 0.25rem;
     }
   }
 

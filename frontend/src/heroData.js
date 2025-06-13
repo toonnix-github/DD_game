@@ -5,7 +5,7 @@ export const HERO_TYPES = {
     skill: {
       title: 'Defensive Stance',
       description:
-        'Spend 2 AP to raise your shield, gaining +1 defence until your next turn.',
+        '2 AP: raise shield for +1 defence until next turn.',
       cost: 2,
     },
     skill2: {
@@ -49,7 +49,7 @@ export const HERO_TYPES = {
     skill: {
       title: 'Forest Stealth',
       description:
-        'Spend 2 AP to blend with the woods, ignoring line of sight for movement this turn.',
+        '2 AP: blend with woods, ignore line of sight.',
       cost: 2,
     },
     skill2: {
@@ -93,7 +93,7 @@ export const HERO_TYPES = {
     title: 'Fierce Shieldmaiden',
     skill: {
       title: 'Berserker Rage',
-      description: 'Spend 2 AP to gain +2 attack power in combat.',
+      description: '2 AP: gain +2 attack power this combat.',
       cost: 2,
       bonus: 2,
     },
@@ -130,12 +130,12 @@ export const HERO_TYPES = {
     skill: {
       title: 'Seeking Bolt',
       description:
-        'Spend 2 AP then roll magic (5+). On success, deal 1 damage to an enemy within 4 spaces.',
+        '2 AP: magic (5+) to deal 1 damage up to 4 spaces.',
       cost: 2,
     },
     skill2: {
       title: 'Mana Shield',
-      description: 'Passive: first damage each turn is reduced by 1.',
+      description: 'Passive: first damage each turn reduced by 1.',
     },
     quote: 'Power flows through me.',
     movement: 4,
@@ -166,12 +166,12 @@ export const HERO_TYPES = {
     skill: {
       title: 'Magic Arrow',
       description:
-        'Spend 2 AP and roll magic (6+). A hit deals 2 damage to a target up to 2 spaces away.',
+        '2 AP: magic (6+) to deal 2 damage within 2 spaces.',
       cost: 2,
     },
     skill2: {
       title: 'Arcane Insight',
-      description: 'Passive: gain an extra spell draw when resting.',
+      description: 'Passive: draw an extra spell when resting.',
     },
     quote: 'By the flames of knowledge!',
     movement: 3,
@@ -202,7 +202,7 @@ export const HERO_TYPES = {
     skill: {
       title: 'Battle Rage',
       description:
-        'Spend 2 AP before attacking to gain +2 on that attack roll.',
+        '2 AP: +2 on your next attack roll.',
       cost: 2,
     },
     skill2: {
@@ -238,7 +238,7 @@ export const HERO_TYPES = {
     skill: {
       title: 'Shadow Walk',
       description:
-        'Spend 2 AP and roll agility (6+). If successful, move up to your speed ignoring enemies and deal 1 damage where you stop.',
+        '2 AP: agility (6+) to dash through foes and strike.',
       cost: 2,
     },
     skill2: {
@@ -274,7 +274,7 @@ export const HERO_TYPES = {
     skill: {
       title: 'Divine Might',
       description:
-        'Spend 2 AP and roll magic (4+). A success adds +2 to your next melee attack.',
+        '2 AP: magic (4+) for +2 to next melee attack.',
       cost: 2,
     },
     skill2: {
@@ -310,7 +310,7 @@ export const HERO_TYPES = {
     skill: {
       title: 'Heal',
       description:
-        'Spend 2 AP while casting a spell to restore 4 HP to a hero up to 3 rooms away.',
+        '2 AP: restore 4 HP to a hero up to 3 rooms away.',
       cost: 2,
     },
     skill2: {
@@ -346,7 +346,7 @@ export const HERO_TYPES = {
     skill: {
       title: 'Stealth',
       description:
-        'Spend 2 AP to move through enemies without stopping this turn.',
+        '2 AP: move through enemies without stopping this turn.',
       cost: 2,
     },
     skill2: {
