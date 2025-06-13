@@ -71,10 +71,13 @@ function loadState() {
         const maxHp = parsed.hero.maxHp ?? base.maxHp ?? base.hp
         const maxAp = parsed.hero.maxAp ?? base.maxAp ?? base.ap
         const skill = parsed.hero.skill ?? base.skill
+        const skill2 = parsed.hero.skill2 ?? base.skill2
+        const quote = parsed.hero.quote ?? base.quote
         parsed.hero = {
           row: parsed.hero.row,
           col: parsed.hero.col,
           skill: typeof skill === 'object' ? { ...skill } : skill,
+          skill2: skill2 ? { ...skill2 } : null,
           movement: parsed.hero.movement ?? base.movement,
           icon: parsed.hero.icon ?? base.icon,
           hp: Math.min(parsed.hero.hp ?? base.hp, maxHp),
@@ -88,6 +91,7 @@ function loadState() {
           weapons: parsed.hero.weapons ?? base.weapons.map(w => ({ ...w })),
           name: base.name,
           image: base.image,
+          quote,
           type,
           offset: parsed.hero.offset ?? { x: 0, y: 0 },
         }
@@ -137,11 +141,14 @@ function App() {
     type => {
       const base = HERO_TYPES[type]
       const skill = base.skill
+      const skill2 = base.skill2
+      const quote = base.quote
     const hero = {
       row: CENTER,
       col: CENTER,
       name: base.name,
       skill: typeof skill === 'object' ? { ...skill } : skill,
+      skill2: skill2 ? { ...skill2 } : null,
       movement: base.movement,
       icon: base.icon,
       hp: base.hp,
@@ -154,6 +161,7 @@ function App() {
       magicDice: base.magicDice,
       weapons: base.weapons.map(w => ({ ...w })),
       image: base.image,
+      quote,
       type,
       offset: {
         x: Math.random() * 40 - 20,
