@@ -36,4 +36,14 @@
       opacity: 1;
     }
   }
+
+  @media (max-width: 600px) {
+    .hero-choice {
+      width: 100%;
+    }
+
+    .hero-panel {
+      width: 100%;
+    }
+  }
 }
