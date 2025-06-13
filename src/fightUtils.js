@@ -117,10 +117,10 @@ export function chooseMonsterAttack(monster, distance = 0) {
   const attacks = monster.attacks || [
     { type: monster.attackType || 'melee', attack: monster.attack, range: monster.range }
   ]
-  const usable = attacks.filter(a => {
-    if (a.type === 'melee') return distance === 0
-    return a.range != null && a.range >= distance
-  })
+  if (distance === 0) {
+    return attacks.find(a => a.type === 'melee') || null
+  }
+  const usable = attacks.filter(a => a.type !== 'melee' && a.range != null && a.range >= distance)
   if (usable.length === 0) return null
   return usable.reduce((best, a) => (a.attack > best.attack ? a : best), usable[0])
 }
