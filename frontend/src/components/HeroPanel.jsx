@@ -8,15 +8,17 @@ function renderDice(count, alt) {
 }
 
 function renderSkillDesc(desc) {
-  const apPattern = /^2 AP:?\s*(.*)/i;
+  const apPattern = /^(\d+)\s*AP:?\s*(.*)/i;
   const match = desc.match(apPattern);
   if (match) {
-    const rest = match[1];
+    const count = parseInt(match[1], 10);
+    const rest = match[2];
     return (
       <>
         <span className="ap-icons">
-          <img src="/flash.png" alt="ap" className="inline-ap" />
-          <img src="/flash.png" alt="ap" className="inline-ap" />
+          {Array.from({ length: count }, (_, i) => (
+            <img key={i} src="/flash.png" alt="ap" className="inline-ap" />
+          ))}
         </span>
         {rest}
       </>
