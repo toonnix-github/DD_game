@@ -18,6 +18,12 @@ function testChooseMeleeAtZero() {
   assert.ok(atk && atk.type === 'melee');
 }
 
+function testRangeCantHitAtZero() {
+  const goblin = { attacks: [{ type: 'range', attack: 3, range: 3 }] };
+  const atk = chooseMonsterAttack(goblin, 0);
+  assert.strictEqual(atk, null);
+}
+
 function testNoCounterWhenOutOfRange() {
   const hero = { defence: 1 };
   const weapon = { defence: 0 };
@@ -30,6 +36,7 @@ function run() {
   testChooseAttackOutOfRange();
   testChooseAttackRange();
   testChooseMeleeAtZero();
+  testRangeCantHitAtZero();
   testNoCounterWhenOutOfRange();
   console.log('All monster counter tests passed');
 }
