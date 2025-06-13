@@ -88,9 +88,14 @@ function loadState() {
           icon: parsed.hero.icon ?? base.icon,
           hp: Math.min(parsed.hero.hp ?? base.hp, maxHp),
           maxHp,
-          ap: Math.min(parsed.hero.ap ?? base.ap, maxAp),
-          maxAp,
-          defence: parsed.hero.defence ?? base.defence,
+         ap: Math.min(parsed.hero.ap ?? base.ap, maxAp),
+         maxAp,
+          heroAction: Math.min(
+            parsed.hero.heroAction ?? base.heroAction ?? 1,
+            base.maxHeroAction ?? 1,
+          ),
+          maxHeroAction: parsed.hero.maxHeroAction ?? base.maxHeroAction ?? 1,
+         defence: parsed.hero.defence ?? base.defence,
           strengthDice: parsed.hero.strengthDice ?? base.strengthDice,
           agilityDice: parsed.hero.agilityDice ?? base.agilityDice,
           magicDice: parsed.hero.magicDice ?? base.magicDice,
@@ -161,6 +166,8 @@ function App() {
       maxHp: base.maxHp ?? base.hp,
       ap: base.ap,
       maxAp: base.maxAp ?? base.ap,
+      heroAction: base.heroAction ?? 1,
+      maxHeroAction: base.maxHeroAction ?? 1,
       defence: base.defence,
       strengthDice: base.strengthDice,
       agilityDice: base.agilityDice,
@@ -203,6 +210,7 @@ function App() {
           ...prev.hero,
           movement: base.movement,
           ap: prev.hero.maxAp,
+          heroAction: prev.hero.maxHeroAction,
         },
       }
     })
@@ -271,25 +279,18 @@ function App() {
         },
       }
 
-      let newEncounter = null
       let newTrap = null
       if (newBoard[r][c].goblin) {
         newHero.movement = 0
-        newEncounter = {
-          goblin: { ...newBoard[r][c].goblin },
-          position: { row: r, col: c },
-          prev: { row: hero.row, col: hero.col },
-          distance: 0,
-        }
       }
 
-      if (newBoard[r][c].trap && !newBoard[r][c].trapResolved && !newEncounter) {
+      if (newBoard[r][c].trap && !newBoard[r][c].trapResolved) {
         newTrap = { position: { row: r, col: c }, trap: newBoard[r][c].trap }
       }
 
-      setState({ board: newBoard, hero: newHero, deck: newDeck, encounter: newEncounter, trap: newTrap })
+      setState({ board: newBoard, hero: newHero, deck: newDeck, encounter: null, trap: newTrap })
       addLog(`${hero.name} moves ${dir}`)
-      if (newEncounter) addLog(`Encountered ${newEncounter.goblin.name}`)
+      if (newBoard[r][c].goblin) addLog(`Encountered ${newBoard[r][c].goblin.name}`)
       if (newTrap) {
         const t = newTrap.trap
         addLog(`Found trap: ${t.id} (difficulty ${t.difficulty})`)
@@ -298,33 +299,29 @@ function App() {
     [state, addLog]
   )
 
-  const shootGoblin = useCallback(
+  const engageGoblin = useCallback(
     (r, c) => {
       const { hero, board, encounter } = state
       if (!hero || encounter) return
       const tile = board[r][c]
       if (!tile.goblin || tile.goblin.hp <= 0) return
 
-      const inRange = hero.weapons.some(w => {
-        if (w.range <= 0) return false
-        if (w.attackType === 'range' && w.dice === 'agility') {
-          return getRangedTargets(board, hero, w.range).some(
-            t => t.row === r && t.col === c,
-          )
-        }
-        if (w.attackType === 'magic' && w.dice === 'magic') {
-          return getMagicTargets(board, hero, w.range).some(
-            t => t.row === r && t.col === c,
-          )
-        }
-        return false
-      })
-      if (!inRange) return
-
       const rangeDist = distanceToTarget(board, hero, r, c)
       const magicDist = distanceMagic(board, hero, r, c)
       const dist = Math.min(rangeDist, magicDist)
       if (dist === Infinity) return
+
+      const canAttack = hero.weapons.some(w => {
+        if (w.attackType === 'melee') return dist === 0
+        if (w.attackType === 'range')
+          return rangeDist > 0 && rangeDist <= w.range && rangeDist !== Infinity
+        if (w.attackType === 'magic')
+          return (
+            magicDist > 0 && magicDist <= w.range && magicDist !== Infinity
+          )
+        return false
+      })
+      if (!canAttack) return
 
       setState(prev => ({
         ...prev,
@@ -337,22 +334,40 @@ function App() {
           distance: dist,
         },
       }))
-      addLog(`${hero.name} attacks ${tile.goblin.name} from afar`)
+      addLog(
+        `${hero.name} attacks ${tile.goblin.name}${dist > 0 ? ' from afar' : ''}`,
+      )
     },
     [state, addLog],
   )
 
-  const promptAttack = useCallback((r, c) => {
-    setActionPrompt({ type: 'attack', row: r, col: c })
-  }, [])
+  const promptHeroAction = useCallback(
+    (message, onConfirm) => {
+      if (state.hero.heroAction <= 0) return
+      setActionPrompt({ message, onConfirm })
+    },
+    [state.hero],
+  )
+
+  const promptAttack = useCallback(
+    (r, c) => {
+      promptHeroAction('attack', () => engageGoblin(r, c))
+    },
+    [promptHeroAction, engageGoblin],
+  )
 
   const confirmAction = useCallback(() => {
     if (!actionPrompt) return
-    if (actionPrompt.type === 'attack') {
-      shootGoblin(actionPrompt.row, actionPrompt.col)
-    }
+    setState(prev => {
+      if (!prev.hero) return prev
+      return {
+        ...prev,
+        hero: { ...prev.hero, heroAction: Math.max(0, prev.hero.heroAction - 1) },
+      }
+    })
+    actionPrompt.onConfirm()
     setActionPrompt(null)
-  }, [actionPrompt, shootGoblin])
+  }, [actionPrompt])
 
   const cancelAction = useCallback(() => setActionPrompt(null), [])
 
@@ -380,10 +395,14 @@ function App() {
     return moves
   }, [state])
 
-  const rangedTargets = useMemo(() => {
+  const attackTargets = useMemo(() => {
     const { hero, board, encounter } = state
     if (!hero || encounter) return []
     const targets = []
+    const tile = board[hero.row][hero.col]
+    if (tile.goblin && tile.goblin.hp > 0) {
+      targets.push({ row: hero.row, col: hero.col })
+    }
     hero.weapons.forEach(w => {
       if (w.range > 0) {
         if (w.attackType === 'range' && w.dice === 'agility') {
@@ -640,7 +659,7 @@ function App() {
           {state.board.map((row, rIdx) =>
             row.map((tile, cIdx) => {
               const move = possibleMoves.some(p => p.row === rIdx && p.col === cIdx)
-              const attack = rangedTargets.some(p => p.row === rIdx && p.col === cIdx)
+              const attack = attackTargets.some(p => p.row === rIdx && p.col === cIdx)
               const disabled = !move && !attack && (state.hero.row !== rIdx || state.hero.col !== cIdx)
               return (
                 <RoomTile
@@ -649,6 +668,7 @@ function App() {
                   highlight={move || attack}
                   move={move}
                   attack={attack}
+                  attackDisabled={state.hero.heroAction <= 0}
                   disabled={disabled}
                   onMove={() => moveHero(rIdx, cIdx)}
                   onAttack={() => promptAttack(rIdx, cIdx)}
@@ -696,7 +716,12 @@ function App() {
         />
       )}
       {state.trap && (
-        <TrapModal hero={state.hero} trap={state.trap.trap} onResolve={handleTrapResolve} />
+        <TrapModal
+          hero={state.hero}
+          trap={state.trap.trap}
+          onResolve={handleTrapResolve}
+          onHeroAction={promptHeroAction}
+        />
       )}
       {state.reward && (
         <RewardModal reward={state.reward} onConfirm={handleRewardConfirm} />
@@ -706,7 +731,7 @@ function App() {
       )}
       {actionPrompt && (
         <ConfirmModal
-          message={`Are you sure you want to ${actionPrompt.type} here?`}
+          message={`Are you sure you want to ${actionPrompt.message}?`}
           onConfirm={confirmAction}
           onCancel={cancelAction}
         />

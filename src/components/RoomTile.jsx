@@ -4,7 +4,7 @@ import { DISARM_RULE, EVASION_RULE } from '../trapRules';
 
 const DIRS = ['up', 'down', 'left', 'right'];
 
-function RoomTile({ tile, move, attack, highlight, disabled, onMove, onAttack }) {
+function RoomTile({ tile, move, attack, attackDisabled = false, highlight, disabled, onMove, onAttack }) {
   return (
     <div
       className={`tile ${tile.revealed ? 'revealed' : ''} ${highlight ? 'possible' : ''} ${!tile.revealed && disabled ? 'disabled' : ''
@@ -37,7 +37,11 @@ function RoomTile({ tile, move, attack, highlight, disabled, onMove, onAttack })
       {(move || attack) && (
         <div className="action-buttons">
           {move && <button onClick={onMove}>Move</button>}
-          {attack && <button onClick={onAttack}>Attack</button>}
+          {attack && (
+            <button onClick={onAttack} disabled={attackDisabled}>
+              Attack
+            </button>
+          )}
         </div>
       )}
       {tile.revealed && tile.effect === 'death' && (
