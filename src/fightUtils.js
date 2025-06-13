@@ -171,7 +171,7 @@ export function fightGoblin(
       distance,
       aliveGoblins,
     )
-    if (counter.effect !== 'torchDown') {
+    if (counter && counter.effect !== 'torchDown') {
       heroHp -= counter.damage
       heroDefenceAfter = counter.heroDefenceAfter
       if (heroHp <= 0) {

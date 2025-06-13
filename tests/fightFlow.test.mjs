@@ -47,11 +47,32 @@ function testFightGoblin() {
   assert.strictEqual(res.hero.hp, 10);
 }
 
+function testFightGoblinOutOfRange() {
+  const hero = {
+    hp: 8,
+    defence: 1,
+    weapons: [
+      { name: 'Bow', attack: 2, defence: 0, attackType: 'range', range: 3 },
+    ],
+  };
+  const goblin = {
+    hp: 3,
+    defence: 0,
+    attack: 2,
+    attackType: 'melee',
+    attacks: [{ type: 'melee', attack: 2 }],
+  };
+  const res = fightGoblin(hero, goblin, hero.weapons[0], [4], 0, [], 0, 0, 2);
+  assert.strictEqual(res.counter, null);
+  assert.strictEqual(res.goblin.hp, 3);
+}
+
 function run() {
   testComputeAttackBreakdown();
   testHeroAttack();
   testComputeCounterAttack();
   testFightGoblin();
+  testFightGoblinOutOfRange();
   console.log('All fight flow tests passed');
 }
 
