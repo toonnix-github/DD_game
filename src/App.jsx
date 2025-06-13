@@ -88,9 +88,14 @@ function loadState() {
           icon: parsed.hero.icon ?? base.icon,
           hp: Math.min(parsed.hero.hp ?? base.hp, maxHp),
           maxHp,
-          ap: Math.min(parsed.hero.ap ?? base.ap, maxAp),
-          maxAp,
-          defence: parsed.hero.defence ?? base.defence,
+         ap: Math.min(parsed.hero.ap ?? base.ap, maxAp),
+         maxAp,
+          heroAction: Math.min(
+            parsed.hero.heroAction ?? base.heroAction ?? 1,
+            base.maxHeroAction ?? 1,
+          ),
+          maxHeroAction: parsed.hero.maxHeroAction ?? base.maxHeroAction ?? 1,
+         defence: parsed.hero.defence ?? base.defence,
           strengthDice: parsed.hero.strengthDice ?? base.strengthDice,
           agilityDice: parsed.hero.agilityDice ?? base.agilityDice,
           magicDice: parsed.hero.magicDice ?? base.magicDice,
@@ -161,6 +166,8 @@ function App() {
       maxHp: base.maxHp ?? base.hp,
       ap: base.ap,
       maxAp: base.maxAp ?? base.ap,
+      heroAction: base.heroAction ?? 1,
+      maxHeroAction: base.maxHeroAction ?? 1,
       defence: base.defence,
       strengthDice: base.strengthDice,
       agilityDice: base.agilityDice,
@@ -203,6 +210,7 @@ function App() {
           ...prev.hero,
           movement: base.movement,
           ap: prev.hero.maxAp,
+          heroAction: prev.hero.maxHeroAction,
         },
       }
     })
@@ -271,25 +279,18 @@ function App() {
         },
       }
 
-      let newEncounter = null
       let newTrap = null
       if (newBoard[r][c].goblin) {
         newHero.movement = 0
-        newEncounter = {
-          goblin: { ...newBoard[r][c].goblin },
-          position: { row: r, col: c },
-          prev: { row: hero.row, col: hero.col },
-          distance: 0,
-        }
       }
 
-      if (newBoard[r][c].trap && !newBoard[r][c].trapResolved && !newEncounter) {
+      if (newBoard[r][c].trap && !newBoard[r][c].trapResolved) {
         newTrap = { position: { row: r, col: c }, trap: newBoard[r][c].trap }
       }
 
-      setState({ board: newBoard, hero: newHero, deck: newDeck, encounter: newEncounter, trap: newTrap })
+      setState({ board: newBoard, hero: newHero, deck: newDeck, encounter: null, trap: newTrap })
       addLog(`${hero.name} moves ${dir}`)
-      if (newEncounter) addLog(`Encountered ${newEncounter.goblin.name}`)
+      if (newBoard[r][c].goblin) addLog(`Encountered ${newBoard[r][c].goblin.name}`)
       if (newTrap) {
         const t = newTrap.trap
         addLog(`Found trap: ${t.id} (difficulty ${t.difficulty})`)
@@ -342,17 +343,33 @@ function App() {
     [state, addLog],
   )
 
-  const promptAttack = useCallback((r, c) => {
-    setActionPrompt({ type: 'attack', row: r, col: c })
-  }, [])
+  const promptHeroAction = useCallback(
+    (message, onConfirm) => {
+      if (state.hero.heroAction <= 0) return
+      setActionPrompt({ message, onConfirm })
+    },
+    [state.hero],
+  )
+
+  const promptAttack = useCallback(
+    (r, c) => {
+      promptHeroAction('attack', () => shootGoblin(r, c))
+    },
+    [promptHeroAction, shootGoblin],
+  )
 
   const confirmAction = useCallback(() => {
     if (!actionPrompt) return
-    if (actionPrompt.type === 'attack') {
-      shootGoblin(actionPrompt.row, actionPrompt.col)
-    }
+    setState(prev => {
+      if (!prev.hero) return prev
+      return {
+        ...prev,
+        hero: { ...prev.hero, heroAction: Math.max(0, prev.hero.heroAction - 1) },
+      }
+    })
+    actionPrompt.onConfirm()
     setActionPrompt(null)
-  }, [actionPrompt, shootGoblin])
+  }, [actionPrompt])
 
   const cancelAction = useCallback(() => setActionPrompt(null), [])
 
@@ -649,6 +666,7 @@ function App() {
                   highlight={move || attack}
                   move={move}
                   attack={attack}
+                  attackDisabled={state.hero.heroAction <= 0}
                   disabled={disabled}
                   onMove={() => moveHero(rIdx, cIdx)}
                   onAttack={() => promptAttack(rIdx, cIdx)}
@@ -696,7 +714,12 @@ function App() {
         />
       )}
       {state.trap && (
-        <TrapModal hero={state.hero} trap={state.trap.trap} onResolve={handleTrapResolve} />
+        <TrapModal
+          hero={state.hero}
+          trap={state.trap.trap}
+          onResolve={handleTrapResolve}
+          onHeroAction={promptHeroAction}
+        />
       )}
       {state.reward && (
         <RewardModal reward={state.reward} onConfirm={handleRewardConfirm} />
@@ -706,7 +729,7 @@ function App() {
       )}
       {actionPrompt && (
         <ConfirmModal
-          message={`Are you sure you want to ${actionPrompt.type} here?`}
+          message={`Are you sure you want to ${actionPrompt.message}?`}
           onConfirm={confirmAction}
           onCancel={cancelAction}
         />

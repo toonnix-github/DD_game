@@ -193,6 +193,25 @@
     }
   }
 
+  .hero-action-badge {
+    position: absolute;
+    bottom: 1%;
+    right: 2.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    z-index: 3;
+    transform: rotate(5deg);
+
+    img {
+      width: 100%;
+      height: 100%;
+    }
+
+    &.change {
+      animation: pop 0.3s;
+    }
+  }
+
   .ap-flashes {
     position: absolute;
     bottom: 8.6rem;

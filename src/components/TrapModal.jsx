@@ -4,7 +4,7 @@ import { DISARM_RULE, EVASION_RULE } from '../trapRules'
 import { computeAttackBreakdown, computeUnusedRewards } from '../fightUtils'
 import HeroPanel from './HeroPanel'
 
-function TrapModal({ hero, trap, onResolve }) {
+function TrapModal({ hero, trap, onResolve, onHeroAction }) {
   const [stage, setStage] = useState('evasionReady')
   const [evasionRolls, setEvasionRolls] = useState([])
   const [evaded, setEvaded] = useState(null)
@@ -220,7 +220,16 @@ function TrapModal({ hero, trap, onResolve }) {
               ) : null}
             </div>
             <div className="buttons">
-              {hero.ap > 0 && <button onClick={() => setStage('disarmReady')}>Disarm (1 AP)</button>}
+              {hero.ap > 0 && (
+                <button
+                  onClick={() =>
+                    onHeroAction('disarm the trap', () => setStage('disarmReady'))
+                  }
+                  disabled={hero.heroAction <= 0}
+                >
+                  Disarm (1 AP)
+                </button>
+              )}
               <button onClick={skip}>Continue</button>
             </div>
           </div>

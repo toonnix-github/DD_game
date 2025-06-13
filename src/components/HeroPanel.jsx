@@ -32,6 +32,8 @@ function HeroPanel({ hero, damaged, hpDamage = null, shieldBroken = false }) {
   const prevMoveRef = useRef(hero?.movement ?? 0);
   const [apPulse, setApPulse] = useState(false);
   const prevApRef = useRef(hero?.ap ?? 0);
+  const [actionPulse, setActionPulse] = useState(false);
+  const prevActionRef = useRef(hero?.heroAction ?? 0);
 
   useEffect(() => {
     if (hero && prevMoveRef.current !== hero.movement) {
@@ -47,6 +49,15 @@ function HeroPanel({ hero, damaged, hpDamage = null, shieldBroken = false }) {
       setApPulse(true);
       const t = setTimeout(() => setApPulse(false), 300);
       prevApRef.current = hero.ap;
+      return () => clearTimeout(t);
+    }
+  }, [hero]);
+
+  useEffect(() => {
+    if (hero && prevActionRef.current !== hero.heroAction) {
+      setActionPulse(true);
+      const t = setTimeout(() => setActionPulse(false), 300);
+      prevActionRef.current = hero.heroAction;
       return () => clearTimeout(t);
     }
   }, [hero]);
@@ -98,6 +109,16 @@ function HeroPanel({ hero, damaged, hpDamage = null, shieldBroken = false }) {
           )}
         </div>
       )}
+      <div className={`hero-action-badge${actionPulse ? ' change' : ''}`}>
+        <img
+          src={
+            hero.heroAction > 0
+              ? '/icon/hero-action.png'
+              : '/icon/hero-action-used.png'
+          }
+          alt="hero action"
+        />
+      </div>
       <div className={`ap-flashes${apPulse ? ' change' : ''}`}>
         {Array.from({ length: hero.maxAp }, (_, i) => (
           <img
