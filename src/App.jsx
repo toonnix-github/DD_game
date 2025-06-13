@@ -463,6 +463,9 @@ function App() {
       } else if (result.counter) {
         // end encounter after counterattack
         newEncounter = null
+      } else {
+        // goblin survived but cannot counterattack
+        newEncounter = null
       }
       const updated = {
         ...prev,
