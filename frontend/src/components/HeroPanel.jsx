@@ -105,7 +105,7 @@ function HeroPanel({ hero, damaged, hpDamage = null, shieldBroken = false }) {
             )}
           </div>
         )}
-        {hero.quote && <p className="quote">"{hero.quote}"</p>}
+        {hero.quote && <p className="quote">~~~ {hero.quote} ~~~</p>}
       </div>
     </div>
   );
