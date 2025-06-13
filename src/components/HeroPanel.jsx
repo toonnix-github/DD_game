@@ -92,6 +92,16 @@ function HeroPanel({ hero, damaged, hpDamage = null, shieldBroken = false }) {
         ))}
         {hpDamage != null && <span className="hp-damage">-{hpDamage}</span>}
       </div>
+      <div className={`hero-action-badge${actionPulse ? ' change' : ''}`}>
+        <img
+          src={
+            hero.heroAction > 0
+              ? '/icon/hero-action.png'
+              : '/icon/hero-action-used.png'
+          }
+          alt="hero action"
+        />
+      </div>
       {(hero.defence > 0 || shieldBroken) && (
         <div className={`defence-badge${shieldBroken ? ' broken' : ''}`}>
           {hero.defence > 0 && (
@@ -109,16 +119,6 @@ function HeroPanel({ hero, damaged, hpDamage = null, shieldBroken = false }) {
           )}
         </div>
       )}
-      <div className={`hero-action-badge${actionPulse ? ' change' : ''}`}>
-        <img
-          src={
-            hero.heroAction > 0
-              ? '/icon/hero-action.png'
-              : '/icon/hero-action-used.png'
-          }
-          alt="hero action"
-        />
-      </div>
       <div className={`ap-flashes${apPulse ? ' change' : ''}`}>
         {Array.from({ length: hero.maxAp }, (_, i) => (
           <img

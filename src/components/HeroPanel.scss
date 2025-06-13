@@ -195,12 +195,12 @@
 
   .hero-action-badge {
     position: absolute;
-    bottom: 1%;
+    bottom: 1.1rem;
     right: 2.5rem;
     width: 2.5rem;
     height: 2.5rem;
     z-index: 3;
-    transform: rotate(5deg);
+    transform: rotate(-15deg);
 
     img {
       width: 100%;
