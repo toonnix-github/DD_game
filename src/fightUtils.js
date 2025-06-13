@@ -177,6 +177,8 @@ export function fightGoblin(
       if (heroHp <= 0) {
         message += ' You have fallen.'
       }
+    } else if (!counter) {
+      message += ' The goblin is too far away to counterattack.'
     }
   } else {
     message += ' Goblin defeated!'
@@ -296,6 +298,8 @@ export function formatFightMessage(result) {
     } else {
       msg += ' You block the counterattack.'
     }
+  } else if (goblin.hp > 0) {
+    msg += " The goblin can't counterattack.";
   }
 
   return msg

@@ -3,7 +3,8 @@ import {
   computeAttackBreakdown,
   heroAttack,
   computeCounterAttack,
-  fightGoblin
+  fightGoblin,
+  formatFightMessage
 } from '../src/fightUtils.js';
 
 function testComputeAttackBreakdown() {
@@ -65,6 +66,9 @@ function testFightGoblinOutOfRange() {
   const res = fightGoblin(hero, goblin, hero.weapons[0], [4], 0, [], 0, 0, 2);
   assert.strictEqual(res.counter, null);
   assert.strictEqual(res.goblin.hp, 3);
+  assert.ok(res.message.includes('too far away'));
+  const msg = formatFightMessage({ ...res, hero, weaponIdx: 0 });
+  assert.ok(msg.includes("can't counterattack"));
 }
 
 function run() {
