@@ -1,6 +1,7 @@
 export const HERO_TYPES = {
   knight: {
     name: 'Lady Arwyn',
+    title: 'Stalwart Knight',
     skill: {
       title: 'Defensive Stance',
       description:
@@ -17,7 +18,7 @@ export const HERO_TYPES = {
     agilityDice: 1,
     magicDice: 1,
     icon: 'K',
-    image: '/knight.png',
+    image: '/hero/crusader.png',
     weapons: [
       {
         name: 'Sword',
@@ -39,6 +40,7 @@ export const HERO_TYPES = {
   },
   elf: {
     name: 'Selene',
+    title: 'Silent Huntress',
     skill: {
       title: 'Forest Stealth',
       description:
@@ -78,6 +80,7 @@ export const HERO_TYPES = {
   },
   viking: {
     name: 'Freya',
+    title: 'Fierce Shieldmaiden',
     skill: {
       title: 'Berserker Rage',
       description: 'Spend 2 AP to gain +2 attack power in combat.',
@@ -94,7 +97,7 @@ export const HERO_TYPES = {
     agilityDice: 1,
     magicDice: 1,
     icon: 'V',
-    image: '/hero-viking.webp',
+    image: '/hero/freya.png',
     weapons: [
       {
         name: 'Axe',
@@ -108,6 +111,7 @@ export const HERO_TYPES = {
   },
   sorceress: {
     name: 'Ethairna',
+    title: 'Arcane Mistress',
     skill: {
       title: 'Seeking Bolt',
       description:
@@ -124,7 +128,7 @@ export const HERO_TYPES = {
     agilityDice: 2,
     magicDice: 3,
     icon: 'S',
-    image: '/elf.png',
+    image: '/hero/red-wizard.png',
     weapons: [
       {
         name: 'Dagger',
@@ -138,6 +142,7 @@ export const HERO_TYPES = {
   },
   wizard: {
     name: 'Serilda the Blue',
+    title: 'Blue Flame Wizard',
     skill: {
       title: 'Magic Arrow',
       description:
@@ -154,7 +159,7 @@ export const HERO_TYPES = {
     agilityDice: 2,
     magicDice: 3,
     icon: 'W',
-    image: '/knight.png',
+    image: '/hero/blue-wizard.png',
     weapons: [
       {
         name: 'Dagger',
@@ -167,7 +172,8 @@ export const HERO_TYPES = {
     ],
   },
   barbarian: {
-    name: 'Groka U\u2019ll',
+    name: 'Groka Ull',
+    title: 'Savage Berserker',
     skill: {
       title: 'Battle Rage',
       description:
@@ -184,7 +190,7 @@ export const HERO_TYPES = {
     agilityDice: 2,
     magicDice: 1,
     icon: 'B',
-    image: '/viking.png',
+    image: '/hero/barbarian.png',
     weapons: [
       {
         name: 'Axe',
@@ -198,6 +204,7 @@ export const HERO_TYPES = {
   },
   rogue: {
     name: 'Lunara',
+    title: 'Nightblade',
     skill: {
       title: 'Shadow Walk',
       description:
@@ -214,7 +221,7 @@ export const HERO_TYPES = {
     agilityDice: 3,
     magicDice: 1,
     icon: 'R',
-    image: '/ninja.png',
+    image: '/hero/ninja.png',
     weapons: [
       {
         name: 'Dagger',
@@ -228,6 +235,7 @@ export const HERO_TYPES = {
   },
   paladin: {
     name: 'Lady Liora',
+    title: 'Battle Veteran',
     skill: {
       title: 'Divine Might',
       description:
@@ -244,7 +252,7 @@ export const HERO_TYPES = {
     agilityDice: 1,
     magicDice: 2,
     icon: 'P',
-    image: '/knight.png',
+    image: '/hero/magic-knight.png',
     weapons: [
       {
         name: 'Hammer',
@@ -256,38 +264,9 @@ export const HERO_TYPES = {
       },
     ],
   },
-  fighter: {
-    name: 'Thora Firebraid',
-    skill: {
-      title: 'Stone Stance',
-      description:
-        'Spend 2 AP during a melee attack to gain +2 defence until your next turn.',
-      cost: 2,
-    },
-    movement: 3,
-    hp: 8,
-    maxHp: 8,
-    maxAp: 4,
-    ap: 4,
-    defence: 4,
-    strengthDice: 3,
-    agilityDice: 2,
-    magicDice: 1,
-    icon: 'F',
-    image: '/viking-portrait.png',
-    weapons: [
-      {
-        name: 'Hammer',
-        attack: 1,
-        defence: 0,
-        dice: 'strength',
-        image: '/weapon/earthshaker.webp',
-        attackType: 'melee',
-      },
-    ],
-  },
   cleric: {
     name: 'Uliessa',
+    title: 'Divine Healer',
     skill: {
       title: 'Heal',
       description:
@@ -304,7 +283,7 @@ export const HERO_TYPES = {
     agilityDice: 1,
     magicDice: 3,
     icon: 'C',
-    image: '/viking.png',
+    image: '/hero/priestess-animate.gif',
     weapons: [
       {
         name: 'Hammer',
@@ -318,6 +297,7 @@ export const HERO_TYPES = {
   },
   ranger: {
     name: 'Wynneth Keleas',
+    title: 'Swift Tracker',
     skill: {
       title: 'Stealth',
       description:
@@ -334,7 +314,7 @@ export const HERO_TYPES = {
     agilityDice: 3,
     magicDice: 1,
     icon: 'A',
-    image: '/elf.png',
+    image: '/hero/dark-elf.png',
     weapons: [
       {
         name: 'Dagger',
