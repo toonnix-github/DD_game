@@ -299,33 +299,29 @@ function App() {
     [state, addLog]
   )
 
-  const shootGoblin = useCallback(
+  const engageGoblin = useCallback(
     (r, c) => {
       const { hero, board, encounter } = state
       if (!hero || encounter) return
       const tile = board[r][c]
       if (!tile.goblin || tile.goblin.hp <= 0) return
 
-      const inRange = hero.weapons.some(w => {
-        if (w.range <= 0) return false
-        if (w.attackType === 'range' && w.dice === 'agility') {
-          return getRangedTargets(board, hero, w.range).some(
-            t => t.row === r && t.col === c,
-          )
-        }
-        if (w.attackType === 'magic' && w.dice === 'magic') {
-          return getMagicTargets(board, hero, w.range).some(
-            t => t.row === r && t.col === c,
-          )
-        }
-        return false
-      })
-      if (!inRange) return
-
       const rangeDist = distanceToTarget(board, hero, r, c)
       const magicDist = distanceMagic(board, hero, r, c)
       const dist = Math.min(rangeDist, magicDist)
       if (dist === Infinity) return
+
+      const canAttack = hero.weapons.some(w => {
+        if (w.attackType === 'melee') return dist === 0
+        if (w.attackType === 'range')
+          return rangeDist > 0 && rangeDist <= w.range && rangeDist !== Infinity
+        if (w.attackType === 'magic')
+          return (
+            magicDist > 0 && magicDist <= w.range && magicDist !== Infinity
+          )
+        return false
+      })
+      if (!canAttack) return
 
       setState(prev => ({
         ...prev,
@@ -338,7 +334,9 @@ function App() {
           distance: dist,
         },
       }))
-      addLog(`${hero.name} attacks ${tile.goblin.name} from afar`)
+      addLog(
+        `${hero.name} attacks ${tile.goblin.name}${dist > 0 ? ' from afar' : ''}`,
+      )
     },
     [state, addLog],
   )
@@ -353,9 +351,9 @@ function App() {
 
   const promptAttack = useCallback(
     (r, c) => {
-      promptHeroAction('attack', () => shootGoblin(r, c))
+      promptHeroAction('attack', () => engageGoblin(r, c))
     },
-    [promptHeroAction, shootGoblin],
+    [promptHeroAction, engageGoblin],
   )
 
   const confirmAction = useCallback(() => {
@@ -397,10 +395,14 @@ function App() {
     return moves
   }, [state])
 
-  const rangedTargets = useMemo(() => {
+  const attackTargets = useMemo(() => {
     const { hero, board, encounter } = state
     if (!hero || encounter) return []
     const targets = []
+    const tile = board[hero.row][hero.col]
+    if (tile.goblin && tile.goblin.hp > 0) {
+      targets.push({ row: hero.row, col: hero.col })
+    }
     hero.weapons.forEach(w => {
       if (w.range > 0) {
         if (w.attackType === 'range' && w.dice === 'agility') {
@@ -657,7 +659,7 @@ function App() {
           {state.board.map((row, rIdx) =>
             row.map((tile, cIdx) => {
               const move = possibleMoves.some(p => p.row === rIdx && p.col === cIdx)
-              const attack = rangedTargets.some(p => p.row === rIdx && p.col === cIdx)
+              const attack = attackTargets.some(p => p.row === rIdx && p.col === cIdx)
               const disabled = !move && !attack && (state.hero.row !== rIdx || state.hero.col !== cIdx)
               return (
                 <RoomTile
