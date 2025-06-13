@@ -32,8 +32,12 @@ function EncounterModal({ goblin, hero, goblinCount, distance = 0, onFight, onFl
   const [baseIdx, setBaseIdx] = useState(null);
   const [extraIdxs, setExtraIdxs] = useState([]);
   const firstUsableIdx = hero.weapons.findIndex(w => {
-    if (distance === 0) return w.attackType !== 'range';
-    return w.attackType === 'range' && w.range >= distance;
+    if (distance === 0) return w.attackType === 'melee';
+    return (
+      ['range', 'magic'].includes(w.attackType) &&
+      w.range != null &&
+      w.range >= distance
+    );
   });
   const [weaponIdx, setWeaponIdx] = useState(firstUsableIdx >= 0 ? firstUsableIdx : 0);
   const [result, setResult] = useState(null);
@@ -62,8 +66,12 @@ function EncounterModal({ goblin, hero, goblinCount, distance = 0, onFight, onFl
 
   useEffect(() => {
     const idx = hero.weapons.findIndex(w => {
-      if (distance === 0) return w.attackType !== 'range';
-      return w.attackType === 'range' && w.range >= distance;
+      if (distance === 0) return w.attackType === 'melee';
+      return (
+        ['range', 'magic'].includes(w.attackType) &&
+        w.range != null &&
+        w.range >= distance
+      );
     });
     setWeaponIdx(idx >= 0 ? idx : 0);
   }, [hero, distance]);
@@ -327,7 +335,15 @@ function EncounterModal({ goblin, hero, goblinCount, distance = 0, onFight, onFl
                       type="radio"
                       checked={weaponIdx === idx}
                       onChange={() => setWeaponIdx(idx)}
-                      disabled={distance === 0 ? w.attackType === 'range' : !(w.attackType === 'range' && w.range >= distance)}
+                      disabled={
+                        distance === 0
+                          ? w.attackType !== 'melee'
+                          : !(
+                              ['range', 'magic'].includes(w.attackType) &&
+                              w.range != null &&
+                              w.range >= distance
+                            )
+                      }
                     />
                     <ItemCard item={w} />
                   </label>
@@ -349,8 +365,12 @@ function EncounterModal({ goblin, hero, goblinCount, distance = 0, onFight, onFl
                   onClick={startFight}
                   disabled={
                     distance === 0
-                      ? hero.weapons[weaponIdx].attackType === 'range'
-                      : !(hero.weapons[weaponIdx].attackType === 'range' && hero.weapons[weaponIdx].range >= distance)
+                      ? hero.weapons[weaponIdx].attackType !== 'melee'
+                      : !(
+                          ['range', 'magic'].includes(hero.weapons[weaponIdx].attackType) &&
+                          hero.weapons[weaponIdx].range != null &&
+                          hero.weapons[weaponIdx].range >= distance
+                        )
                   }
                 >
                   Fight
