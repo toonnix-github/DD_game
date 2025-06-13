@@ -321,10 +321,9 @@ function App() {
       })
       if (!inRange) return
 
-      const dist = Math.min(
-        distanceToTarget(board, hero, r, c),
-        distanceMagic(board, hero, r, c),
-      )
+      const rangeDist = distanceToTarget(board, hero, r, c)
+      const magicDist = distanceMagic(board, hero, r, c)
+      const dist = Math.min(rangeDist, magicDist)
       if (dist === Infinity) return
 
       setState(prev => ({
@@ -333,6 +332,8 @@ function App() {
           goblin: { ...tile.goblin },
           position: { row: r, col: c },
           prev: { row: hero.row, col: hero.col },
+          distanceRange: rangeDist,
+          distanceMagic: magicDist,
           distance: dist,
         },
       }))
@@ -686,7 +687,8 @@ function App() {
           goblin={state.encounter.goblin}
           hero={state.hero}
           goblinCount={goblinCount}
-          distance={state.encounter.distance}
+          distanceRange={state.encounter.distanceRange}
+          distanceMagic={state.encounter.distanceMagic}
           onReward={applyDiceRewards}
           onSkill={applySkillCost}
           onFight={handleFight}
