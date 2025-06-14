@@ -88,6 +88,8 @@ export function loadState() {
       if (!parsed.trap) parsed.trap = null
       if (!parsed.discard) parsed.discard = null
       if (!parsed.reward || !parsed.reward.item) parsed.reward = null
+      if (!parsed.torch) parsed.torch = 1
+      if (!parsed.gameOver) parsed.gameOver = false
       return parsed
     } catch {
       /* ignore corrupted save */
@@ -111,5 +113,7 @@ export function loadState() {
     trap: null,
     discard: null,
     reward: null,
+    torch: 1,
+    gameOver: false,
   }
 }

@@ -82,6 +82,13 @@ lists a title, a short description of how it works and the AP cost required to
 use it. For example Freya's **Berserker Rage** spends 2 AP to grant +2
 attack power for one fight.
 
+### Torch Mechanic
+
+The dungeon torch counts down through 20 steps. Each time a hero ends their turn
+or a goblin rolls a **torch down** result, the torch advances. Certain steps
+spawn a new goblin at the entrance or trigger all monsters to act. Reaching step
+20 or having five goblins on the board ends the game.
+
 ### Developer Tools
 
 Click the **Dev** button to open a modal showing the event log and a reset option.

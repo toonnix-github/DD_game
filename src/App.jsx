@@ -11,6 +11,9 @@ import { TRAP_TYPES } from './trapRules'
 import DiscardModal from './components/DiscardModal'
 import RewardModal from './components/RewardModal'
 import DeveloperModal from './components/DeveloperModal'
+import TorchMat from './components/TorchMat'
+import GameOverModal from './components/GameOverModal'
+import { TORCH_EVENTS, spawnGoblin, monsterActions, countGoblins } from './torch'
 import './App.css'
 import { HERO_TYPES } from './heroData'
 import { GOBLIN_TYPES, randomGoblinType } from './goblinData'
@@ -40,6 +43,39 @@ function App() {
   const addLog = useCallback(msg => {
     setEventLog(prev => [...prev, msg])
   }, [])
+
+  const advanceTorch = useCallback(() => {
+    const logs = []
+    setState(prev => {
+      if (!prev.hero || prev.gameOver) return prev
+      let torch = prev.torch || 1
+      if (torch >= TORCH_EVENTS.length) return prev
+      torch += 1
+      let board = prev.board
+      let hero = prev.hero
+      board = prev.board.map(row => row.map(t => ({ ...t })))
+      hero = { ...prev.hero }
+      const event = TORCH_EVENTS[torch - 1]
+      if (event === 'spawn') {
+        board = spawnGoblin(board)
+        logs.push('A goblin appears at the entrance.')
+      } else if (event === 'monster') {
+        const res = monsterActions(board, hero)
+        board = res.board
+        hero = res.hero
+        logs.push('Monsters act.')
+      } else if (event === 'gameover') {
+        logs.push('The torch has gone out.')
+        return { ...prev, board, hero, torch, gameOver: true }
+      }
+      if (countGoblins(board) >= 5) {
+        logs.push('Too many goblins!')
+        return { ...prev, board, hero, torch, gameOver: true }
+      }
+      return { ...prev, board, hero, torch }
+    })
+    logs.forEach(addLog)
+  }, [addLog, setState])
 
   const chooseHero = useCallback(
     type => {
@@ -107,7 +143,8 @@ function App() {
         },
       }
     })
-  }, [])
+    advanceTorch()
+  }, [advanceTorch])
 
   const resetGame = useCallback(() => {
     localStorage.removeItem('dungeon-state')
@@ -334,7 +371,7 @@ function App() {
     handleTrapResolve,
     handleRewardConfirm,
     handleDiscardConfirm,
-  } = useEncounterHandlers(setState, addLog)
+  } = useEncounterHandlers(setState, addLog, advanceTorch)
 
   useEffect(() => {
     if (!state.hero) return
@@ -392,6 +429,7 @@ function App() {
           )}
         </div>
       <div className="side">
+        <TorchMat step={state.torch} />
         <HeroPanel hero={state.hero} damaged={heroDamaged} />
         {state.hero && (
           <div className="hero-items">
@@ -444,6 +482,7 @@ function App() {
           onClose={() => setShowDevModal(false)}
         />
       )}
+      {state.gameOver && <GameOverModal onReset={resetGame} />}
     </div>
   </>
 )
