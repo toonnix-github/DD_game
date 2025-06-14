@@ -46,9 +46,10 @@ export function countGoblins(board) {
 export function monsterActions(board, hero) {
   const newBoard = board.map(row => row.map(t => ({ ...t })));
   let newHero = { ...hero };
+  const logs = [];
   newBoard.forEach(row => {
     row.forEach(tile => {
-      let goblin = tile.goblin;
+      const goblin = tile.goblin;
       if (!goblin || goblin.hp <= 0 || newHero.hp <= 0) return;
       let r = tile.row;
       let c = tile.col;
@@ -61,17 +62,23 @@ export function monsterActions(board, hero) {
         newBoard[r][c].goblin = null;
         r = step.row;
         c = step.col;
+        logs.push(`${goblin.name} moves.`);
       }
       const rangeDist = distanceToTarget(newBoard, newHero, r, c);
       const magicDist = distanceMagic(newBoard, newHero, r, c);
       const dist = Math.min(rangeDist, magicDist);
       if (dist === Infinity) return;
       const res = monsterCounter(newHero, newHero.weapons[0], goblin, dist, 1);
-      if (res && res.effect !== 'torchDown') {
-        newHero.hp -= res.damage;
-        newHero.defence = res.heroDefenceAfter;
+      if (res) {
+        if (res.effect === 'torchDown') {
+          logs.push(`${goblin.name} forces the torch down!`);
+        } else {
+          newHero.hp -= res.damage;
+          newHero.defence = res.heroDefenceAfter;
+          logs.push(`${goblin.name} attacks for ${res.damage} damage.`);
+        }
       }
     });
   });
-  return { board: newBoard, hero: newHero };
+  return { board: newBoard, hero: newHero, logs };
 }

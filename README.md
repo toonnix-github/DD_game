@@ -59,7 +59,8 @@ npm test
   burst of light, permanently removing its defence.
 - Overflow damage now bursts from the target's hearts, and counterattacks show
   the same floating numbers when they hit the hero.
-- Actions are recorded in an event log viewable from the **Dev** button.
+- Actions are recorded in an event log displayed below the controls (also
+  accessible from the **Dev** button).
 
 The hero panel now displays these attributes along with a portrait image for the selected hero. Lost HP is shown using the same heart icon tinted black via CSS so you can quickly gauge your health. Dice stats are represented by repeating dice icons rather than numbers.
 
@@ -88,6 +89,10 @@ The dungeon torch counts down through 20 steps. Each time a hero ends their turn
 or a goblin rolls a **torch down** result, the torch advances. Certain steps
 spawn a new goblin at the entrance or trigger all monsters to act. Reaching step
 20 or having five goblins on the board ends the game.
+
+Revealing a room with a monster immediately deals **1 HP** of damage to the hero
+and ends their movement for that turn. Torch events and each monster action are
+logged so you can track what happens between turns.
 
 ### Developer Tools
 

@@ -11,6 +11,7 @@ import { TRAP_TYPES } from './trapRules'
 import DiscardModal from './components/DiscardModal'
 import RewardModal from './components/RewardModal'
 import DeveloperModal from './components/DeveloperModal'
+import EventLog from './components/EventLog'
 import TorchMat from './components/TorchMat'
 import GameOverModal from './components/GameOverModal'
 import { TORCH_EVENTS, spawnGoblin, monsterActions, countGoblins } from './torch'
@@ -64,6 +65,9 @@ function App() {
         board = res.board
         hero = res.hero
         logs.push('Monsters act.')
+        if (res.logs) {
+          res.logs.forEach(l => logs.push(l))
+        }
       } else if (event === 'gameover') {
         logs.push('The torch has gone out.')
         return { ...prev, board, hero, torch, gameOver: true }
@@ -168,6 +172,7 @@ function App() {
       const newBoard = board.map(row => row.map(tile => ({ ...tile })))
       let newDeck = deck
       const target = newBoard[r][c]
+      let revealedGoblin = null
       if (!target.revealed) {
         const room = newDeck[0]
         const roomId = room.roomId
@@ -194,6 +199,7 @@ function App() {
           trapResolved: false,
           effect: null,
         }
+        revealedGoblin = goblin
       } else if (!target.paths[opposite(dir)]) {
         return
       }
@@ -212,6 +218,9 @@ function App() {
       let newTrap = null
       if (newBoard[r][c].goblin) {
         newHero.movement = 0
+        if (revealedGoblin) {
+          newHero.hp = Math.max(0, hero.hp - 1)
+        }
       }
 
       if (newBoard[r][c].trap && !newBoard[r][c].trapResolved) {
@@ -220,7 +229,11 @@ function App() {
 
       setState({ board: newBoard, hero: newHero, deck: newDeck, encounter: null, trap: newTrap })
       addLog(`${hero.name} moves ${dir}`)
-      if (newBoard[r][c].goblin) addLog(`Encountered ${newBoard[r][c].goblin.name}`)
+      if (revealedGoblin) {
+        addLog(`Revealed ${revealedGoblin.name}! Lose 1 HP and all movement.`)
+      } else if (newBoard[r][c].goblin) {
+        addLog(`Encountered ${newBoard[r][c].goblin.name}`)
+      }
       if (newTrap) {
         const t = newTrap.trap
         addLog(`Found trap: ${t.id} (difficulty ${t.difficulty})`)
@@ -439,6 +452,7 @@ function App() {
           </div>
         )}
         <button onClick={endTurn} className="end-turn">End Turn</button>
+        <EventLog log={eventLog.slice(-5)} />
       </div>
       {state.encounter && (
         <EncounterModal
