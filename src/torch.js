@@ -22,7 +22,7 @@ export const TORCH_EVENTS = [
 ];
 
 import { randomGoblinType, GOBLIN_TYPES } from './goblinData.js';
-import { distanceToTarget, distanceMagic } from './boardUtils.js';
+import { distanceToTarget, distanceMagic, nextStepTowards } from './boardUtils.js';
 import { monsterCounter } from './fightUtils.js';
 
 export function spawnGoblin(board) {
@@ -48,12 +48,25 @@ export function monsterActions(board, hero) {
   let newHero = { ...hero };
   newBoard.forEach(row => {
     row.forEach(tile => {
-      if (!tile.goblin || tile.goblin.hp <= 0 || newHero.hp <= 0) return;
-      const rangeDist = distanceToTarget(newBoard, newHero, tile.row, tile.col);
-      const magicDist = distanceMagic(newBoard, newHero, tile.row, tile.col);
+      let goblin = tile.goblin;
+      if (!goblin || goblin.hp <= 0 || newHero.hp <= 0) return;
+      let r = tile.row;
+      let c = tile.col;
+      for (let m = 0; m < (goblin.movement || 0); m++) {
+        if (r === newHero.row && c === newHero.col) break;
+        const step = nextStepTowards(newBoard, r, c, newHero.row, newHero.col);
+        if (!step) break;
+        if (newBoard[step.row][step.col].goblin) break;
+        newBoard[step.row][step.col].goblin = goblin;
+        newBoard[r][c].goblin = null;
+        r = step.row;
+        c = step.col;
+      }
+      const rangeDist = distanceToTarget(newBoard, newHero, r, c);
+      const magicDist = distanceMagic(newBoard, newHero, r, c);
       const dist = Math.min(rangeDist, magicDist);
       if (dist === Infinity) return;
-      const res = monsterCounter(newHero, newHero.weapons[0], tile.goblin, dist, 1);
+      const res = monsterCounter(newHero, newHero.weapons[0], goblin, dist, 1);
       if (res && res.effect !== 'torchDown') {
         newHero.hp -= res.damage;
         newHero.defence = res.heroDefenceAfter;

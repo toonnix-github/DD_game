@@ -126,3 +126,36 @@ export function distanceMagic(board, hero, row, col) {
   }
   return Infinity;
 }
+
+export function nextStepTowards(board, sr, sc, tr, tc) {
+  const dirs = {
+    up: [-1, 0],
+    down: [1, 0],
+    left: [0, -1],
+    right: [0, 1],
+  };
+  const visited = new Set();
+  const queue = [{ r: sr, c: sc, path: [] }];
+  visited.add(`${sr},${sc}`);
+  while (queue.length > 0) {
+    const { r, c, path } = queue.shift();
+    if (r === tr && c === tc) {
+      return path[0] || null;
+    }
+    const tile = board[r][c];
+    Object.entries(dirs).forEach(([dir, [dr, dc]]) => {
+      if (!tile.paths[dir]) return;
+      const nr = r + dr;
+      const nc = c + dc;
+      if (nr < 0 || nr >= board.length || nc < 0 || nc >= board[0].length)
+        return;
+      const next = board[nr][nc];
+      if (!next.revealed || !next.paths[opposite(dir)]) return;
+      const key = `${nr},${nc}`;
+      if (visited.has(key)) return;
+      visited.add(key);
+      queue.push({ r: nr, c: nc, path: [...path, { row: nr, col: nc }] });
+    });
+  }
+  return null;
+}
