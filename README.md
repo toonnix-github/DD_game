@@ -1,8 +1,8 @@
 # DD_game
 
-This project aims to build a digital adaptation of the board game **Tiny Epic Dungeon** using JavaScript and React.
+This project is a React and Vite implementation of the board game **Tiny Epic Dungeon**.
 
-The current version shows a hero portrait drawn in a Hearthstone‑style. Each hero now has unique artwork making it clear which character is a knight or an elf.
+The hero selection screen displays colorful card‑style portraits for every hero type, letting you easily tell them apart.
 
 ## Getting Started
 
@@ -40,7 +40,7 @@ npm test
 - Dungeon with a 7x7 grid of tiles.
 - 70 prepared room tiles.
 - Open new rooms only when a character moves to a connecting exit.
-- Three characters: knight, elf and viking.
+- Ten heroes: knight, elf, viking, sorceress, wizard, barbarian, rogue, paladin, cleric and ranger.
 - Choose your hero at the start of the game.
 - Characters have attributes:
   - Movement range
@@ -49,14 +49,17 @@ npm test
   - AP fully regenerates at the start of your turn
   - Defence power
   - Weapons determine attack power
+  - One hero action available each turn, indicated by the action badge
 - Fleeing now requires rolling agility dice, adding excitement to encounters.
 - Monsters may counterattack. Damage equals the counter roll plus their attack
   and modifiers from special goblins and the number of goblins still alive.
+- Ranged and magic attacks respect line of sight and distance.
 - Attacks now animate the target's shield shaking with the damage value popping
   out on a starburst background. Big hits can even shatter the shield in a
   burst of light, permanently removing its defence.
 - Overflow damage now bursts from the target's hearts, and counterattacks show
   the same floating numbers when they hit the hero.
+- Actions are recorded in an event log viewable from the **Dev** button.
 
 The hero panel now displays these attributes along with a portrait image for the selected hero. Lost HP is shown using the same heart icon tinted black via CSS so you can quickly gauge your health. Dice stats are represented by repeating dice icons rather than numbers.
 
@@ -78,6 +81,10 @@ Each hero now has a unique skill defined in `src/heroData.js`. A skill
 lists a title, a short description of how it works and the AP cost required to
 use it. For example Freya's **Berserker Rage** spends 2 AP to grant +2
 attack power for one fight.
+
+### Developer Tools
+
+Click the **Dev** button to open a modal showing the event log and a reset option.
 
 ### Styling with SCSS
 
