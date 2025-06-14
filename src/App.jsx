@@ -14,6 +14,8 @@ import DeveloperModal from './components/DeveloperModal'
 import EventLog from './components/EventLog'
 import TorchMat from './components/TorchMat'
 import GameOverModal from './components/GameOverModal'
+import InfoModal from './components/InfoModal'
+import Toast from './components/Toast'
 import { TORCH_EVENTS, spawnGoblin, monsterActions, countGoblins } from './torch'
 import './App.css'
 import { HERO_TYPES } from './heroData'
@@ -39,47 +41,65 @@ function App() {
   const [eventLog, setEventLog] = useState([])
   const [showDevModal, setShowDevModal] = useState(false)
   const [actionPrompt, setActionPrompt] = useState(null)
+  const [toastMessage, setToastMessage] = useState(null)
+  const [infoMessage, setInfoMessage] = useState(null)
   const prevHpRef = useRef(state.hero ? state.hero.hp : null)
 
   const addLog = useCallback(msg => {
     setEventLog(prev => [...prev, msg])
   }, [])
 
+  const showToast = useCallback(msg => {
+    setToastMessage(msg)
+    setTimeout(() => setToastMessage(null), 2000)
+  }, [])
+
   const advanceTorch = useCallback(() => {
     const logs = []
+    let message = ''
+    let important = false
+    let newTorch = 0
     setState(prev => {
       if (!prev.hero || prev.gameOver) return prev
-      let torch = prev.torch || 1
-      if (torch >= TORCH_EVENTS.length) return prev
-      torch += 1
-      let board = prev.board
-      let hero = prev.hero
-      board = prev.board.map(row => row.map(t => ({ ...t })))
-      hero = { ...prev.hero }
-      const event = TORCH_EVENTS[torch - 1]
+      newTorch = prev.torch + 1
+      if (newTorch > TORCH_EVENTS.length) return prev
+      let board = prev.board.map(row => row.map(t => ({ ...t })))
+      let hero = { ...prev.hero }
+      const event = TORCH_EVENTS[newTorch - 1]
+      message = `Torch step ${newTorch}.`
       if (event === 'spawn') {
         board = spawnGoblin(board)
         logs.push('A goblin appears at the entrance.')
+        message += ' A goblin appears at the entrance.'
+        important = true
       } else if (event === 'monster') {
         const res = monsterActions(board, hero)
         board = res.board
         hero = res.hero
         logs.push('Monsters act.')
+        message += ' Monsters act.'
         if (res.logs) {
           res.logs.forEach(l => logs.push(l))
         }
+        important = true
       } else if (event === 'gameover') {
         logs.push('The torch has gone out.')
-        return { ...prev, board, hero, torch, gameOver: true }
+        message += ' Game over!'
+        important = true
+        return { ...prev, board, hero, torch: newTorch, gameOver: true }
       }
       if (countGoblins(board) >= 5) {
         logs.push('Too many goblins!')
-        return { ...prev, board, hero, torch, gameOver: true }
+        message += ' Too many goblins!'
+        important = true
+        return { ...prev, board, hero, torch: newTorch, gameOver: true }
       }
-      return { ...prev, board, hero, torch }
+      return { ...prev, board, hero, torch: newTorch }
     })
     logs.forEach(addLog)
-  }, [addLog, setState])
+    showToast(message)
+    if (important) setInfoMessage(message)
+  }, [addLog, setState, showToast])
 
   const chooseHero = useCallback(
     type => {
@@ -495,6 +515,10 @@ function App() {
           onReset={resetGame}
           onClose={() => setShowDevModal(false)}
         />
+      )}
+      {toastMessage && <Toast message={toastMessage} />}
+      {infoMessage && (
+        <InfoModal message={infoMessage} onConfirm={() => setInfoMessage(null)} />
       )}
       {state.gameOver && <GameOverModal onReset={resetGame} />}
     </div>

@@ -92,7 +92,9 @@ spawn a new goblin at the entrance or trigger all monsters to act. Reaching step
 
 Revealing a room with a monster immediately deals **1 HP** of damage to the hero
 and ends their movement for that turn. Torch events and each monster action are
-logged so you can track what happens between turns.
+logged so you can track what happens between turns. A toast message briefly
+describes every torch step, while critical events such as monster spawns or
+monster actions pop up a confirmation dialog so you don't miss them.
 
 ### Developer Tools
 
