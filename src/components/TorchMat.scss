@@ -1,0 +1,17 @@
+.torch-mat {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.5rem;
+}
+
+.torch-step {
+  border: 1px solid #666;
+  padding: 2px 4px;
+  font-size: 0.7rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.torch-step.active {
+  background: #ffefa0;
+}

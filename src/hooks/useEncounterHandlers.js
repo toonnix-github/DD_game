@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 import { adaptTreasureItem, randomTreasure } from '../treasureDeck'
 import { formatFightLogs } from '../fightUtils'
 
-export default function useEncounterHandlers(setState, addLog) {
+export default function useEncounterHandlers(setState, addLog, onTorchDown) {
   const applyDiceRewards = useCallback(
     rewards => {
       if (!rewards || (!rewards.ap && !rewards.hp)) return
@@ -92,8 +92,11 @@ export default function useEncounterHandlers(setState, addLog) {
         formatFightLogs(fightResult).forEach(l => logs.push(l))
       }
       logs.forEach(addLog)
+      if (fightResult && fightResult.counter && fightResult.counter.effect === 'torchDown') {
+        if (onTorchDown) onTorchDown()
+      }
     },
-    [addLog, setState],
+    [addLog, setState, onTorchDown],
   )
 
   const handleFlee = useCallback(
