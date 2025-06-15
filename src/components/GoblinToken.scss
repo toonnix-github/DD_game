@@ -2,7 +2,7 @@
 @use 'sass:list';
 
 .goblin-token {
-  @include card.card(-2deg, 20vmin, list.slash(1, 1));
+  @include card.card(-2deg, 100%, list.slash(1, 1));
   position: relative;
 
   .token-image {
