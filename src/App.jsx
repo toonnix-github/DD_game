@@ -17,6 +17,7 @@ import EventLog from './components/EventLog'
 import './App.css'
 import { HERO_TYPES } from './heroData'
 import { GOBLIN_TYPES, randomGoblinType } from './goblinData'
+import GoblinCard from './components/GoblinCard'
 import {
   getRangedTargets,
   getMagicTargets,
@@ -38,6 +39,8 @@ function App() {
   const [eventLog, setEventLog] = useState([])
   const [showDevModal, setShowDevModal] = useState(false)
   const [actionPrompt, setActionPrompt] = useState(null)
+  const [revealGoblin, setRevealGoblin] = useState(null)
+  const [revealPhase, setRevealPhase] = useState('spin')
   const prevHpRef = useRef(state.hero ? state.hero.hp : null)
 
   const addLog = useCallback(msg => {
@@ -95,6 +98,26 @@ function App() {
     }
     prevHpRef.current = state.hero.hp
   }, [state.hero])
+
+  useEffect(() => {
+    if (!revealGoblin) return
+    setRevealPhase('spin')
+    const t1 = setTimeout(() => setRevealPhase('move'), 800)
+    const t2 = setTimeout(() => {
+      setState(prev => ({
+        ...prev,
+        discoveredGoblins: [
+          ...prev.discoveredGoblins,
+          { row: revealGoblin.row, col: revealGoblin.col },
+        ],
+      }))
+      setRevealGoblin(null)
+    }, 1600)
+    return () => {
+      clearTimeout(t1)
+      clearTimeout(t2)
+    }
+  }, [revealGoblin, setState])
 
   const endTurn = useCallback(() => {
     if (!state.hero) return
@@ -202,6 +225,9 @@ function App() {
         encounter: null,
         trap: newTrap,
       }))
+      if (revealedGoblin) {
+        setRevealGoblin({ goblin: newBoard[r][c].goblin, row: r, col: c })
+      }
       addLog(`${hero.name} advances ${dir}, eyes on the shadows.`)
       if (newBoard[r][c].goblin) {
         addLog(`A ${newBoard[r][c].goblin.name} leaps from the darkness!`)
@@ -381,7 +407,16 @@ function App() {
     <>
       <div className="main">
         <div className="board-column">
-          <div className="board">
+          <div className="board-wrapper">
+            <div className="goblin-area">
+              {state.discoveredGoblins.map(g => {
+                const gob = state.board[g.row][g.col].goblin
+                return gob ? (
+                  <GoblinCard key={`${g.row}-${g.col}`} goblin={gob} />
+                ) : null
+              })}
+            </div>
+            <div className="board">
           {state.board.map((row, rIdx) =>
             row.map((tile, cIdx) => {
               const move = possibleMoves.some(p => p.row === rIdx && p.col === cIdx)
@@ -414,6 +449,18 @@ function App() {
               <Hero hero={state.hero} damaged={heroDamaged} />
             </div>
           )}
+          {revealGoblin && (
+            <div
+              className={`goblin-reveal ${revealPhase}`}
+              style={{
+                top: `calc(${revealGoblin.row} * (100% / ${BOARD_SIZE}))`,
+                left: `calc(${revealGoblin.col} * (100% / ${BOARD_SIZE}))`,
+              }}
+            >
+              <GoblinCard goblin={revealGoblin.goblin} />
+            </div>
+          )}
+            </div>
           </div>
           <TorchMat step={state.torch} />
         </div>
