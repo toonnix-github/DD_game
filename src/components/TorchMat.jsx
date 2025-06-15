@@ -1,5 +1,5 @@
-import React from 'react'
-import './TorchMat.scss'
+import React from 'react';
+import './TorchMat.scss';
 
 function TorchMat({ step, max = 20 }) {
   const cells = Array.from({ length: max + 1 }, (_, i) => (
@@ -7,10 +7,10 @@ function TorchMat({ step, max = 20 }) {
       key={i}
       className={`torch-cell${i === step ? ' current' : i < step ? ' spent' : ''}`}
     >
-      {i === step && <img src="/icon/torch.svg" alt="torch" />}
+      {i === step && <img src="/icon/torch.png" alt="torch" />}
     </div>
-  ))
-  return <div className="torch-mat">{cells}</div>
+  ));
+  return <div className="torch-mat">{cells}</div>;
 }
 
-export default TorchMat
+export default TorchMat;

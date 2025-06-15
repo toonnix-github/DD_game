@@ -18,7 +18,7 @@
 
 .torch-cell img {
   position: absolute;
-  top: -1rem;
+  top: -0.5rem;
   left: 50%;
   width: 1rem;
   height: 1rem;
@@ -32,6 +32,7 @@
 
 .torch-cell.current {
   background: orange;
+
   img {
     display: block;
   }
