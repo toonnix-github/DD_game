@@ -1,0 +1,30 @@
+.gameover-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 30;
+}
+
+.gameover-modal {
+  background: #111;
+  color: #fff;
+  padding: 1rem 2rem;
+  border-radius: 4px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  max-width: 300px;
+}
+
+.gameover-modal h1 {
+  margin-top: 0;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.gameover-modal button {
+  margin-top: 0.5rem;
+  font-size: 1rem;
+}

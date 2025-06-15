@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, useRef } from 'react'
 import RoomTile from './components/RoomTile'
+import TorchMat from './components/TorchMat'
 import ConfirmModal from './components/ConfirmModal'
 import Hero from './components/Hero'
 import HeroPanel from './components/HeroPanel'
@@ -11,6 +12,7 @@ import { TRAP_TYPES } from './trapRules'
 import DiscardModal from './components/DiscardModal'
 import RewardModal from './components/RewardModal'
 import DeveloperModal from './components/DeveloperModal'
+import GameOverModal from './components/GameOverModal'
 import './App.css'
 import { HERO_TYPES } from './heroData'
 import { GOBLIN_TYPES, randomGoblinType } from './goblinData'
@@ -97,6 +99,8 @@ function App() {
     setState(prev => {
       if (!prev.hero) return prev
       const base = HERO_TYPES[prev.hero.type]
+      const newTorch = Math.min(prev.torch + 1, 20)
+      const gameOver = prev.gameOver || newTorch >= 20
       return {
         ...prev,
         hero: {
@@ -105,6 +109,8 @@ function App() {
           ap: prev.hero.maxAp,
           heroAction: prev.hero.maxHeroAction,
         },
+        torch: newTorch,
+        gameOver,
       }
     })
   }, [])
@@ -181,7 +187,14 @@ function App() {
         newTrap = { position: { row: r, col: c }, trap: newBoard[r][c].trap }
       }
 
-      setState({ board: newBoard, hero: newHero, deck: newDeck, encounter: null, trap: newTrap })
+      setState(prev => ({
+        ...prev,
+        board: newBoard,
+        hero: newHero,
+        deck: newDeck,
+        encounter: null,
+        trap: newTrap,
+      }))
       addLog(`${hero.name} moves ${dir}`)
       if (newBoard[r][c].goblin) addLog(`Encountered ${newBoard[r][c].goblin.name}`)
       if (newTrap) {
@@ -357,7 +370,8 @@ function App() {
   return (
     <>
       <div className="main">
-        <div className="board">
+        <div className="board-column">
+          <div className="board">
           {state.board.map((row, rIdx) =>
             row.map((tile, cIdx) => {
               const move = possibleMoves.some(p => p.row === rIdx && p.col === cIdx)
@@ -390,8 +404,10 @@ function App() {
               <Hero hero={state.hero} damaged={heroDamaged} />
             </div>
           )}
+          </div>
+          <TorchMat step={state.torch} />
         </div>
-      <div className="side">
+        <div className="side">
         <HeroPanel hero={state.hero} damaged={heroDamaged} />
         {state.hero && (
           <div className="hero-items">
@@ -444,6 +460,7 @@ function App() {
           onClose={() => setShowDevModal(false)}
         />
       )}
+      {state.gameOver && <GameOverModal onReset={resetGame} />}
     </div>
   </>
 )
