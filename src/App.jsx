@@ -187,7 +187,14 @@ function App() {
         newTrap = { position: { row: r, col: c }, trap: newBoard[r][c].trap }
       }
 
-      setState({ board: newBoard, hero: newHero, deck: newDeck, encounter: null, trap: newTrap })
+      setState(prev => ({
+        ...prev,
+        board: newBoard,
+        hero: newHero,
+        deck: newDeck,
+        encounter: null,
+        trap: newTrap,
+      }))
       addLog(`${hero.name} moves ${dir}`)
       if (newBoard[r][c].goblin) addLog(`Encountered ${newBoard[r][c].goblin.name}`)
       if (newTrap) {
