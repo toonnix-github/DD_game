@@ -89,8 +89,9 @@ Click the **Dev** button to open a modal showing the event log and a reset optio
 ### Torch Track
 
 A horizontal torch bar below the dungeon board counts turns. The torch starts at
-step 0 and drops one step every time you end your turn. Reaching step 20 opens a
-Game Over modal announcing defeat.
+step 0 and drops one step every time you end your turn. A burning torch icon
+marks the current position on the track. Reaching step 20 opens a Game Over
+modal announcing defeat.
 
 ### Styling with SCSS
 

@@ -13,6 +13,17 @@
   height: 0.6rem;
   background: #222;
   border: 1px solid #555;
+  position: relative;
+}
+
+.torch-cell img {
+  position: absolute;
+  top: -1rem;
+  left: 50%;
+  width: 1rem;
+  height: 1rem;
+  transform: translateX(-50%);
+  display: none;
 }
 
 .torch-cell.spent {
@@ -21,4 +32,7 @@
 
 .torch-cell.current {
   background: orange;
+  img {
+    display: block;
+  }
 }

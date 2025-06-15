@@ -6,7 +6,9 @@ function TorchMat({ step, max = 20 }) {
     <div
       key={i}
       className={`torch-cell${i === step ? ' current' : i < step ? ' spent' : ''}`}
-    />
+    >
+      {i === step && <img src="/icon/torch.svg" alt="torch" />}
+    </div>
   ))
   return <div className="torch-mat">{cells}</div>
 }
