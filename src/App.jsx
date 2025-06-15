@@ -12,6 +12,7 @@ import DiscardModal from './components/DiscardModal'
 import RewardModal from './components/RewardModal'
 import DeveloperModal from './components/DeveloperModal'
 import EventLog from './components/EventLog'
+import NarrativeBox from './components/NarrativeBox'
 import TorchMat from './components/TorchMat'
 import GameOverModal from './components/GameOverModal'
 import InfoModal from './components/InfoModal'
@@ -43,15 +44,18 @@ function App() {
   const [actionPrompt, setActionPrompt] = useState(null)
   const [toastMessage, setToastMessage] = useState(null)
   const [infoMessage, setInfoMessage] = useState(null)
+  const [narrative, setNarrative] = useState('')
   const prevHpRef = useRef(state.hero ? state.hero.hp : null)
 
   const addLog = useCallback(msg => {
     setEventLog(prev => [...prev, msg])
+    setNarrative(msg)
   }, [])
 
   const showToast = useCallback(msg => {
     setToastMessage(msg)
     setTimeout(() => setToastMessage(null), 2000)
+    setNarrative(msg)
   }, [])
 
   const advanceTorch = useCallback(() => {
@@ -427,7 +431,8 @@ function App() {
   return (
     <>
       <div className="main">
-        <div className="board">
+        <div className="board-area">
+          <div className="board">
           {state.board.map((row, rIdx) =>
             row.map((tile, cIdx) => {
               const move = possibleMoves.some(p => p.row === rIdx && p.col === cIdx)
@@ -460,9 +465,11 @@ function App() {
               <Hero hero={state.hero} damaged={heroDamaged} />
             </div>
           )}
+          </div>
+          <TorchMat step={state.torch} />
         </div>
       <div className="side">
-        <TorchMat step={state.torch} />
+        <NarrativeBox message={narrative} />
         <HeroPanel hero={state.hero} damaged={heroDamaged} />
         {state.hero && (
           <div className="hero-items">

@@ -61,6 +61,7 @@ npm test
   the same floating numbers when they hit the hero.
 - Actions are recorded in an event log displayed below the controls (also
   accessible from the **Dev** button).
+- A narrative box above the hero card shows the latest event as it happens.
 
 The hero panel now displays these attributes along with a portrait image for the selected hero. Lost HP is shown using the same heart icon tinted black via CSS so you can quickly gauge your health. Dice stats are represented by repeating dice icons rather than numbers.
 
@@ -95,6 +96,8 @@ and ends their movement for that turn. Torch events and each monster action are
 logged so you can track what happens between turns. A toast message briefly
 describes every torch step, while critical events such as monster spawns or
 monster actions pop up a confirmation dialog so you don't miss them.
+The torch mat is displayed horizontally beneath the dungeon grid so you can see
+how close you are to the end of the torch.
 
 ### Developer Tools
 
