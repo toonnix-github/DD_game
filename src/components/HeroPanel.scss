@@ -1,7 +1,7 @@
 @use '../styles/card' as card;
 
 .hero-panel {
-  @include card.card(1deg, 32vmin);
+  @include card.card(1deg, 40vmin);
   aspect-ratio: 2/3;
 
   .name-bar {

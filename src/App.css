@@ -46,20 +46,20 @@
 
 .goblin-area {
   position: absolute;
-  left: -24vmin;
+  left: -22vmin;
   top: 0;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.goblin-area .goblin-card {
-  width: 22vmin;
+.goblin-area .goblin-token {
+  width: 20vmin;
 }
 
 .goblin-reveal {
   position: absolute;
-  width: 22vmin;
+  width: 20vmin;
   aspect-ratio: 2 / 3;
   pointer-events: none;
   transform-origin: center;

@@ -18,6 +18,7 @@ import './App.css'
 import { HERO_TYPES } from './heroData'
 import { GOBLIN_TYPES, randomGoblinType } from './goblinData'
 import GoblinCard from './components/GoblinCard'
+import GoblinToken from './components/GoblinToken'
 import {
   getRangedTargets,
   getMagicTargets,
@@ -412,7 +413,7 @@ function App() {
               {state.discoveredGoblins.map(g => {
                 const gob = state.board[g.row][g.col].goblin
                 return gob ? (
-                  <GoblinCard key={`${g.row}-${g.col}`} goblin={gob} />
+                  <GoblinToken key={`${g.row}-${g.col}`} goblin={gob} />
                 ) : null
               })}
             </div>
