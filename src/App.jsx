@@ -65,8 +65,7 @@ function App() {
   const showToast = useCallback(msg => {
     setToastMessage(msg)
     setTimeout(() => setToastMessage(null), 2000)
-    addNarrative(msg)
-  }, [addNarrative])
+  }, [])
 
   const advanceTorch = useCallback(() => {
     const logs = []
@@ -110,6 +109,7 @@ function App() {
       }
       return { ...prev, board, hero, torch: newTorch }
     })
+    addLog(message)
     logs.forEach(addLog)
     showToast(message)
     if (important) setInfoMessage(message)
@@ -168,6 +168,8 @@ function App() {
   }, [state.hero])
 
   const endTurn = useCallback(() => {
+    if (!state.hero) return
+    const heroName = state.hero.name
     setState(prev => {
       if (!prev.hero) return prev
       const base = HERO_TYPES[prev.hero.type]
@@ -181,8 +183,9 @@ function App() {
         },
       }
     })
+    addLog(`${heroName} ends their turn.`)
     advanceTorch()
-  }, [advanceTorch])
+  }, [state.hero, addLog, advanceTorch])
 
   const resetGame = useCallback(() => {
     localStorage.removeItem('dungeon-state')
@@ -231,7 +234,7 @@ function App() {
           goblin,
           trap: room.trap ? { ...TRAP_TYPES[room.trap], id: room.trap } : null,
           trapResolved: false,
-          effect: null,
+          effect: goblin ? 'newGoblin' : null,
         }
         revealedGoblin = goblin
       } else if (!target.paths[opposite(dir)]) {
@@ -262,6 +265,16 @@ function App() {
       }
 
       setState({ board: newBoard, hero: newHero, deck: newDeck, encounter: null, trap: newTrap })
+      if (revealedGoblin) {
+        setTimeout(() => {
+          setState(prev => {
+            const copy = prev.board.map(row => row.map(t => ({ ...t })))
+            const tile = copy[r][c]
+            if (tile.effect === 'newGoblin') tile.effect = null
+            return { ...prev, board: copy }
+          })
+        }, 400)
+      }
 
       if (target.revealed) {
         addLog(`${hero.name} moves ${dir}.`)

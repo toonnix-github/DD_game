@@ -30,7 +30,7 @@ function RoomTile({ tile, move, attack, attackDisabled = false, highlight, disab
         </div>
       )}
       {tile.revealed && tile.goblin && (
-        <div className="goblin-container">
+        <div className={`goblin-container${tile.effect === 'newGoblin' ? ' pop' : ''}`}> 
           <span className="goblin-icon">{tile.goblin.icon}</span>
         </div>
       )}
