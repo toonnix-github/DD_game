@@ -12,6 +12,7 @@ import { TRAP_TYPES } from './trapRules'
 import DiscardModal from './components/DiscardModal'
 import RewardModal from './components/RewardModal'
 import DeveloperModal from './components/DeveloperModal'
+import GameOverModal from './components/GameOverModal'
 import './App.css'
 import { HERO_TYPES } from './heroData'
 import { GOBLIN_TYPES, randomGoblinType } from './goblinData'
@@ -99,9 +100,7 @@ function App() {
       if (!prev.hero) return prev
       const base = HERO_TYPES[prev.hero.type]
       const newTorch = Math.min(prev.torch + 1, 20)
-      if (newTorch >= 20) {
-        window.alert('The torch has burned out! Game over.')
-      }
+      const gameOver = prev.gameOver || newTorch >= 20
       return {
         ...prev,
         hero: {
@@ -111,6 +110,7 @@ function App() {
           heroAction: prev.hero.maxHeroAction,
         },
         torch: newTorch,
+        gameOver,
       }
     })
   }, [])
@@ -460,6 +460,7 @@ function App() {
           onClose={() => setShowDevModal(false)}
         />
       )}
+      {state.gameOver && <GameOverModal onReset={resetGame} />}
     </div>
   </>
 )
