@@ -97,24 +97,24 @@ function App() {
   }, [state.hero])
 
   const endTurn = useCallback(() => {
-    setState(prev => {
-      if (!prev.hero) return prev
-      const base = HERO_TYPES[prev.hero.type]
-      const newTorch = Math.min(prev.torch + 1, 20)
-      const gameOver = prev.gameOver || newTorch >= 20
-      return {
-        ...prev,
-        hero: {
-          ...prev.hero,
-          movement: base.movement,
-          ap: prev.hero.maxAp,
-          heroAction: prev.hero.maxHeroAction,
-        },
-        torch: newTorch,
-        gameOver,
-      }
-    })
-  }, [])
+    if (!state.hero) return
+    const base = HERO_TYPES[state.hero.type]
+    const newTorch = Math.min(state.torch + 1, 20)
+    const gameOver = state.gameOver || newTorch >= 20
+    setState(prev => ({
+      ...prev,
+      hero: {
+        ...prev.hero,
+        movement: base.movement,
+        ap: prev.hero.maxAp,
+        heroAction: prev.hero.maxHeroAction,
+      },
+      torch: newTorch,
+      gameOver,
+    }))
+    addLog(`${state.hero.name} pauses to regroup.`)
+    addLog(`Torch advances to ${newTorch}/20.`)
+  }, [state, addLog])
 
   const resetGame = useCallback(() => {
     localStorage.removeItem('dungeon-state')
