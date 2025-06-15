@@ -53,6 +53,7 @@ npm test
 - Fleeing now requires rolling agility dice, adding excitement to encounters.
 - Monsters may counterattack. Damage equals the counter roll plus their attack
   and modifiers from special goblins and the number of goblins still alive.
+- Revealing a monster for the first time deals 1 damage to the hero.
 - Ranged and magic attacks respect line of sight and distance.
 - Attacks now animate the target's shield shaking with the damage value popping
   out on a starburst background. Big hits can even shatter the shield in a

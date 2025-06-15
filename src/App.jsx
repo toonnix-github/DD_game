@@ -137,6 +137,7 @@ function App() {
       const newBoard = board.map(row => row.map(tile => ({ ...tile })))
       let newDeck = deck
       const target = newBoard[r][c]
+      let revealedGoblin = false
       if (!target.revealed) {
         const room = newDeck[0]
         const roomId = room.roomId
@@ -150,6 +151,7 @@ function App() {
         if (room.goblin) {
           const typeKey = room.goblin === 'king' ? 'king' : randomGoblinType()
           goblin = { ...GOBLIN_TYPES[typeKey], type: typeKey }
+          revealedGoblin = true
         }
 
         newBoard[r][c] = {
@@ -178,6 +180,10 @@ function App() {
         },
       }
 
+      if (revealedGoblin) {
+        newHero.hp = hero.hp - 1
+      }
+
       let newTrap = null
       if (newBoard[r][c].goblin) {
         newHero.movement = 0
@@ -196,7 +202,10 @@ function App() {
         trap: newTrap,
       }))
       addLog(`${hero.name} moves ${dir}`)
-      if (newBoard[r][c].goblin) addLog(`Encountered ${newBoard[r][c].goblin.name}`)
+      if (newBoard[r][c].goblin) {
+        addLog(`Encountered ${newBoard[r][c].goblin.name}`)
+        if (revealedGoblin) addLog('Ambushed and lost 1 hp')
+      }
       if (newTrap) {
         const t = newTrap.trap
         addLog(`Found trap: ${t.id} (difficulty ${t.difficulty})`)
