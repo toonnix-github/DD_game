@@ -90,6 +90,7 @@ export function loadState() {
       if (!parsed.reward || !parsed.reward.item) parsed.reward = null
       if (!('torch' in parsed)) parsed.torch = 0
       if (!('gameOver' in parsed)) parsed.gameOver = false
+      if (!parsed.discoveredGoblins) parsed.discoveredGoblins = []
       return parsed
     } catch {
       /* ignore corrupted save */
@@ -115,5 +116,6 @@ export function loadState() {
     reward: null,
     torch: 0,
     gameOver: false,
+    discoveredGoblins: [],
   }
 }

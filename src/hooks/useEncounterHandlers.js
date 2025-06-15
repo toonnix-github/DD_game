@@ -85,6 +85,10 @@ export default function useEncounterHandlers(setState, addLog) {
           encounter: newEncounter,
           reward,
           discard,
+          discoveredGoblins:
+            result.goblin.hp <= 0
+              ? prev.discoveredGoblins.filter(g => g.row !== row || g.col !== col)
+              : prev.discoveredGoblins,
         }
         return updated
       })
