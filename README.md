@@ -61,7 +61,7 @@ npm test
   the same floating numbers when they hit the hero.
 - Actions are recorded in an event log displayed below the controls (also
   accessible from the **Dev** button).
-- A narrative box above the hero card shows the latest event as it happens.
+- A narrative box above the hero card shows the three most recent events in a Game Master tone.
 
 The hero panel now displays these attributes along with a portrait image for the selected hero. Lost HP is shown using the same heart icon tinted black via CSS so you can quickly gauge your health. Dice stats are represented by repeating dice icons rather than numbers.
 

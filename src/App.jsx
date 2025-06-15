@@ -44,19 +44,29 @@ function App() {
   const [actionPrompt, setActionPrompt] = useState(null)
   const [toastMessage, setToastMessage] = useState(null)
   const [infoMessage, setInfoMessage] = useState(null)
-  const [narrative, setNarrative] = useState('')
+  const [narrativeLines, setNarrativeLines] = useState([])
   const prevHpRef = useRef(state.hero ? state.hero.hp : null)
 
-  const addLog = useCallback(msg => {
-    setEventLog(prev => [...prev, msg])
-    setNarrative(msg)
+  const addNarrative = useCallback(msg => {
+    setNarrativeLines(prev => {
+      const next = [...prev, msg]
+      return next.slice(-3)
+    })
   }, [])
+
+  const addLog = useCallback(
+    msg => {
+      setEventLog(prev => [...prev, msg])
+      addNarrative(msg)
+    },
+    [addNarrative],
+  )
 
   const showToast = useCallback(msg => {
     setToastMessage(msg)
     setTimeout(() => setToastMessage(null), 2000)
-    setNarrative(msg)
-  }, [])
+    addNarrative(msg)
+  }, [addNarrative])
 
   const advanceTorch = useCallback(() => {
     const logs = []
@@ -70,31 +80,31 @@ function App() {
       let board = prev.board.map(row => row.map(t => ({ ...t })))
       let hero = { ...prev.hero }
       const event = TORCH_EVENTS[newTorch - 1]
-      message = `Torch step ${newTorch}.`
+      message = `The torch flickers to step ${newTorch}.`
       if (event === 'spawn') {
         board = spawnGoblin(board)
-        logs.push('A goblin appears at the entrance.')
-        message += ' A goblin appears at the entrance.'
+        logs.push('A goblin creeps from the entrance.')
+        message += ' A goblin creeps from the entrance.'
         important = true
       } else if (event === 'monster') {
         const res = monsterActions(board, hero)
         board = res.board
         hero = res.hero
-        logs.push('Monsters act.')
-        message += ' Monsters act.'
+        logs.push('The monsters surge forward.')
+        message += ' The monsters surge forward.'
         if (res.logs) {
           res.logs.forEach(l => logs.push(l))
         }
         important = true
       } else if (event === 'gameover') {
-        logs.push('The torch has gone out.')
+        logs.push('The torch sputters and dies.')
         message += ' Game over!'
         important = true
         return { ...prev, board, hero, torch: newTorch, gameOver: true }
       }
       if (countGoblins(board) >= 5) {
-        logs.push('Too many goblins!')
-        message += ' Too many goblins!'
+        logs.push('The dungeon is overrun with goblins!')
+        message += ' The dungeon is overrun with goblins!'
         important = true
         return { ...prev, board, hero, torch: newTorch, gameOver: true }
       }
@@ -252,15 +262,24 @@ function App() {
       }
 
       setState({ board: newBoard, hero: newHero, deck: newDeck, encounter: null, trap: newTrap })
-      addLog(`${hero.name} moves ${dir}`)
+
+      if (target.revealed) {
+        addLog(`${hero.name} moves ${dir}.`)
+      } else {
+        addLog(`${hero.name} steps into the "${newBoard[r][c].roomId}".`)
+      }
+
       if (revealedGoblin) {
-        addLog(`Revealed ${revealedGoblin.name}! Lose 1 HP and all movement.`)
+        addLog('There is a monster in the room.')
+        addLog(
+          `${hero.name} discovers a "${revealedGoblin.name}", and loses 1 HP and all movement.`,
+        )
       } else if (newBoard[r][c].goblin) {
-        addLog(`Encountered ${newBoard[r][c].goblin.name}`)
+        addLog(`${hero.name} sees a ${newBoard[r][c].goblin.name}.`)
       }
       if (newTrap) {
         const t = newTrap.trap
-        addLog(`Found trap: ${t.id} (difficulty ${t.difficulty})`)
+        addLog(`A ${t.id} trap springs! (difficulty ${t.difficulty})`)
       }
     },
     [state, addLog]
@@ -469,7 +488,7 @@ function App() {
           <TorchMat step={state.torch} />
         </div>
       <div className="side">
-        <NarrativeBox message={narrative} />
+        <NarrativeBox messages={narrativeLines} />
         <HeroPanel hero={state.hero} damaged={heroDamaged} />
         {state.hero && (
           <div className="hero-items">
