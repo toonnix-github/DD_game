@@ -28,16 +28,21 @@
 }
 
 .main {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 3fr 2fr;
   gap: 1rem;
-  justify-content: center;
   align-items: flex-start;
 }
 
+.goblin-column,
 .board-column {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.goblin-column {
+  width: 20vmin;
 }
 
 .board-wrapper {
@@ -45,16 +50,14 @@
 }
 
 .goblin-area {
-  position: absolute;
-  left: -22vmin;
-  top: 0;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  width: 20vmin;
 }
 
 .goblin-area .goblin-token {
-  width: 20vmin;
+  width: 100%;
 }
 
 .goblin-reveal {
@@ -121,6 +124,7 @@
     padding: 1rem;
   }
   .main {
+    display: flex;
     flex-direction: column;
     align-items: center;
   }

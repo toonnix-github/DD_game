@@ -407,16 +407,18 @@ function App() {
   return (
     <>
       <div className="main">
+        <div className="goblin-column">
+          <div className="goblin-area">
+            {state.discoveredGoblins.map(g => {
+              const gob = state.board[g.row][g.col].goblin
+              return gob ? (
+                <GoblinToken key={`${g.row}-${g.col}`} goblin={gob} />
+              ) : null
+            })}
+          </div>
+        </div>
         <div className="board-column">
           <div className="board-wrapper">
-            <div className="goblin-area">
-              {state.discoveredGoblins.map(g => {
-                const gob = state.board[g.row][g.col].goblin
-                return gob ? (
-                  <GoblinToken key={`${g.row}-${g.col}`} goblin={gob} />
-                ) : null
-              })}
-            </div>
             <div className="board">
           {state.board.map((row, rIdx) =>
             row.map((tile, cIdx) => {
