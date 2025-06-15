@@ -184,7 +184,8 @@ function App() {
       }
     })
     addLog(`${heroName} ends their turn.`)
-    advanceTorch()
+    // ensure torch step processes after hero state updates
+    setTimeout(advanceTorch, 0)
   }, [state.hero, addLog, advanceTorch])
 
   const resetGame = useCallback(() => {

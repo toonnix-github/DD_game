@@ -99,7 +99,7 @@ monster actions pop up a confirmation dialog so you don't miss them.
 The torch mat is displayed horizontally beneath the dungeon grid so you can see
 how close you are to the end of the torch.
 
-- Ending a turn now prints a log message before the torch advances.
+ - Ending a turn now prints a log message and automatically advances the torch, triggering any events on the new step.
 - Torch step messages are logged in the narrative as well as shown in a toast.
 - Newly revealed goblins pop with a short animation, and the torch mat pulses
   when it advances.
