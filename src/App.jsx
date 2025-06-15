@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, useRef } from 'react'
 import RoomTile from './components/RoomTile'
+import TorchMat from './components/TorchMat'
 import ConfirmModal from './components/ConfirmModal'
 import Hero from './components/Hero'
 import HeroPanel from './components/HeroPanel'
@@ -97,6 +98,10 @@ function App() {
     setState(prev => {
       if (!prev.hero) return prev
       const base = HERO_TYPES[prev.hero.type]
+      const newTorch = Math.min(prev.torch + 1, 20)
+      if (newTorch >= 20) {
+        window.alert('The torch has burned out! Game over.')
+      }
       return {
         ...prev,
         hero: {
@@ -105,6 +110,7 @@ function App() {
           ap: prev.hero.maxAp,
           heroAction: prev.hero.maxHeroAction,
         },
+        torch: newTorch,
       }
     })
   }, [])
@@ -357,7 +363,8 @@ function App() {
   return (
     <>
       <div className="main">
-        <div className="board">
+        <div className="board-column">
+          <div className="board">
           {state.board.map((row, rIdx) =>
             row.map((tile, cIdx) => {
               const move = possibleMoves.some(p => p.row === rIdx && p.col === cIdx)
@@ -390,8 +397,10 @@ function App() {
               <Hero hero={state.hero} damaged={heroDamaged} />
             </div>
           )}
+          </div>
+          <TorchMat step={state.torch} />
         </div>
-      <div className="side">
+        <div className="side">
         <HeroPanel hero={state.hero} damaged={heroDamaged} />
         {state.hero && (
           <div className="hero-items">

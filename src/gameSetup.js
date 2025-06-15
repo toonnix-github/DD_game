@@ -88,6 +88,7 @@ export function loadState() {
       if (!parsed.trap) parsed.trap = null
       if (!parsed.discard) parsed.discard = null
       if (!parsed.reward || !parsed.reward.item) parsed.reward = null
+      if (!('torch' in parsed)) parsed.torch = 0
       return parsed
     } catch {
       /* ignore corrupted save */
@@ -111,5 +112,6 @@ export function loadState() {
     trap: null,
     discard: null,
     reward: null,
+    torch: 0,
   }
 }
