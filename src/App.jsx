@@ -13,6 +13,7 @@ import DiscardModal from './components/DiscardModal'
 import RewardModal from './components/RewardModal'
 import DeveloperModal from './components/DeveloperModal'
 import GameOverModal from './components/GameOverModal'
+import EventLog from './components/EventLog'
 import './App.css'
 import { HERO_TYPES } from './heroData'
 import { GOBLIN_TYPES, randomGoblinType } from './goblinData'
@@ -77,7 +78,7 @@ function App() {
       },
     }
     setState(prev => ({ ...prev, hero }))
-    addLog(`${hero.name} enters the dungeon.`)
+    addLog(`*${hero.name} steps into the dungeon, torch held high.*`)
   }, [addLog])
 
   useEffect(() => {
@@ -201,14 +202,14 @@ function App() {
         encounter: null,
         trap: newTrap,
       }))
-      addLog(`${hero.name} moves ${dir}`)
+      addLog(`${hero.name} advances ${dir}, eyes on the shadows.`)
       if (newBoard[r][c].goblin) {
-        addLog(`Encountered ${newBoard[r][c].goblin.name}`)
-        if (revealedGoblin) addLog('Ambushed and lost 1 hp')
+        addLog(`A ${newBoard[r][c].goblin.name} leaps from the darkness!`)
+        if (revealedGoblin) addLog('The ambush wounds you for 1 HP.')
       }
       if (newTrap) {
         const t = newTrap.trap
-        addLog(`Found trap: ${t.id} (difficulty ${t.difficulty})`)
+        addLog(`You spot a ${t.id} trap—difficulty ${t.difficulty}.`)
       }
     },
     [state, addLog]
@@ -250,7 +251,7 @@ function App() {
         },
       }))
       addLog(
-        `${hero.name} attacks ${tile.goblin.name}${dist > 0 ? ' from afar' : ''}`,
+        `${hero.name} strikes at ${tile.goblin.name}${dist > 0 ? ' from afar' : ''}!`,
       )
     },
     [state, addLog],
@@ -417,6 +418,7 @@ function App() {
           <TorchMat step={state.torch} />
         </div>
         <div className="side">
+        <EventLog log={eventLog.slice(-3)} className="narrative-log" />
         <HeroPanel hero={state.hero} damaged={heroDamaged} />
         {state.hero && (
           <div className="hero-items">

@@ -9,7 +9,7 @@ export default function useEncounterHandlers(setState, addLog) {
       const rewardParts = []
       if (rewards.ap) rewardParts.push(`${rewards.ap} ap`)
       if (rewards.hp) rewardParts.push(`${rewards.hp} hp`)
-      addLog(`Unused dice reward: ${rewardParts.join(' and ')}.`)
+      addLog(`The unused dice grant ${rewardParts.join(' and ')}.`)
       setState(prev => {
         const hero = prev.hero
         if (!hero) return prev
@@ -27,7 +27,7 @@ export default function useEncounterHandlers(setState, addLog) {
   const applySkillCost = useCallback(
     (cost, title) => {
       if (!cost) return
-      addLog(`Used ${title} (-${cost} AP).`)
+      addLog(`${title} invoked, costing ${cost} AP.`)
       setState(prev => {
         const hero = prev.hero
         if (!hero) return prev
@@ -113,11 +113,11 @@ export default function useEncounterHandlers(setState, addLog) {
             y: Math.random() * 40 - 20,
           }
           newEncounter = null
-          msg = 'Fled successfully.'
+          msg = 'You escape into the corridor.'
         } else {
           const damage = Math.max(1, encounter.goblin.attack - hero.defence)
           newHero.hp = hero.hp - damage
-          msg = `Failed to flee and took ${damage} damage.`
+          msg = `The goblin blocks your path, dealing ${damage} damage!`
         }
         return { ...prev, board: newBoard, hero: newHero, encounter: newEncounter }
       })
@@ -148,7 +148,7 @@ export default function useEncounterHandlers(setState, addLog) {
         let discard = null
         if (!evaded) {
           newHero.hp = hero.hp - tile.trap.damage
-          messageParts.push(`Hit by trap for ${tile.trap.damage} damage.`)
+          messageParts.push(`The trap snaps shut, dealing ${tile.trap.damage} damage!`)
         } else {
           newHero.ap = Math.min(hero.ap + evasionRewards.ap, hero.maxAp)
           newHero.hp = Math.min(newHero.hp + evasionRewards.hp, hero.maxHp)
@@ -156,7 +156,9 @@ export default function useEncounterHandlers(setState, addLog) {
           if (evasionRewards.ap) rParts.push(`${evasionRewards.ap} ap`)
           if (evasionRewards.hp) rParts.push(`${evasionRewards.hp} hp`)
           messageParts.push(
-            rParts.length ? `Evaded trap and gained ${rParts.join(' and ')}.` : 'Evaded trap.',
+            rParts.length
+              ? `You deftly evade the trap and gain ${rParts.join(' and ')}.`
+              : 'You nimbly evade the trap.',
           )
         }
         if (disarm !== undefined) {
@@ -171,10 +173,10 @@ export default function useEncounterHandlers(setState, addLog) {
             if (tile.trap.reward) rewardMsg.push(`${tile.trap.reward} hp`)
             if (rewards.ap) rewardMsg.push(`${rewards.ap} ap`)
             if (rewards.hp) rewardMsg.push(`${rewards.hp} bonus hp`)
-            messageParts.push(`Disarmed trap and gained ${rewardMsg.join(' and ')}.`)
+            messageParts.push(`You disarm the trap and gain ${rewardMsg.join(' and ')}.`)
           } else {
             newHero.hp = newHero.hp - tile.trap.damage
-            messageParts.push(`Failed to disarm and took ${tile.trap.damage} damage.`)
+            messageParts.push(`You fail to disarm it and suffer ${tile.trap.damage} damage!`)
           }
         }
         return { ...prev, board: newBoard, hero: newHero, trap: null, reward, discard }
@@ -191,7 +193,7 @@ export default function useEncounterHandlers(setState, addLog) {
 
   const handleRewardConfirm = useCallback(
     () => {
-      let msg = 'Collected reward'
+      let msg = 'You gather the spoils.'
       setState(prev => {
         if (!prev.reward) return prev
         let discard = null
@@ -208,7 +210,7 @@ export default function useEncounterHandlers(setState, addLog) {
   const handleDiscardConfirm = useCallback(
     items => {
       setState(prev => ({ ...prev, hero: { ...prev.hero, weapons: items }, discard: null }))
-      addLog('Chose items to keep')
+      addLog('You decide which gear to keep.')
     },
     [addLog, setState],
   )
