@@ -19,6 +19,7 @@ import { HERO_TYPES } from './heroData'
 import { GOBLIN_TYPES, randomGoblinType } from './goblinData'
 import GoblinCard from './components/GoblinCard'
 import GoblinToken from './components/GoblinToken'
+import Goblin from './components/Goblin'
 import {
   getRangedTargets,
   getMagicTargets,
@@ -186,7 +187,18 @@ function App() {
         let goblin = null
         if (room.goblin) {
           const typeKey = room.goblin === 'king' ? 'king' : randomGoblinType()
-          goblin = { ...GOBLIN_TYPES[typeKey], type: typeKey }
+          const corners = [
+            { x: -35, y: -35 },
+            { x: 35, y: -35 },
+            { x: -35, y: 35 },
+            { x: 35, y: 35 },
+          ]
+          goblin = {
+            ...GOBLIN_TYPES[typeKey],
+            type: typeKey,
+            offset: corners[Math.floor(Math.random() * corners.length)],
+            angle: Math.random() * 30 - 15,
+          }
           revealedGoblin = true
         }
 
@@ -451,6 +463,22 @@ function App() {
               )
             })
           )}
+          {state.discoveredGoblins.map(g => {
+            const gob = state.board[g.row][g.col].goblin
+            return gob ? (
+              <div
+                key={`gob-${g.row}-${g.col}`}
+                className="goblin-overlay"
+                style={{
+                  transform: `translate(${g.col * 100 + (gob.offset?.x ?? 0)}%, ${
+                    g.row * 100 + (gob.offset?.y ?? 0)
+                  }%) rotate(${gob.angle ?? 0}deg)`,
+                }}
+              >
+                <Goblin goblin={gob} />
+              </div>
+            ) : null
+          })}
           {state.hero && (
             <div
               className={`hero-overlay${heroDamaged ? ' shake' : ''}`}

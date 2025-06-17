@@ -29,11 +29,6 @@ function RoomTile({ tile, move, attack, attackDisabled = false, highlight, disab
           )}
         </div>
       )}
-      {tile.revealed && tile.goblin && (
-        <div className="goblin-container">
-          <span className="goblin-icon">{tile.goblin.icon}</span>
-        </div>
-      )}
       {(move || attack) && (
         <div className="action-buttons">
           {move && <button onClick={onMove}>Move</button>}
