@@ -1,7 +1,4 @@
-
 .goblin {
-  background-color: darkgreen;
-  color: white;
   width: 30px;
   height: 30px;
   display: flex;
@@ -22,9 +19,23 @@
 }
 
 @keyframes shake {
-  0% { transform: translate(0); }
-  25% { transform: translate(-3px); }
-  50% { transform: translate(3px); }
-  75% { transform: translate(-3px); }
-  100% { transform: translate(0); }
+  0% {
+    transform: translate(0);
+  }
+
+  25% {
+    transform: translate(-3px);
+  }
+
+  50% {
+    transform: translate(3px);
+  }
+
+  75% {
+    transform: translate(-3px);
+  }
+
+  100% {
+    transform: translate(0);
+  }
 }
