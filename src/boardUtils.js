@@ -126,3 +126,58 @@ export function distanceMagic(board, hero, row, col) {
   }
   return Infinity;
 }
+
+export function nextStepTowards(board, fromRow, fromCol, toRow, toCol) {
+  const dirs = {
+    up: [-1, 0],
+    down: [1, 0],
+    left: [0, -1],
+    right: [0, 1],
+  };
+  const visited = new Set();
+  const queue = [{ r: fromRow, c: fromCol, path: [] }];
+  visited.add(`${fromRow},${fromCol}`);
+  while (queue.length > 0) {
+    const { r, c, path } = queue.shift();
+    if (r === toRow && c === toCol) return path[0] || null;
+    const tile = board[r][c];
+    Object.entries(dirs).forEach(([dir, [dr, dc]]) => {
+      if (!tile.paths[dir]) return;
+      const nr = r + dr;
+      const nc = c + dc;
+      if (nr < 0 || nr >= board.length || nc < 0 || nc >= board[0].length) return;
+      const next = board[nr][nc];
+      if (!next.revealed || !next.paths[opposite(dir)]) return;
+      const key = `${nr},${nc}`;
+      if (visited.has(key)) return;
+      visited.add(key);
+      queue.push({ r: nr, c: nc, path: [...path, { r: nr, c: nc }] });
+    });
+  }
+  return null;
+}
+
+export function moveGoblinsTowardsHero(board, hero, goblinPositions) {
+  const copy = board.map(row => row.map(t => ({ ...t })));
+  const newPositions = goblinPositions.map(p => ({ ...p }));
+  goblinPositions.forEach((pos, idx) => {
+    const tile = copy[pos.row][pos.col];
+      const gob = tile.goblin;
+      if (!gob || gob.hp <= 0) return;
+    let r = pos.row;
+    let c = pos.col;
+    for (let step = 0; step < (gob.movement || 1); step++) {
+      const next = nextStepTowards(copy, r, c, hero.row, hero.col);
+      if (!next) break;
+      const { r: nr, c: nc } = next;
+      if (copy[nr][nc].goblin && copy[nr][nc].goblin.hp > 0) break;
+      copy[nr][nc] = { ...copy[nr][nc], goblin: gob };
+      copy[r][c] = { ...copy[r][c], goblin: null };
+      r = nr;
+      c = nc;
+      if (r === hero.row && c === hero.col) break;
+    }
+    newPositions[idx] = { row: r, col: c };
+  });
+  return { board: copy, positions: newPositions };
+}

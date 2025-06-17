@@ -25,6 +25,7 @@ import {
   opposite,
   distanceToTarget,
   distanceMagic,
+  moveGoblinsTowardsHero,
 } from './boardUtils'
 import {
   BOARD_SIZE,
@@ -125,6 +126,13 @@ function App() {
     const base = HERO_TYPES[state.hero.type]
     const newTorch = Math.min(state.torch + 1, 20)
     const gameOver = state.gameOver || newTorch >= 20
+    let board = state.board
+    let positions = state.discoveredGoblins
+    if (newTorch === 4) {
+      const moved = moveGoblinsTowardsHero(state.board, state.hero, state.discoveredGoblins)
+      board = moved.board
+      positions = moved.positions
+    }
     setState(prev => ({
       ...prev,
       hero: {
@@ -133,11 +141,14 @@ function App() {
         ap: prev.hero.maxAp,
         heroAction: prev.hero.maxHeroAction,
       },
+      board,
+      discoveredGoblins: positions,
       torch: newTorch,
       gameOver,
     }))
     addLog(`${state.hero.name} pauses to regroup.`)
     addLog(`Torch advances to ${newTorch}/20.`)
+    if (newTorch === 4) addLog('The goblins surge forward!')
   }, [state, addLog])
 
   const resetGame = useCallback(() => {
