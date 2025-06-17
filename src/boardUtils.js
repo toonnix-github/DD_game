@@ -13,6 +13,11 @@ export function opposite(dir) {
   }
 }
 
+export function roomCode(row, col) {
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  return `${letters[row]}${col + 1}`
+}
+
 export function getRangedTargets(board, hero, range) {
   const dirs = {
     up: [-1, 0],
@@ -188,7 +193,7 @@ export function getGoblinMoveSteps(board, hero, goblinPositions) {
       copy[nr][nc] = { ...copy[nr][nc], goblin: gob }
       copy[pos.row][pos.col] = { ...tile, goblin: null }
       newPositions[idx] = { row: nr, col: nc }
-      logs.push(`${gob.name} moves toward the hero.`)
+      logs.push(`${gob.name} moves to ${roomCode(nr, nc)}.`)
       moved = true
     }
     if (moved) {

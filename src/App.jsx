@@ -27,6 +27,7 @@ import {
   distanceToTarget,
   distanceMagic,
   moveGoblinsTowardsHero,
+  roomCode,
 } from './boardUtils'
 import {
   BOARD_SIZE,
@@ -84,7 +85,7 @@ function App() {
       },
     }
     setState(prev => ({ ...prev, hero }))
-    addLog(`*${hero.name} steps into the dungeon, torch held high.*`)
+    addLog(`*${hero.name} steps into the dungeon at ${roomCode(hero.row, hero.col)}, torch held high.*`)
   }, [addLog])
 
   useEffect(() => {
@@ -154,7 +155,7 @@ function App() {
       torch: newTorch,
       gameOver,
     }))
-    addLog(`${state.hero.name} pauses to regroup.`)
+    addLog(`${state.hero.name} pauses to regroup at ${roomCode(state.hero.row, state.hero.col)}.`)
     addLog(`Torch advances to ${newTorch}/20.`)
     if (newTorch === 4) {
       addLog('The goblins surge forward!')
@@ -267,14 +268,14 @@ function App() {
       if (revealedGoblin) {
         setRevealGoblin({ goblin: newBoard[r][c].goblin, row: r, col: c })
       }
-      addLog(`${hero.name} advances ${dir}, eyes on the shadows.`)
+      addLog(`${hero.name} moves to ${roomCode(r, c)}, eyes on the shadows.`)
       if (newBoard[r][c].goblin) {
-        addLog(`A ${newBoard[r][c].goblin.name} leaps from the darkness!`)
-        if (revealedGoblin) addLog('The ambush wounds you for 1 HP.')
+        addLog(`A ${newBoard[r][c].goblin.name} leaps from the darkness in ${roomCode(r, c)}!`)
+        if (revealedGoblin) addLog(`The ambush in ${roomCode(r, c)} wounds you for 1 HP.`)
       }
       if (newTrap) {
         const t = newTrap.trap
-        addLog(`You spot a ${t.id} trap—difficulty ${t.difficulty}.`)
+        addLog(`You spot a ${t.id} trap in ${roomCode(r, c)}—difficulty ${t.difficulty}.`)
       }
     },
     [state, addLog]
@@ -316,7 +317,7 @@ function App() {
         },
       }))
       addLog(
-        `${hero.name} strikes at ${tile.goblin.name}${dist > 0 ? ' from afar' : ''}!`,
+        `${hero.name} strikes at ${tile.goblin.name}${dist > 0 ? ' from afar' : ''} in ${roomCode(hero.row, hero.col)}!`,
       )
     },
     [state, addLog],
