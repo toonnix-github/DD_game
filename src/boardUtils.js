@@ -157,12 +157,11 @@ export function nextStepTowards(board, fromRow, fromCol, toRow, toCol) {
   return null;
 }
 
-export function moveGoblinsTowardsHero(board, hero, goblinPositions) {
+export function getGoblinMoveSteps(board, hero, goblinPositions) {
   const copy = board.map(row => row.map(t => ({ ...t })))
   const newPositions = goblinPositions.map(p => ({ ...p }))
-  const logs = []
+  const steps = []
 
-  // Determine the maximum movement across all goblins
   const maxMove = Math.max(
     0,
     ...goblinPositions.map(pos => {
@@ -172,6 +171,8 @@ export function moveGoblinsTowardsHero(board, hero, goblinPositions) {
   )
 
   for (let step = 0; step < maxMove; step++) {
+    const logs = []
+    let moved = false
     for (let idx = 0; idx < goblinPositions.length; idx++) {
       const pos = newPositions[idx]
       const tile = copy[pos.row][pos.col]
@@ -188,8 +189,24 @@ export function moveGoblinsTowardsHero(board, hero, goblinPositions) {
       copy[pos.row][pos.col] = { ...tile, goblin: null }
       newPositions[idx] = { row: nr, col: nc }
       logs.push(`${gob.name} moves toward the hero.`)
+      moved = true
+    }
+    if (moved) {
+      const stepBoard = copy.map(row => row.map(t => ({ ...t })))
+      const stepPositions = newPositions.map(p => ({ ...p }))
+      steps.push({ board: stepBoard, positions: stepPositions, logs })
     }
   }
 
-  return { board: copy, positions: newPositions, logs }
+  return { board: copy, positions: newPositions, steps }
+}
+
+export function moveGoblinsTowardsHero(board, hero, goblinPositions) {
+  const { board: b, positions, steps } = getGoblinMoveSteps(
+    board,
+    hero,
+    goblinPositions,
+  )
+  const logs = steps.flatMap(s => s.logs)
+  return { board: b, positions, logs, steps }
 }

@@ -122,24 +122,27 @@ function App() {
     }
   }, [revealGoblin, setState])
 
+  const animateGoblinSteps = useCallback(
+    async steps => {
+      for (const step of steps) {
+        await new Promise(res => setTimeout(res, 1000))
+        setState(prev => ({
+          ...prev,
+          board: step.board,
+          discoveredGoblins: step.positions,
+        }))
+        step.logs.forEach(msg => addLog(msg))
+      }
+    },
+    [addLog],
+  )
+
   const endTurn = useCallback(() => {
     if (!state.hero) return
     const base = HERO_TYPES[state.hero.type]
     const newTorch = Math.min(state.torch + 1, 20)
     const gameOver = state.gameOver || newTorch >= 20
-    let board = state.board
-    let positions = state.discoveredGoblins
-    let moveLogs = []
-    if (newTorch === 4) {
-      const moved = moveGoblinsTowardsHero(
-        state.board,
-        state.hero,
-        state.discoveredGoblins,
-      )
-      board = moved.board
-      positions = moved.positions
-      moveLogs = moved.logs
-    }
+
     setState(prev => ({
       ...prev,
       hero: {
@@ -148,8 +151,6 @@ function App() {
         ap: prev.hero.maxAp,
         heroAction: prev.hero.maxHeroAction,
       },
-      board,
-      discoveredGoblins: positions,
       torch: newTorch,
       gameOver,
     }))
@@ -157,9 +158,14 @@ function App() {
     addLog(`Torch advances to ${newTorch}/20.`)
     if (newTorch === 4) {
       addLog('The goblins surge forward!')
-      moveLogs.forEach(msg => addLog(msg))
+      const { steps } = moveGoblinsTowardsHero(
+        state.board,
+        state.hero,
+        state.discoveredGoblins,
+      )
+      animateGoblinSteps(steps)
     }
-  }, [state, addLog])
+  }, [state, addLog, animateGoblinSteps])
 
   const resetGame = useCallback(() => {
     localStorage.removeItem('dungeon-state')

@@ -96,7 +96,7 @@ A horizontal torch bar below the dungeon board counts turns. The torch starts at
 step 0 and drops one step every time you end your turn. A burning torch icon
 marks the current position on the track. Reaching step 20 opens a Game Over
 modal announcing defeat.
-Each end turn logs a short message as the torch advances so you can follow the countdown in the narrative feed. When the torch reaches step 4 every discovered monster now advances one room at a time. Each move is logged so you can track how the dungeon closes in around the hero.
+Each end turn logs a short message as the torch advances so you can follow the countdown in the narrative feed. When the torch reaches step 4 every discovered monster now advances one room at a time with a one second pause between each move. Every step is logged so you can track how the dungeon closes in around the hero.
 
 ### Styling with SCSS
 
