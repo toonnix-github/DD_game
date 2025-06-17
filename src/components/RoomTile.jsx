@@ -12,9 +12,9 @@ function RoomTile({ tile, move, attack, attackDisabled = false, highlight, disab
       title={
         tile.revealed
           ? tile.roomId +
-            (tile.trap && !tile.trapResolved
-              ? ` - ${EVASION_RULE} Difficulty ${tile.trap.difficulty}. ${DISARM_RULE}`
-              : '')
+          (tile.trap && !tile.trapResolved
+            ? ` - ${EVASION_RULE} Difficulty ${tile.trap.difficulty}. ${DISARM_RULE}`
+            : '')
           : undefined
       }
     >
@@ -31,7 +31,7 @@ function RoomTile({ tile, move, attack, attackDisabled = false, highlight, disab
       )}
       {tile.revealed && tile.goblin && (
         <div className="goblin-container">
-          <img className="goblin-icon" src={tile.goblin.icon} alt="goblin" />
+          <img className="goblin-icon" src='/icon/icon-goblin.png' alt="goblin" />
         </div>
       )}
       {(move || attack) && (

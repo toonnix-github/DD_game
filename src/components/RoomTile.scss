@@ -120,11 +120,10 @@
 
   .goblin-container {
     position: absolute;
-    bottom: 2px;
-    left: 2px;
-    font-size: 0.7rem;
-    width: 0.7rem;
-    height: 0.7rem;
+    bottom: 0px;
+    left: 0;
+    width: 2rem;
+    aspect-ratio: 1 / 1;
   }
 
   .goblin-icon {
