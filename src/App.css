@@ -28,16 +28,73 @@
 }
 
 .main {
-  display: flex;
+  display: grid;
+  grid-template-columns: 3fr 4fr 4fr;
   gap: 1rem;
-  justify-content: center;
   align-items: flex-start;
 }
 
+.goblin-column,
 .board-column {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.goblin-column {
+  width: 100%;
+}
+
+.board-wrapper {
+  position: relative;
+}
+
+.goblin-area {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.goblin-area .goblin-token {
+  width: 100%;
+}
+
+.goblin-reveal {
+  position: absolute;
+  width: 20vmin;
+  aspect-ratio: 2 / 3;
+  pointer-events: none;
+  transform-origin: center;
+}
+
+.goblin-reveal.spin {
+  animation: goblin-spin 0.8s forwards;
+}
+
+.goblin-reveal.move {
+  animation: goblin-move 0.8s forwards;
+}
+
+@keyframes goblin-spin {
+  0% {
+    transform: scale(0) rotate(0) rotateY(0);
+  }
+  50% {
+    transform: scale(1.2) rotate(360deg) rotateY(90deg);
+  }
+  100% {
+    transform: scale(1) rotate(720deg) rotateY(0);
+  }
+}
+
+@keyframes goblin-move {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(-110%, 0);
+  }
 }
 
 .side {
@@ -67,6 +124,7 @@
     padding: 1rem;
   }
   .main {
+    display: flex;
     flex-direction: column;
     align-items: center;
   }
