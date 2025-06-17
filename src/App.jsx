@@ -129,10 +129,16 @@ function App() {
     const gameOver = state.gameOver || newTorch >= 20
     let board = state.board
     let positions = state.discoveredGoblins
+    let moveLogs = []
     if (newTorch === 4) {
-      const moved = moveGoblinsTowardsHero(state.board, state.hero, state.discoveredGoblins)
+      const moved = moveGoblinsTowardsHero(
+        state.board,
+        state.hero,
+        state.discoveredGoblins,
+      )
       board = moved.board
       positions = moved.positions
+      moveLogs = moved.logs
     }
     setState(prev => ({
       ...prev,
@@ -149,7 +155,10 @@ function App() {
     }))
     addLog(`${state.hero.name} pauses to regroup.`)
     addLog(`Torch advances to ${newTorch}/20.`)
-    if (newTorch === 4) addLog('The goblins surge forward!')
+    if (newTorch === 4) {
+      addLog('The goblins surge forward!')
+      moveLogs.forEach(msg => addLog(msg))
+    }
   }, [state, addLog])
 
   const resetGame = useCallback(() => {

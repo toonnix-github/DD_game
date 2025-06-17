@@ -158,26 +158,38 @@ export function nextStepTowards(board, fromRow, fromCol, toRow, toCol) {
 }
 
 export function moveGoblinsTowardsHero(board, hero, goblinPositions) {
-  const copy = board.map(row => row.map(t => ({ ...t })));
-  const newPositions = goblinPositions.map(p => ({ ...p }));
-  goblinPositions.forEach((pos, idx) => {
-    const tile = copy[pos.row][pos.col];
-      const gob = tile.goblin;
-      if (!gob || gob.hp <= 0) return;
-    let r = pos.row;
-    let c = pos.col;
-    for (let step = 0; step < (gob.movement || 1); step++) {
-      const next = nextStepTowards(copy, r, c, hero.row, hero.col);
-      if (!next) break;
-      const { r: nr, c: nc } = next;
-      if (copy[nr][nc].goblin && copy[nr][nc].goblin.hp > 0) break;
-      copy[nr][nc] = { ...copy[nr][nc], goblin: gob };
-      copy[r][c] = { ...copy[r][c], goblin: null };
-      r = nr;
-      c = nc;
-      if (r === hero.row && c === hero.col) break;
+  const copy = board.map(row => row.map(t => ({ ...t })))
+  const newPositions = goblinPositions.map(p => ({ ...p }))
+  const logs = []
+
+  // Determine the maximum movement across all goblins
+  const maxMove = Math.max(
+    0,
+    ...goblinPositions.map(pos => {
+      const gob = copy[pos.row][pos.col].goblin
+      return gob && gob.hp > 0 ? gob.movement || 1 : 0
+    }),
+  )
+
+  for (let step = 0; step < maxMove; step++) {
+    for (let idx = 0; idx < goblinPositions.length; idx++) {
+      const pos = newPositions[idx]
+      const tile = copy[pos.row][pos.col]
+      const gob = tile.goblin
+      if (!gob || gob.hp <= 0) continue
+      if (step >= (gob.movement || 1)) continue
+
+      const next = nextStepTowards(copy, pos.row, pos.col, hero.row, hero.col)
+      if (!next) continue
+      const { r: nr, c: nc } = next
+      if (copy[nr][nc].goblin && copy[nr][nc].goblin.hp > 0) continue
+
+      copy[nr][nc] = { ...copy[nr][nc], goblin: gob }
+      copy[pos.row][pos.col] = { ...tile, goblin: null }
+      newPositions[idx] = { row: nr, col: nc }
+      logs.push(`${gob.name} moves toward the hero.`)
     }
-    newPositions[idx] = { row: r, col: c };
-  });
-  return { board: copy, positions: newPositions };
+  }
+
+  return { board: copy, positions: newPositions, logs }
 }
