@@ -2,6 +2,7 @@ export const GOBLIN_TYPES = {
   knife: {
     name: 'Knife Goblin',
     hp: 1,
+    movement: 2,
     attack: 1,
     attackType: 'melee',
     attacks: [
@@ -15,6 +16,7 @@ export const GOBLIN_TYPES = {
   archer: {
     name: 'Archer Goblin',
     hp: 1,
+    movement: 2,
     attack: 2,
     attackType: 'range',
     range: 3,
@@ -29,6 +31,7 @@ export const GOBLIN_TYPES = {
   mage: {
     name: 'Mage Goblin',
     hp: 1,
+    movement: 2,
     attack: 6,
     attackType: 'magic',
     range: 5,
@@ -43,6 +46,7 @@ export const GOBLIN_TYPES = {
   king: {
     name: 'Goblin King',
     hp: 1,
+    movement: 3,
     attack: 5,
     attackType: 'melee',
     attacks: [
