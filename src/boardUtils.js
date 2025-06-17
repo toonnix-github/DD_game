@@ -193,7 +193,7 @@ export function getGoblinMoveSteps(board, hero, goblinPositions) {
       copy[nr][nc] = { ...copy[nr][nc], goblin: gob }
       copy[pos.row][pos.col] = { ...tile, goblin: null }
       newPositions[idx] = { row: nr, col: nc }
-      logs.push(`${gob.name} moves toward the hero.`)
+      logs.push(`${gob.name} moves to ${roomCode(nr, nc)}.`)
       moved = true
     }
     if (moved) {

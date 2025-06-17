@@ -1,6 +1,7 @@
 import { useCallback } from 'react'
 import { adaptTreasureItem, randomTreasure } from '../treasureDeck'
 import { formatFightLogs } from '../fightUtils'
+import { roomCode } from '../boardUtils'
 
 export default function useEncounterHandlers(setState, addLog) {
   const applyDiceRewards = useCallback(
@@ -9,10 +10,13 @@ export default function useEncounterHandlers(setState, addLog) {
       const rewardParts = []
       if (rewards.ap) rewardParts.push(`${rewards.ap} ap`)
       if (rewards.hp) rewardParts.push(`${rewards.hp} hp`)
-      addLog(`The unused dice grant ${rewardParts.join(' and ')}.`)
+      let row = 0
+      let col = 0
       setState(prev => {
         const hero = prev.hero
         if (!hero) return prev
+        row = hero.row
+        col = hero.col
         const newHero = {
           ...hero,
           ap: Math.min(hero.ap + rewards.ap, hero.maxAp),
@@ -20,6 +24,7 @@ export default function useEncounterHandlers(setState, addLog) {
         }
         return { ...prev, hero: newHero }
       })
+      addLog(`The unused dice grant ${rewardParts.join(' and ')} in ${roomCode(row, col)}.`)
     },
     [addLog, setState],
   )
@@ -27,12 +32,16 @@ export default function useEncounterHandlers(setState, addLog) {
   const applySkillCost = useCallback(
     (cost, title) => {
       if (!cost) return
-      addLog(`${title} invoked, costing ${cost} AP.`)
+      let row = 0
+      let col = 0
       setState(prev => {
         const hero = prev.hero
         if (!hero) return prev
+        row = hero.row
+        col = hero.col
         return { ...prev, hero: { ...hero, ap: Math.max(0, hero.ap - cost) } }
       })
+      addLog(`${title} invoked at ${roomCode(row, col)}, costing ${cost} AP.`)
     },
     [addLog, setState],
   )
@@ -134,7 +143,11 @@ export default function useEncounterHandlers(setState, addLog) {
           encounter: newEncounter,
         }
       })
-      addLog(msg, newRow, newCol)
+      if (newRow != null && newCol != null && success) {
+        addLog(`${msg} You end up at ${roomCode(newRow, newCol)}.`)
+      } else {
+        addLog(msg)
+      }
     },
     [addLog, setState],
   )
@@ -199,7 +212,13 @@ export default function useEncounterHandlers(setState, addLog) {
       if (disarmRolls.length) rollParts.push(`Disarm roll ${disarmRolls.join(', ')} (best ${Math.max(...disarmRolls)})`)
       const rollMsg = rollParts.join('. ')
       const msg = messageParts.join(' ')
-      addLog(rollMsg ? `${rollMsg}. ${msg}` : msg)
+      const row = trap.position.row
+      const col = trap.position.col
+      addLog(
+        rollMsg
+          ? `${rollMsg}. ${msg} at ${roomCode(row, col)}.`
+          : `${msg} at ${roomCode(row, col)}.`,
+      )
     },
     [addLog, setState],
   )
