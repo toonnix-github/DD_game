@@ -19,6 +19,7 @@ import { HERO_TYPES } from './heroData'
 import { GOBLIN_TYPES, randomGoblinType } from './goblinData'
 import GoblinCard from './components/GoblinCard'
 import GoblinToken from './components/GoblinToken'
+import Goblin from './components/Goblin'
 import {
   getRangedTargets,
   getMagicTargets,
@@ -451,6 +452,18 @@ function App() {
               )
             })
           )}
+          {state.discoveredGoblins.map(g => {
+            const gob = state.board[g.row][g.col].goblin
+            return gob ? (
+              <div
+                key={`gob-${g.row}-${g.col}`}
+                className="goblin-overlay"
+                style={{ transform: `translate(${g.col * 100}%, ${g.row * 100}%)` }}
+              >
+                <Goblin goblin={gob} />
+              </div>
+            ) : null
+          })}
           {state.hero && (
             <div
               className={`hero-overlay${heroDamaged ? ' shake' : ''}`}
