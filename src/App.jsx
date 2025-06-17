@@ -27,6 +27,7 @@ import {
   distanceToTarget,
   distanceMagic,
   moveGoblinsTowardsHero,
+  roomCode,
 } from './boardUtils'
 import {
   BOARD_SIZE,
@@ -46,9 +47,13 @@ function App() {
   const [revealPhase, setRevealPhase] = useState('spin')
   const prevHpRef = useRef(state.hero ? state.hero.hp : null)
 
-  const addLog = useCallback(msg => {
-    setEventLog(prev => [...prev, msg])
-  }, [])
+  const addLog = useCallback(
+    (msg, row = state.hero ? state.hero.row : null, col = state.hero ? state.hero.col : null) => {
+      const prefix = row != null && col != null ? `[${roomCode(row, col)}] ` : ''
+      setEventLog(prev => [...prev, `${prefix}${msg}`])
+    },
+    [state.hero],
+  )
 
   const chooseHero = useCallback(
     type => {
@@ -84,7 +89,7 @@ function App() {
       },
     }
     setState(prev => ({ ...prev, hero }))
-    addLog(`*${hero.name} steps into the dungeon, torch held high.*`)
+    addLog(`*${hero.name} steps into the dungeon, torch held high.*`, hero.row, hero.col)
   }, [addLog])
 
   useEffect(() => {
@@ -267,14 +272,14 @@ function App() {
       if (revealedGoblin) {
         setRevealGoblin({ goblin: newBoard[r][c].goblin, row: r, col: c })
       }
-      addLog(`${hero.name} advances ${dir}, eyes on the shadows.`)
+      addLog(`${hero.name} advances ${dir}, eyes on the shadows.`, r, c)
       if (newBoard[r][c].goblin) {
-        addLog(`A ${newBoard[r][c].goblin.name} leaps from the darkness!`)
-        if (revealedGoblin) addLog('The ambush wounds you for 1 HP.')
+        addLog(`A ${newBoard[r][c].goblin.name} leaps from the darkness!`, r, c)
+        if (revealedGoblin) addLog('The ambush wounds you for 1 HP.', r, c)
       }
       if (newTrap) {
         const t = newTrap.trap
-        addLog(`You spot a ${t.id} trap—difficulty ${t.difficulty}.`)
+        addLog(`You spot a ${t.id} trap—difficulty ${t.difficulty}.`, r, c)
       }
     },
     [state, addLog]
@@ -317,6 +322,8 @@ function App() {
       }))
       addLog(
         `${hero.name} strikes at ${tile.goblin.name}${dist > 0 ? ' from afar' : ''}!`,
+        hero.row,
+        hero.col,
       )
     },
     [state, addLog],

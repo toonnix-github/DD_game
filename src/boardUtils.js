@@ -13,6 +13,11 @@ export function opposite(dir) {
   }
 }
 
+export function roomCode(row, col) {
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  return `${letters[row]}${col + 1}`
+}
+
 export function getRangedTargets(board, hero, range) {
   const dirs = {
     up: [-1, 0],

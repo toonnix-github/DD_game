@@ -103,6 +103,8 @@ export default function useEncounterHandlers(setState, addLog) {
   const handleFlee = useCallback(
     success => {
       let msg = ''
+      let newRow = null
+      let newCol = null
       setState(prev => {
         if (!prev.encounter) return prev
         const { encounter, board, hero } = prev
@@ -123,9 +125,16 @@ export default function useEncounterHandlers(setState, addLog) {
           newHero.hp = hero.hp - damage
           msg = `The goblin blocks your path, dealing ${damage} damage!`
         }
-        return { ...prev, board: newBoard, hero: newHero, encounter: newEncounter }
+        newRow = newHero.row
+        newCol = newHero.col
+        return {
+          ...prev,
+          board: newBoard,
+          hero: newHero,
+          encounter: newEncounter,
+        }
       })
-      addLog(msg)
+      addLog(msg, newRow, newCol)
     },
     [addLog, setState],
   )
