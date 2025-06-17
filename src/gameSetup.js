@@ -39,6 +39,20 @@ export function loadState() {
           row.forEach(tile => {
             if (!tile.paths) tile.paths = { up: false, down: false, left: false, right: false }
             if (!('goblin' in tile)) tile.goblin = null
+            if (tile.goblin) {
+              if (!tile.goblin.offset) {
+                const corners = [
+                  { x: -35, y: -35 },
+                  { x: 35, y: -35 },
+                  { x: -35, y: 35 },
+                  { x: 35, y: 35 },
+                ]
+                tile.goblin.offset = corners[Math.floor(Math.random() * corners.length)]
+              }
+              if (tile.goblin.angle == null) {
+                tile.goblin.angle = Math.random() * 30 - 15
+              }
+            }
             if (!('trap' in tile)) tile.trap = null
             if (tile.trap && typeof tile.trap === 'string') {
               tile.trap = { ...TRAP_TYPES[tile.trap], id: tile.trap }

@@ -1,5 +1,5 @@
-import React from 'react';
-import './Goblin.scss';
+function Goblin({ goblin, damaged, style }) {
+    <div className={`goblin${damaged ? ' shake' : ''}`} style={style}>
 
 function Goblin({ goblin, damaged }) {
   return (
