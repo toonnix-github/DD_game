@@ -1,0 +1,16 @@
+.goblin-overlay {
+  position: absolute;
+  width: calc(100% / 7);
+  height: calc(100% / 7);
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+}
+
+.goblin-icon {
+  width: 30px;
+  height: 30px;
+}

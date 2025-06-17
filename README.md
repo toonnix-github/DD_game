@@ -64,7 +64,7 @@ npm test
   latest three entries are shown above the hero card as a narrative feed.
 - Hovering a goblin token reveals its full card for quick reference.
 - Goblins now slide across the board when they advance on the hero.
-- Room tiles display a goblin icon image instead of a letter.
+- Goblin icons now overlay rooms as movable tokens.
 
 The hero panel now displays these attributes along with a portrait image for the selected hero. Lost HP is shown using the same heart icon tinted black via CSS so you can quickly gauge your health. Dice stats are represented by repeating dice icons rather than numbers.
 

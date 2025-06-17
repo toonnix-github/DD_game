@@ -12,11 +12,6 @@ function RoomTile({ tile, move, attack, attackDisabled = false, highlight, disab
       title={
         tile.revealed
           ? tile.roomId +
-          (tile.trap && !tile.trapResolved
-            ? ` - ${EVASION_RULE} Difficulty ${tile.trap.difficulty}. ${DISARM_RULE}`
-            : '')
-          : undefined
-      }
     >
       {!tile.revealed && <div className="card-back" />}
       {tile.revealed && (
