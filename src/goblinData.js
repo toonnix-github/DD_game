@@ -10,7 +10,7 @@ export const GOBLIN_TYPES = {
     ],
     extra: 1,
     defence: 5,
-    icon: 'K',
+    icon: '/icon/icon-goblin.png',
     image: '/goblin/stabby-goblin.webp',
   },
   archer: {
@@ -25,7 +25,7 @@ export const GOBLIN_TYPES = {
       { type: 'range', attack: 2, range: 3 },
     ],
     defence: 7,
-    icon: 'A',
+    icon: '/icon/icon-goblin.png',
     image: '/goblin/shooty-goblin.webp',
   },
   mage: {
@@ -40,7 +40,7 @@ export const GOBLIN_TYPES = {
       { type: 'magic', attack: 6, range: 5 },
     ],
     defence: 4,
-    icon: 'M',
+    icon: '/icon/icon-goblin.png',
     image: '/goblin/shaman-goblin.webp',
   },
   king: {
@@ -54,7 +54,7 @@ export const GOBLIN_TYPES = {
     ],
     extra: 2,
     defence: 10,
-    icon: 'G',
+    icon: '/icon/icon-goblin.png',
     image: '/goblin/boss-goblin.webp',
   },
 };

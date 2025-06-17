@@ -43,6 +43,7 @@ function App() {
   const [actionPrompt, setActionPrompt] = useState(null)
   const [revealGoblin, setRevealGoblin] = useState(null)
   const [revealPhase, setRevealPhase] = useState('spin')
+  const [goblinMoves, setGoblinMoves] = useState([])
   const prevHpRef = useRef(state.hero ? state.hero.hp : null)
 
   const addLog = useCallback(msg => {
@@ -121,6 +122,12 @@ function App() {
     }
   }, [revealGoblin, setState])
 
+  useEffect(() => {
+    if (goblinMoves.length === 0) return
+    const t = setTimeout(() => setGoblinMoves([]), 400)
+    return () => clearTimeout(t)
+  }, [goblinMoves])
+
   const endTurn = useCallback(() => {
     if (!state.hero) return
     const base = HERO_TYPES[state.hero.type]
@@ -132,6 +139,7 @@ function App() {
       const moved = moveGoblinsTowardsHero(state.board, state.hero, state.discoveredGoblins)
       board = moved.board
       positions = moved.positions
+      setGoblinMoves(moved.moves)
     }
     setState(prev => ({
       ...prev,
@@ -463,6 +471,20 @@ function App() {
               <Hero hero={state.hero} damaged={heroDamaged} />
             </div>
           )}
+          {goblinMoves.map((m, idx) => (
+            <img
+              key={idx}
+              className="goblin-move"
+              src={m.goblin.icon}
+              alt="goblin"
+              style={{
+                top: `calc(${m.from.row} * (100% / ${BOARD_SIZE}))`,
+                left: `calc(${m.from.col} * (100% / ${BOARD_SIZE}))`,
+                '--dx': `${(m.to.col - m.from.col) * 100}%`,
+                '--dy': `${(m.to.row - m.from.row) * 100}%`,
+              }}
+            />
+          ))}
           {revealGoblin && (
             <div
               className={`goblin-reveal ${revealPhase}`}

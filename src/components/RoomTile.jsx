@@ -31,7 +31,7 @@ function RoomTile({ tile, move, attack, attackDisabled = false, highlight, disab
       )}
       {tile.revealed && tile.goblin && (
         <div className="goblin-container">
-          <span className="goblin-icon">{tile.goblin.icon}</span>
+          <img className="goblin-icon" src={tile.goblin.icon} alt="goblin" />
         </div>
       )}
       {(move || attack) && (

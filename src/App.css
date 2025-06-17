@@ -76,6 +76,14 @@
   animation: goblin-move 0.8s forwards;
 }
 
+.goblin-move {
+  position: absolute;
+  width: calc(100% / 7);
+  height: calc(100% / 7);
+  pointer-events: none;
+  animation: goblin-slide 0.4s forwards;
+}
+
 @keyframes goblin-spin {
   0% {
     transform: scale(0) rotate(0) rotateY(0);
@@ -94,6 +102,15 @@
   }
   to {
     transform: translate(-110%, 0);
+  }
+}
+
+@keyframes goblin-slide {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(var(--dx), var(--dy));
   }
 }
 

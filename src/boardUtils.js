@@ -160,10 +160,11 @@ export function nextStepTowards(board, fromRow, fromCol, toRow, toCol) {
 export function moveGoblinsTowardsHero(board, hero, goblinPositions) {
   const copy = board.map(row => row.map(t => ({ ...t })));
   const newPositions = goblinPositions.map(p => ({ ...p }));
+  const moves = [];
   goblinPositions.forEach((pos, idx) => {
     const tile = copy[pos.row][pos.col];
-      const gob = tile.goblin;
-      if (!gob || gob.hp <= 0) return;
+    const gob = tile.goblin;
+    if (!gob || gob.hp <= 0) return;
     let r = pos.row;
     let c = pos.col;
     for (let step = 0; step < (gob.movement || 1); step++) {
@@ -178,6 +179,9 @@ export function moveGoblinsTowardsHero(board, hero, goblinPositions) {
       if (r === hero.row && c === hero.col) break;
     }
     newPositions[idx] = { row: r, col: c };
+    if (r !== pos.row || c !== pos.col) {
+      moves.push({ goblin: gob, from: { ...pos }, to: { row: r, col: c } });
+    }
   });
-  return { board: copy, positions: newPositions };
+  return { board: copy, positions: newPositions, moves };
 }
