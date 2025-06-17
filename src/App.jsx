@@ -157,7 +157,7 @@ function App() {
     }))
     addLog(`${state.hero.name} pauses to regroup at ${roomCode(state.hero.row, state.hero.col)}.`)
     addLog(`Torch advances to ${newTorch}/20.`)
-    if (newTorch === 4) {
+    if ([4, 8, 10, 13, 15, 18].includes(newTorch)) {
       addLog('The goblins surge forward!')
       const { steps } = moveGoblinsTowardsHero(
         state.board,
